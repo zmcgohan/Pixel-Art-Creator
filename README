@@ -1,0 +1,64 @@
+:.:.: Sprite Creator :.:.:
+
+This application provides an easy method of drawing and animating pixel art in a format which allows for efficient and simple rendering.
+
+Features:
+	- Unlimited size of art
+	- Works on mobile/tablets
+	- 'Highlighted' part of screen = image dimensions
+	- Able to set size or have program resize as needed
+	- Tools:
+		+ Basic pen
+		+ Rectangle select
+		+ Move
+		+ Bucket fill
+		+ Replace color
+		+ Mirror tools
+		+ Selection rotate
+		+ Vertical/horizontal flip
+		+ Shapes tool (circles, rectangles, lines)
+		+ Lighten/darken
+		+ Color picker
+	- Systems:
+		+ Main grid
+		+ Mouse/keyboard input
+		+ Layers
+		+ Palettes (4/5 color easy-switch)
+		+ Animation frames
+			- Onion-skinning option
+		+ Frame management system
+		+ Export (GIF, PNG, custom)
+
+Code setup:
+	- Grid: Main grid of application
+		+ Only allows moving view up until curSprite is only a few pixels in-view
+		+ curSprite: current Sprite being edited, its current frame, and location
+		+ bgSprites: transparent background sprites (for onion-skinning & comparison), their locations and current frames
+		+ numCells: number of 
+		+ cellWidth: cell width in pixels (used for zoom)
+		+ topLeftViewPos: top left position of view of grid (relative to 0,0=topleft at beginning) in pixels
+		+ lineColor: color of lines on grid
+		+ bgColor: color of background cells
+	- Sprite: Set of all frames of an animated sprite
+		+ width, height: dimensions of Sprite in pixels
+		+ frames: SpriteFrames of Sprite
+	- SpriteFrame: An individual frame of a sprite's animation
+		+ pixels: 2D array of pixels in frame, sized by width & height of Sprite
+	- Window: An editable portion of the screen for housing a system (like color palette, frames, etc.)
+		+ position: position of window on screen (in pixels)
+		+ width, height: dimensions of Window in pixels
+		+ Inheriting:
+			- ToolWindow
+			- ColorPaletteWindow
+			- LayerWindow
+			- AnimationWindow
+	- ColorPalette: A set of colors
+		+ colors: array of different colors in palette
+
+	
+Sprite Creator's custom format:
+	- Purpose: Meant to enable easy rendering and storing of voxel sprites in HTML5 or other systems (rather than a PNG sprite sheet, etc.)
+	- Implementation: For now, just stores individual pixels of each sprite's frames. Aims to keep size of images as small as possible while ignoring any irrelevant details.
+		+ Possible future additions:
+			- Only stores changes of each frame
+			- Reduces storage to rectangles of pixels for quicker rendering
