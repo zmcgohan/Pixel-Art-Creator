@@ -9,12 +9,15 @@ var AR = 2, // aspect ratio
 
 var canvas, ctx, mainGrid;
 
+var curTool = Tools.PEN;
+
+var mouseDown = false;
+
 /* CLASS SECTION */
 
 function Grid() {
-	this.curSprite = { pos: { x: undefined, y: undefined },
-					   sprite: undefined }; // current sprite being edited
-	this.bgSprites = null; // bg sprites (onion-skinning)
+	this.curSprite = undefined; // current sprite being edited
+	this.bgSprites = undefined; // bg sprites (onion-skinning)
 	this.topLeftViewPos = { x: 0, y: 0 }; // top left view position (in pixels)
 	this.lineColor = DEFAULT_LINE_COLOR; // color of cell separation lines
 	this.bgColors = [ DEFAULT_BG_COLOR, '#dedede' ]; // color of background cells
@@ -53,7 +56,7 @@ function Grid() {
 				// TODO: make the following sprite rendering more efficient.. because it's not. at all.
 				// render current sprite
 				var spriteCellColor = undefined;
-				if(this.curSprite.pos.x <= topLeftCellX+j && this.curSprite.pos.x+this.curSprite.sprite.width >= topLeftCellX && this.curSprite.pos.y <= topLeftCellY+i && this.curSprite.pos.y+this.curSprite.sprite.height >= topLeftCellY) {
+				if(this.curSprite !== undefined && this.curSprite.pos.x <= topLeftCellX+j && this.curSprite.pos.x+this.curSprite.sprite.width >= topLeftCellX && this.curSprite.pos.y <= topLeftCellY+i && this.curSprite.pos.y+this.curSprite.sprite.height >= topLeftCellY) {
 					var spritePxRow = (topLeftCellY+i)-this.curSprite.pos.y,
 						spritePxCol = (topLeftCellX+j)-this.curSprite.pos.x;
 					if(this.curSprite.sprite.frames[0].layers[0].pixels[spritePxRow] !== undefined && this.curSprite.sprite.frames[0].layers[0].pixels[spritePxRow][spritePxCol] !== undefined)
@@ -111,7 +114,7 @@ function Sprite() {
 	this.height = 0;
 	this.frames = [ new Frame() ];
 	this.curFrameI = 0; // current frame index
-	this.changePixel = function(row, col, color) {
+	this.colorPixel = function(row, col, color) {
 		var i, j,
 			curFrame = this.frames[this.curFrameI],
 			curLayer = curFrame.layers[curFrame.curLayerI];
@@ -163,6 +166,63 @@ function Sprite() {
 		}
 		curLayer.pixels[row][col] = color;
 	}
+	this.erasePixel = function(row, col) {
+		var dimensionChanges = { top: 0, right: 0, bottom: 0, left: 0 };
+		if(row >= 0 && row < this.height && col >= 0 && col < this.width) {
+			var i, j,
+				curFrame = this.frames[this.curFrameI],
+				curLayer = curFrame.layers[curFrame.curLayerI];
+			curLayer.pixels[row][col] = '';
+			// remove each side if empty (trim the sprite)
+			var oldWidth = this.width;
+			leftSide:
+			for(i = 0; i < oldWidth; ++i) {
+				for(j = 0; j < this.height; ++j) {
+					if(curLayer.pixels[j][0] !== '')
+						break leftSide;
+				}
+				for(j = 0; j < this.height; ++j) {
+					curLayer.pixels[j].splice(0, 1);
+				}
+				--this.width;
+				++dimensionChanges.left;
+			}
+			rightSide:
+			for(i = this.width-1; i >= 0; --i) {
+				for(j = 0; j < this.height; ++j) {
+					if(curLayer.pixels[j][i] !== '')
+						break rightSide;
+				}
+				for(j = 0; j < this.height; ++j) {
+					curLayer.pixels[j].splice(this.width-1, 1);
+				}
+				--this.width;
+				++dimensionChanges.right;
+			}
+			var oldHeight = this.height;
+			topSide:
+			for(i = 0; i < oldHeight; ++i) {
+				for(j = 0; j < this.width; ++j) {
+					if(curLayer.pixels[0][j] !== '')
+						break topSide;
+				}
+				curLayer.pixels.splice(0,1);
+				--this.height;
+				++dimensionChanges.top;
+			}
+			bottomSide:
+			for(i = this.height-1; i >= 0; --i) {
+				for(j = 0; j < this.width; ++j) {
+					if(curLayer.pixels[i][j] !== '')
+						break bottomSide;
+				}
+				curLayer.pixels.splice(i,1);
+				--this.height;
+				++dimensionChanges.bottom;
+			}
+		}
+		return dimensionChanges;
+	}
 }
 
 function Frame() {
@@ -172,6 +232,22 @@ function Frame() {
 
 function Layer() {
 	this.pixels = [];
+}
+
+function Window() {
+	this.resize = function(width, height) {
+		this.window.style.width = width + 'px';
+		this.window.style.height = height + 'px';
+	}
+	this.setPosition = function(top, left) {
+		this.window.style.top = top + 'px';
+		this.window.style.left = left + 'px';
+	}
+
+	this.window = document.createElement('div');
+	this.resize(100,100);
+	this.setPosition(50,50);
+	document.body.appendChild(this.window);
 }
 
 /* FUNCTION SECTION */
@@ -189,8 +265,6 @@ function setUp() {
 }
 
 /* EVENT HANDLERS */
-
-var mouseDown = false;
 
 window.addEventListener("resize", function(event) {
 	canvas.width = window.innerWidth * AR;
@@ -237,24 +311,41 @@ window.addEventListener("mousewheel", function(event) {
 // highlight moused-over cell
 window.addEventListener("mousemove", function(event) {
 	mainGrid.activeCell = mainGrid.getCellAtPos(mainGrid.topLeftViewPos.x+event.x*AR, mainGrid.topLeftViewPos.y+event.y*AR);
+
+	curTool.handleEvent(event);
+
 	mainGrid.render();
 }, false);
 
-// handle clicks
+// handle mouse button being depressed
 window.addEventListener("mousedown", function(event) {
-	var clickedCell = mainGrid.getCellAtPos(mainGrid.topLeftViewPos.x+event.x*AR, mainGrid.topLeftViewPos.y+event.y*AR);
-	if(mainGrid.curSprite.sprite === undefined) {
-		mainGrid.curSprite.pos = clickedCell;
-		mainGrid.curSprite.sprite = new Sprite();
-		mainGrid.curSprite.sprite.changePixel(0,0,'#ff0000');
-	} else {
-		var changedRow = clickedCell.y - mainGrid.curSprite.pos.y,
-			changedCol = clickedCell.x - mainGrid.curSprite.pos.x;
-		if(changedRow < 0) mainGrid.curSprite.pos.y = clickedCell.y;
-		if(changedCol < 0) mainGrid.curSprite.pos.x = clickedCell.x;
-		mainGrid.curSprite.sprite.changePixel(changedRow, changedCol, '#ff0000');
-	}
+	mouseDown = true;
+
+	curTool.handleEvent(event);
+
 	mainGrid.render();
+}, false);
+
+// handle mouse button being released
+window.addEventListener("mouseup", function(event) {
+	mouseDown = false;
+
+	curTool.handleEvent(event);
+
+	mainGrid.render();
+}, false);
+
+// handle key clicks
+window.addEventListener("keydown", function(event) {
+	if(event.which === 32) {
+		if(curTool === Tools.PEN) {
+			console.log("Tool: Eraser");
+		   	curTool = Tools.ERASER;
+		} else if(curTool === Tools.ERASER) {
+			console.log("Tool: Pen");
+		   	curTool = Tools.PEN;
+		}
+	}
 }, false);
 
 /* EXECUTION SECTION */

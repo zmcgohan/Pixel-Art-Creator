@@ -34,7 +34,13 @@ function addBlankSprite() {
 
 function testChangePixel(row, col, color) {
 	var sprite = mainGrid.curSprite.sprite;
-	sprite.changePixel(row, col, color);
+	sprite.colorPixel(row, col, color);
 	console.log(sprite.frames[0].layers[0].pixels);
 	mainGrid.render();
 }
+
+function createTestWindow() {
+	var w = new Window();
+}
+
+createTestWindow();

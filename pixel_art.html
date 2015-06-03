@@ -4,16 +4,23 @@
 		<title>Pixel Art Testing</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
 			html, body {
 				font-family: Helvetica, sans-serif;
 				font-size: 1.3em;
 				color: #222;
-				margin: 0;
 				background: #fafafa;
-				padding: 0;
 				width: 100%;
 				height: 100%;
 				overflow: hidden;
+			}
+			div {
+				position: absolute;
+				z-index: 10;
+				background: rgba(200,200,200,0.5);
 			}
 		</style>
 	</head>
@@ -27,6 +34,7 @@
 				</tr>
 			</table>
 		</noscript>
+		<script src="tools.js"></script>
 		<script src="pixel_art.js"></script>
 		<script src="tests.js"></script>
 	</body>
