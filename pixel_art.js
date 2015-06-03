@@ -4,7 +4,8 @@ var AR = 2, // aspect ratio
 	DEFAULT_BG_COLOR = '#fafafa',
 	DEFAULT_LINE_COLOR = '#aaaaaa',
 	DEFAULT_ACTIVE_CELL_COLOR = '#888888',
-	DEFAULT_ACTIVE_CELL_ALPHA = 0.4;
+	DEFAULT_ACTIVE_CELL_ALPHA = 0.4,
+	SPRITE_BG_COLOR = '#fdfdfd';
 
 var canvas, ctx, mainGrid;
 
@@ -39,7 +40,7 @@ function Grid() {
 			pxDiffY = this.topLeftViewPos.y % this.cellHeight,
 			topLeftCellX = Math.floor((this.topLeftViewPos.x) / this.cellWidth),
 			topLeftCellY = Math.floor((this.topLeftViewPos.y) / this.cellHeight);
-		// draw cells
+		// draw visible cells
 		for(i = 0; i < this.numRows+1; ++i) {
 			for(j = 0; j < this.numCols+1; ++j) {
 				var drawXPos, drawYPos;
@@ -49,14 +50,29 @@ function Grid() {
 				// same with y difference
 				if(pxDiffY >= 0) drawYPos = i*this.cellHeight-pxDiffY;
 				else drawYPos = i*this.cellHeight-(this.cellHeight+pxDiffY);
-				// calculate background color -- different if in negative cells
-				if(topLeftCellX+j >= 0 && topLeftCellY+i >= 0) ctx.fillStyle = this.bgColors[(topLeftCellX+topLeftCellY+i+j)%this.bgColors.length];
-				else {
-					var xAdd = topLeftCellX+j >= 0 ? topLeftCellX : this.bgColors.length + (topLeftCellX % this.bgColors.length);
-					var yAdd = topLeftCellY+i >= 0 ? topLeftCellY : this.bgColors.length + (topLeftCellY % this.bgColors.length);
-					ctx.fillStyle = this.bgColors[(xAdd+yAdd+i+j)%this.bgColors.length];
+				// TODO: make the following sprite rendering more efficient.. because it's not. at all.
+				// render current sprite
+				var spriteCellColor = undefined;
+				if(this.curSprite.pos.x <= topLeftCellX+j && this.curSprite.pos.x+this.curSprite.sprite.width >= topLeftCellX && this.curSprite.pos.y <= topLeftCellY+i && this.curSprite.pos.y+this.curSprite.sprite.height >= topLeftCellY) {
+					var spritePxRow = (topLeftCellY+i)-this.curSprite.pos.y,
+						spritePxCol = (topLeftCellX+j)-this.curSprite.pos.x;
+					if(this.curSprite.sprite.frames[0].layers[0].pixels[spritePxRow] !== undefined && this.curSprite.sprite.frames[0].layers[0].pixels[spritePxRow][spritePxCol] !== undefined)
+						spriteCellColor = this.curSprite.sprite.frames[0].layers[0].pixels[spritePxRow][spritePxCol];
 				}
-				ctx.fillRect(drawXPos, drawYPos, this.cellWidth, this.cellHeight);
+				if(spriteCellColor !== undefined) { // sprite cell found -- draw it
+					if(spriteCellColor !== '') ctx.fillStyle = spriteCellColor;
+					else ctx.fillStyle = SPRITE_BG_COLOR;
+					ctx.fillRect(drawXPos, drawYPos, this.cellWidth, this.cellHeight);
+				} else { // empty cell -- default bg color
+					// calculate background color -- different if in negative cells
+					if(topLeftCellX+j >= 0 && topLeftCellY+i >= 0) ctx.fillStyle = this.bgColors[(topLeftCellX+topLeftCellY+i+j)%this.bgColors.length];
+					else {
+						var xAdd = topLeftCellX+j >= 0 ? topLeftCellX : this.bgColors.length + (topLeftCellX % this.bgColors.length);
+						var yAdd = topLeftCellY+i >= 0 ? topLeftCellY : this.bgColors.length + (topLeftCellY % this.bgColors.length);
+						ctx.fillStyle = this.bgColors[(xAdd+yAdd+i+j)%this.bgColors.length];
+					}
+					ctx.fillRect(drawXPos, drawYPos, this.cellWidth, this.cellHeight);
+				}
 				// if active cell, shade it
 				if(topLeftCellX+j === this.activeCell.x && topLeftCellY+i === this.activeCell.y) {
 					ctx.globalAlpha = this.activeCellAlpha;
@@ -93,11 +109,65 @@ function Grid() {
 function Sprite() {
 	this.width = 0;
 	this.height = 0;
-	this.frames = [];
+	this.frames = [ new Frame() ];
+	this.curFrameI = 0; // current frame index
+	this.changePixel = function(row, col, color) {
+		var i, j,
+			curFrame = this.frames[this.curFrameI],
+			curLayer = curFrame.layers[curFrame.curLayerI];
+		// sprite is currently empty -- create first pixel and return
+		if(this.width === 0 && this.height === 0) {
+			curLayer.pixels.push([color]);
+			this.width = this.height = 1;
+			return;
+		}
+		// resize if necessary
+		if(col < 0) { // col is less than 0 (add cols in front)
+			this.width += -col;
+			for(i = 0; i < curLayer.pixels.length; ++i) {
+				for(j = 0; j > col; --j) {
+					curLayer.pixels[i].unshift('');
+				}
+			}
+			col = 0;
+		} else if(col > this.width-1) { // col is greater than current cols
+			var widthDiff = col - (this.width-1);
+			this.width += widthDiff;
+			for(i = 0; i < curLayer.pixels.length; ++i) {
+				for(j = 0; j < widthDiff; ++j) {
+					curLayer.pixels[i].push('');
+				}
+			}
+		}
+		if(row < 0) { // row is above current rows
+			this.height += -row;
+			for(i = 0; i > row; --i) {
+				var newRow = [];
+				for(j = 0; j < this.width; ++j) {
+					newRow.push('');
+				}
+				curLayer.pixels.unshift(newRow);
+			}
+			row = 0;
+		} else if(row > this.height-1) { // row is below current rows
+			var heightDiff = row - (this.height-1),
+				newRow;
+			this.height += heightDiff;
+			for(i = 0; i < heightDiff; ++i) {
+				newRow = [];
+				for(j = 0; j < this.width; ++j) {
+					newRow.push('');
+				}
+				curLayer.pixels.push(newRow);
+			}
+		}
+		curLayer.pixels[row][col] = color;
+	}
 }
 
 function Frame() {
-	this.layers = [];
+	this.layers = [ new Layer() ];
+	this.curLayerI = 0; // current layer index
 }
 
 function Layer() {
@@ -119,6 +189,8 @@ function setUp() {
 }
 
 /* EVENT HANDLERS */
+
+var mouseDown = false;
 
 window.addEventListener("resize", function(event) {
 	canvas.width = window.innerWidth * AR;
@@ -168,27 +240,26 @@ window.addEventListener("mousemove", function(event) {
 	mainGrid.render();
 }, false);
 
+// handle clicks
+window.addEventListener("mousedown", function(event) {
+	var clickedCell = mainGrid.getCellAtPos(mainGrid.topLeftViewPos.x+event.x*AR, mainGrid.topLeftViewPos.y+event.y*AR);
+	if(mainGrid.curSprite.sprite === undefined) {
+		mainGrid.curSprite.pos = clickedCell;
+		mainGrid.curSprite.sprite = new Sprite();
+		mainGrid.curSprite.sprite.changePixel(0,0,'#ff0000');
+	} else {
+		var changedRow = clickedCell.y - mainGrid.curSprite.pos.y,
+			changedCol = clickedCell.x - mainGrid.curSprite.pos.x;
+		if(changedRow < 0) mainGrid.curSprite.pos.y = clickedCell.y;
+		if(changedCol < 0) mainGrid.curSprite.pos.x = clickedCell.x;
+		mainGrid.curSprite.sprite.changePixel(changedRow, changedCol, '#ff0000');
+	}
+	mainGrid.render();
+}, false);
+
 /* EXECUTION SECTION */
 
 setUp();
 mainGrid = new Grid();
-
-var spriteOneWidth = 5,
-	spriteOneHeight = 10;
-var spriteOne = new Sprite();
-spriteOne.width = spriteOneWidth;
-spriteOne.height = spriteOneHeight;
-spriteOne.frames.push(new Frame());
-
-spriteOne.frames[0].layers.push(new Layer());
-console.log(spriteOne.frames[0].layers[0]);
-for(var i = 0; i < spriteOne.height; ++i) {
-	spriteOne.frames[0].layers[0].pixels.push([]);
-	for(var j = 0; j < spriteOne.width; ++j) {
-		spriteOne.frames[0].layers[0].pixels[i].push('#ff0000');
-	}
-}
-console.log(spriteOne.frames[0].layers[0]);
-mainGrid.curSprite = { pos: { x: 5, y: 5}, sprite: spriteOne };
 
 mainGrid.render();
