@@ -39,8 +39,12 @@ function testChangePixel(row, col, color) {
 	mainGrid.render();
 }
 
-function createTestWindow() {
-	var w = new Window();
+function createTestWindows() {
+	var colorPalette = new ColorPalette(),
+		toolBox = new ToolBox();
+	windows.push(colorPalette);
+	windows.push(toolBox);
+	updateScreen();
 }
 
-createTestWindow();
+createTestWindows();

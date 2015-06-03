@@ -19,8 +19,21 @@
 			}
 			div {
 				position: absolute;
-				z-index: 10;
-				background: rgba(200,200,200,0.5);
+				vertical-align: top;
+				z-index: 1;
+				background: none;
+				overflow: hidden;
+			}
+			canvas {
+				z-index: 0;
+			/* No highlighting -- looks nicer :) */
+			::selection {
+				background-color: transparent;
+				color: #000000;
+			}
+			::-moz-selection {
+				background-color: transparent;
+				color: #000000;
 			}
 		</style>
 	</head>

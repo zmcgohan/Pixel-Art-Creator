@@ -6,13 +6,13 @@ var Tools = {
 
 				if(mainGrid.curSprite === undefined) {
 					mainGrid.curSprite = { pos: clickedCell, sprite: new Sprite() };
-					mainGrid.curSprite.sprite.colorPixel(0,0,'#ff0000');
+					mainGrid.curSprite.sprite.colorPixel(0, 0, curColor);
 				} else {
 					var changedRow = clickedCell.y - mainGrid.curSprite.pos.y,
 						changedCol = clickedCell.x - mainGrid.curSprite.pos.x;
 					if(changedRow < 0) mainGrid.curSprite.pos.y = clickedCell.y;
 					if(changedCol < 0) mainGrid.curSprite.pos.x = clickedCell.x;
-					mainGrid.curSprite.sprite.colorPixel(changedRow, changedCol, '#ff0000');
+					mainGrid.curSprite.sprite.colorPixel(changedRow, changedCol, curColor);
 				}
 			}
 		}
