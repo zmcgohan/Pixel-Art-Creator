@@ -41,9 +41,11 @@ function testChangePixel(row, col, color) {
 
 function createTestWindows() {
 	var colorPalette = new ColorPalette(),
-		toolBox = new ToolBox();
+		toolBox = new ToolBox(),
+		dimensionsDisplay = new DimensionsDisplay();
 	windows.push(colorPalette);
 	windows.push(toolBox);
+	windows.push(dimensionsDisplay);
 	updateScreen();
 }
 

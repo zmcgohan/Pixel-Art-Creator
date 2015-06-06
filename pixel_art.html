@@ -7,6 +7,15 @@
 			* {
 				margin: 0;
 				padding: 0;
+				box-sizing: border-box;
+				-webkit-box-sizing: border-box;
+				-moz-box-sizing: border-box;
+			    -webkit-touch-callout: none;
+			    -webkit-user-select: none;
+			    -khtml-user-select: none;
+			    -moz-user-select: none;
+			    -ms-user-select: none;
+			    user-select: none;
 			}
 			html, body {
 				font-family: Helvetica, sans-serif;
@@ -16,16 +25,17 @@
 				width: 100%;
 				height: 100%;
 				overflow: hidden;
+				cursor: default;
 			}
 			div {
 				position: absolute;
 				vertical-align: top;
 				z-index: 1;
 				background: none;
-				overflow: hidden;
 			}
 			canvas {
 				z-index: 0;
+			}
 			/* No highlighting -- looks nicer :) */
 			::selection {
 				background-color: transparent;
@@ -34,6 +44,84 @@
 			::-moz-selection {
 				background-color: transparent;
 				color: #000000;
+			}
+			#colorPalette {
+				position: absolute;
+				top: 50px;
+				left: 50px;
+				vertical-align: top;
+				z-index: 1;
+				background: none;
+			}
+			#colorPalette > .colorSlide, #colorPalette > #newColorSlide {
+				position: relative;
+				display: inline-block;
+				float: left;
+				width: 1.45em;
+				height: 1.45em;
+			}
+			#colorPalette > .colorSlide {
+				margin: 0 4px 0 0;
+				background: #00ff00;
+			}
+			#colorPalette > #newColorSlide {
+				background: rgba(34,34,34,0.25);
+				text-align: center;
+			}
+			#colorPalette > .curSlide {
+				border-style: dashed;
+				border-color: rgba(34,34,34,0.7);
+				border-width: 3px;
+			}
+			#colorPalette > #newColorDialog {
+				position: absolute;
+				left: 0;
+				top: 110%;
+				padding: 4%;
+				width: 220px;
+				height: 120px;
+				background: rgba(34,34,34,0.85);
+				overflow: hidden;
+			}
+			#newColorDialog > #saturationBrightnessBox {
+				float: left;
+				width: 43.5%;
+				height: 100%;
+				margin-right: 2%;
+				border: 1px solid rgb(100,100,100);
+				border-radius: 2px;
+			}
+			#newColorDialog > #hueBar {
+				float: left;
+				height: 100%;
+				width: 9%;
+				border: 1px solid rgb(100,100,100);
+				border-radius: 2px;
+				margin-right: 0.5%;
+			}
+			#newColorDialog > #hueBarArrowCanvas {
+				float: left;
+				position: relative;
+				top: -4.35%;
+				opacity: 0.8;
+				height: 108.7%;
+				width: 2.5%;
+			}
+			td, tr {
+				padding: 0;
+				margin: 0;
+			}
+			#curColorDisplay {
+				width: 42.5%;
+				height: 24px;
+				border: 1px solid rgb(100,100,100);
+				border-radius: 2px;
+			}
+			#newColorDialog > #colorInfoTable {
+				float: left;
+				width: 42.5%;
+				border-collapse: collapse;
+				border-spacing: 0px;
 			}
 		</style>
 	</head>
@@ -47,6 +135,24 @@
 				</tr>
 			</table>
 		</noscript>
+		<div id="colorPalette">
+			<div class="colorSlide"></div>
+			<div class="colorSlide curSlide"></div>
+			<div id="newColorSlide">+</div>
+			<div id="newColorDialog">
+				<canvas id="saturationBrightnessBox"></canvas>
+				<canvas id="hueBar"></canvas>
+				<canvas id="hueBarArrowCanvas"></canvas>
+				<canvas id="curColorDisplay"></canvas>
+			</div>
+		</div>
+		<script src="misc_funcs.js"></script>
+		<script src="grid.js"></script>
+		<script src="sprite.js"></script>
+		<script src="windows/window.js"></script>
+		<script src="windows/color_palette.js"></script>
+		<script src="windows/tool_box.js"></script>
+		<script src="windows/dimensions_display.js"></script>
 		<script src="tools.js"></script>
 		<script src="pixel_art.js"></script>
 		<script src="tests.js"></script>
