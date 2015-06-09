@@ -1,5 +1,6 @@
 // screen (grid) resized
 window.addEventListener("resize", function(event) {
+	updatePositionsAndSizes();
 	canvas.width = window.innerWidth * AR;
 	canvas.height = window.innerHeight * AR;
 	canvas.style.width = window.innerWidth + 'px';
@@ -10,6 +11,7 @@ window.addEventListener("resize", function(event) {
 
 // moving around the grid and zooming in/out
 window.addEventListener("mousewheel", function(event) {
+	event.preventDefault();
 	if(!event.ctrlKey) { // basic scrolling (moves grid)
 		mainGrid.topLeftViewPos.x -= event.wheelDeltaX;
 		mainGrid.topLeftViewPos.y -= event.wheelDeltaY;
@@ -53,6 +55,16 @@ canvas.addEventListener("mousemove", function(event) {
 // handle mouse button being depressed
 canvas.addEventListener("mousedown", function(event) {
 	mouseDown = true;
+
+	console.log('Mouse is down');
+	curTool.handleEvent(event);
+
+	updateScreen();
+}, false);
+
+canvas.addEventListener("touchend", function(event) {
+	console.log(event);
+	event.preventDefault();
 
 	curTool.handleEvent(event);
 

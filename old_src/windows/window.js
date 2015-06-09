@@ -1,6 +1,5 @@
 function Window() {
 	this.window = document.createElement('div');
-	this.setPosition(50,50);
 	document.body.appendChild(this.window);
 	// drag support -- ondrag is.. iffy at best
 	this.mouseDown = false;

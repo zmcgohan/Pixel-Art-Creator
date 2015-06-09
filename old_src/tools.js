@@ -1,8 +1,14 @@
 var Tools = {
 	PEN: { // pen tool -- simply draws a pixel at the mouse position
 		handleEvent: function(event) {
-			if(event.type === 'mousedown' || (event.type === 'mousemove' && mouseDown)) {
-				var clickedCell = mainGrid.getCellAtPos(mainGrid.topLeftViewPos.x+event.x*AR, mainGrid.topLeftViewPos.y+event.y*AR);
+			if(event.type === 'mousedown' || (event.type === 'mousemove' && mouseDown) || event.type === 'touchend') {
+				var clickedCell = undefined; 
+				if(event.type !== 'touchend') {
+					clickedCell = mainGrid.getCellAtPos(mainGrid.topLeftViewPos.x+event.x*AR, mainGrid.topLeftViewPos.y+event.y*AR);
+				} else {
+					clickedCell = mainGrid.getCellAtPos(mainGrid.topLeftViewPos.x+event.changedTouches[0].pageX*AR, mainGrid.topLeftViewPos.y+event.changedTouches[0].pageY*AR);
+					console.log(clickedCell);
+				}
 
 				if(mainGrid.curSprite === undefined) {
 					mainGrid.curSprite = { pos: clickedCell, sprite: new Sprite() };

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<title>Pixel Art Testing</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" type="text/css" href="styles.css" />
+	</head>
+	<body>
+		<noscript>
+			<table style="width:100%;height:100%;text-align:center;">
+				<tr>
+					<td>
+						Sorry! JavaScript is required to run this web application.
+					</td>
+				</tr>
+			</table>
+		</noscript>
+		<div id="colorPalette">
+			<span id="colorSlidesContainer"></span>
+			<div id="newColorSlide">+</div>
+			<div id="newColorDialog">
+				<canvas id="saturationBrightnessBox"></canvas>
+				<canvas id="hueBarArrowCanvasLeft"></canvas>
+				<canvas id="hueBar"></canvas>
+				<canvas id="hueBarArrowCanvasRight"></canvas>
+				<canvas class="colorDisplay" id="chosenColorDisplay"></canvas>
+				<canvas class="colorDisplay" id="lastColorDisplay"></canvas>
+				<div class="colorInputContainer" id="rValueContainer">R <input type="text" class="rgbHsvInput" id="rValueInput" maxlength="3" /></div>
+				<div class="colorInputContainer" id="gValueContainer">G <input type="text" class="rgbHsvInput" id="gValueInput" maxlength="3" /></div>
+				<div class="colorInputContainer" id="bValueContainer">B <input type="text" class="rgbHsvInput" id="bValueInput" maxlength="3" /></div>
+				<div class="colorInputContainer" id="hValueContainer">H <input type="text" class="rgbHsvInput" id="hValueInput" maxlength="3" /></div>
+				<div class="colorInputContainer" id="sValueContainer">S <input type="text" class="rgbHsvInput" id="sValueInput" maxlength="3" /></div>
+				<div class="colorInputContainer" id="vValueContainer">V <input type="text" class="rgbHsvInput" id="vValueInput" maxlength="3" /></div>
+				<div id="hexValueContainer"># <input type="text" id="hexInput" maxlength="6" /></div>
+				<div id="saveButton">&#10003;</div>
+			</div>
+		</div>
+		<canvas id="mainCanvas"></canvas>
+		<!-- General Functions -->
+		<script src="misc_funcs.js"></script>
+
+		<!-- Classes -->
+		<script src="grid.js"></script>
+		<script src="sprite.js"></script>
+		<script src="windows/window.js"></script>
+		<script src="windows/color_palette.js"></script>
+		<script src="windows/tool_box.js"></script>
+		<script src="windows/dimensions_display.js"></script>
+		<script src="tools.js"></script>
+
+		<!-- Execution start -->
+		<script src="pixel_art.js"></script>
+
+		<!-- Events -->
+		<script src="canvas_events.js"></script>
+
+		<!-- Testing Stuff -->
+		<script src="tests.js"></script>
+	</body>
+</html>

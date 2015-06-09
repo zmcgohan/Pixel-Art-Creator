@@ -1,0 +1,209 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+canvas {
+	-webkit-tap-highlight-color: transparent;
+}
+html, body {
+	font-family: Helvetica, sans-serif;
+	font-size: 3vmax;
+	color: #222;
+	background: #fafafa;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	cursor: default;
+}
+div {
+	position: absolute;
+	vertical-align: top;
+	z-index: 1;
+	background: none;
+}
+/* No highlighting (at least in FF?) -- looks nicer :) */
+::selection {
+	background-color: transparent;
+	color: #000000;
+}
+::-moz-selection {
+	background-color: transparent;
+	color: #000000;
+}
+/* MAIN CANVAS */
+#mainCanvas {
+	z-index: 0;
+	width: 100%;
+	height: 100%;
+}
+/* COLOR PALETTE */
+#colorPalette {
+	position: absolute;
+	right: -3vmax;
+	top: 3vmax;
+	width: 22vmax;
+	height: 4vmax;
+	vertical-align: top;
+	z-index: 1;
+	background: none;
+}
+.colorSlide, #newColorSlide {
+	position: relative;
+	display: inline-block;
+	float: left;
+	width: 4vmax;
+	height: 4vmax;
+}
+.colorSlide {
+	margin: 0 0.5vmax 0 0;
+}
+#newColorSlide {
+	background: rgba(34,34,34,0.25);
+	text-align: center;
+}
+.curSlide {
+	border-style: dashed;
+	border-color: rgba(34,34,34,0.7);
+	border-width: 3px;
+}
+#newColorDialog {
+	display: none;
+	width: 22vmax;
+	height: 21.3vmax;
+	position: absolute;
+	left: 0;
+	top: 4.6vmax;
+	background: rgba(34,34,34,0.85);
+	overflow: hidden;
+}
+#saturationBrightnessBox {
+	position: absolute;
+	top: 0.6vmax;
+	left: 0.6vmax;
+	width: 13.5vmax;
+	height: 12.6vmax;
+	border: 1px solid rgb(100,100,100);
+	border-radius: 2px;
+}
+#hueBar {
+	position: absolute;
+	top: 0.6vmax;
+	left: 15.15vmax;
+	height: 12.6vmax;
+	width: 2.6vmax;
+	border: 1px solid rgb(100,100,100);
+	border-radius: 2px;
+	margin-right: 0.5%;
+}
+#hueBarArrowCanvasLeft, #hueBarArrowCanvasRight {
+	position: absolute;
+	top: 0;
+	width: 0.6vmax;
+	height: 13.8vmax;
+	opacity: 0.8;
+}
+#hueBarArrowCanvasLeft { left: 14.55vmax; }
+#hueBarArrowCanvasRight { left: 17.75vmax; }
+.colorDisplay {
+	position: absolute;
+	height: 6vmax;
+	width: 2.6vmax;
+	right: 0.6vmax;
+	border: 1px solid rgb(100,100,100);
+	border-radius: 2px;
+}
+#chosenColorDisplay {
+	top: 0.6vmax;
+}
+#lastColorDisplay {
+	top: 7.2vmax;
+}
+.colorInputContainer, #hexValueContainer {
+	position: absolute;
+	padding-left: .2vmax;
+	height: 1.9vmax;
+	line-height: 1.9vmax;
+	background: #777;
+	color: #dadada;
+	font-size: 1.3vmax;
+	border: 1px solid rgb(100,100,100);
+	border-radius: 2px;
+}
+.colorInputContainer {
+	width: 5.3vmax;
+}
+#rValueContainer {
+	top: 13.8vmax;
+	left: 1.8vmax;
+}
+#gValueContainer {
+	top: 13.8vmax;
+	left: 8.35vmax;
+}
+#bValueContainer {
+	top: 13.8vmax;
+	right: 1.8vmax;
+}
+#hValueContainer {
+	top: 16.3vmax;
+	left: 1.8vmax;
+}
+#sValueContainer {
+	top: 16.3vmax;
+	left: 8.35vmax;
+}
+#vValueContainer {
+	top: 16.3vmax;
+	right: 1.8vmax;
+}
+#hexValueContainer {
+	top: 18.8vmax;
+	left: 1.8vmax;
+	width: 8vmax;
+}
+#newColorDialog input[type="text"] {
+	position: absolute;
+	top: 0;
+	right: 0.5vmax;
+	background: none;
+	outline: none;
+	height: calc(1.9vmax - 2px);
+	line-height: calc(1.9vmax-2px);
+	font-size: 1.2vmax;
+	color: #dadada;
+	border: none;
+	font-family: Helvetica, sans-serif;
+}
+.rgbHsvInput {
+	width: 2.5vmax;
+}
+#hexInput {
+	width: 4.5vmax;
+}
+#saveButton {
+	position: absolute;
+	bottom: 0.6vmax;
+	right: 1.8vmax;
+	width: 2.2vmax;
+	height: 1.9vmax;
+	line-height: 1.9vmax;
+	background: #666666;
+	font-size: 1.4vmax;
+	color: #bbbbbb;
+	border: 1px solid #999999;
+	border-radius: 2px;
+	text-align: center;
+}
+#saveButton:hover {
+	border-color: #bbbbbb;
+	color: #00ff00;
+}

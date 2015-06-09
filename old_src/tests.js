@@ -43,6 +43,7 @@ function createTestWindows() {
 	var colorPalette = new ColorPalette(),
 		toolBox = new ToolBox(),
 		dimensionsDisplay = new DimensionsDisplay();
+	colorPalette.activateColorDialog();
 	windows.push(colorPalette);
 	windows.push(toolBox);
 	windows.push(dimensionsDisplay);

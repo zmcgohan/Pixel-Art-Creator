@@ -118,3 +118,12 @@ Sprite.prototype.erasePixel = function(row, col) {
 	}
 	return dimensionChanges;
 }
+
+function Frame() {
+	this.layers = [ new Layer() ];
+	this.curLayerI = 0; // current layer index
+}
+
+function Layer() {
+	this.pixels = [];
+}

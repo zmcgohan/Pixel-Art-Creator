@@ -1,3 +1,0 @@
-function Layer() {
-	this.pixels = [];
-}
