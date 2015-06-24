@@ -6,24 +6,9 @@ function Sprite() {
 	this.height = 0;
 	this.frames = [ new Frame() ];
 	this.curFrameI = 0; // current frame index
-	this.dimensionsLocked = false; // true = sprite will resize when pixels out of current dimensions are added
-}
-
-// gets the pixel at specified row and col of current frame/layer
-Sprite.prototype.getPixel = function(row, col) {
-	var curFrame = this.frames[this.curFrameI],
-		curLayer = curFrame.layers[curFrame.curLayerI];
-	if(curLayer.pixels[row] !== undefined && curLayer.pixels[row][col] !== undefined) {
-		return curLayer.pixels[row][col];
-	} else {
-		return undefined;
-	}
 }
 
 Sprite.prototype.colorPixel = function(row, col, color) {
-	// if dimensions are locked, just return
-	if((col < 0 || col > this.width-1 || row < 0 || row > this.height-1) && this.dimensionsLocked)
-		return undefined;
 	var i, j,
 		curFrame = this.frames[this.curFrameI],
 		curLayer = curFrame.layers[curFrame.curLayerI];
@@ -31,7 +16,6 @@ Sprite.prototype.colorPixel = function(row, col, color) {
 	if(this.width === 0 && this.height === 0) {
 		curLayer.pixels.push([color]);
 		this.width = this.height = 1;
-		dimensionsDisplay.update();
 		return;
 	}
 	// resize if necessary
@@ -75,21 +59,15 @@ Sprite.prototype.colorPixel = function(row, col, color) {
 		}
 	}
 	curLayer.pixels[row][col] = color;
-	dimensionsDisplay.update();
 }
 
 Sprite.prototype.erasePixel = function(row, col) {
 	var dimensionChanges = { top: 0, right: 0, bottom: 0, left: 0 };
-	// make sure the affected row and col is actually a part of the sprite
 	if(row >= 0 && row < this.height && col >= 0 && col < this.width) {
 		var i, j,
 			curFrame = this.frames[this.curFrameI],
 			curLayer = curFrame.layers[curFrame.curLayerI];
-		// clear pixel
 		curLayer.pixels[row][col] = '';
-		// if dimensions are locked, don't worry about resizing sprite
-		if(this.dimensionsLocked)
-			return dimensionChanges;
 		// remove each side if empty (trim the sprite)
 		var oldWidth = this.width;
 		leftSide:
@@ -138,7 +116,6 @@ Sprite.prototype.erasePixel = function(row, col) {
 			++dimensionChanges.bottom;
 		}
 	}
-	dimensionsDisplay.update();
 	return dimensionChanges;
 }
 

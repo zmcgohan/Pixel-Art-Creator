@@ -1,19 +1,34 @@
 'use strict';
 
-var AR = 2; // aspect ratio
+/* Yes, the code for this is -slightly- less than perfectly organized. Thx */
 
-var canvas, ctx, mainGrid;
+var AR = 2, // aspect ratio
+	screenWidthHeightRatio = window.innerWidth / window.innerHeight; // ratio of screen width to height
 
-var windows = [];
+var canvas, ctx;
 
-var curTool = Tools.PEN,
-	curColor = '#FF0000';
+var grid, colorPalette, toolBox, animationWindow, dimensionsDisplay;
+
+var tools = {};
+
+var curColor = '#FF0000';
 
 var mouseDown = false;
 
 /* EXECUTION SECTION */
 
 setUp();
-mainGrid = new Grid();
+
+// initialize tools
+tools.pen = new PenTool();
+tools.eraser = new EraserTool();
+addToolKeyHandlers();
+
+// initialize objects
+grid = new Grid();
+colorPalette = new ColorPalette();
+toolBox = new ToolBox();
+animationWindow = new AnimationWindow();
+dimensionsDisplay = new DimensionsDisplay();
 
 updateScreen();

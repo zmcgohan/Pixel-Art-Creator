@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<title>Pixel Art Testing</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<!-- <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic,500,500italic,700,700italic,100,100italic' rel='stylesheet' type='text/css' /> -->
+		<link href="style.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<!-- If JavaScript is not enabled, application will not run -->
+		<noscript>
+			<table id="noScriptTable">
+				<tr>
+					<td>
+						Sorry! JavaScript is required to run this web application.
+					</td>
+				</tr>
+			</table>
+		</noscript>
+
+		<!-- All necessary HTML components for application -->
+		<div id="topContainer">
+			<span id="currentTool"></span>
+			<div id="colorPalette">
+				<div id="colorSlidesContainer" style="display: inline-block; float: left;"></div>
+				<span id="newColorSlide">+</span>
+			</div>
+		</div>
+		<div id="bottomContainer">
+			<div id="bottomLabelsContainer">
+				<span id="animationLabel" class="bottomLabel">Animation</span>
+				<span id="layersLabel" class="bottomLabel">Layers</span>
+				<span id="spritesLabel" class="bottomLabel">Sprites</span>
+				<span id="optionsLabel" class="bottomLabel">Options</span>
+			</div>
+			<div id="animationContainer">
+				<div id="animationDisplayTopBG"></div>
+				<div id="animationSlidesContainer">
+					<canvas class="animationSlide"></canvas>
+					<canvas class="animationSlide"></canvas>
+					<canvas class="animationSlide"></canvas>
+					<canvas class="animationSlide"></canvas>
+					<canvas class="animationSlide"></canvas>
+					<canvas class="animationSlide"></canvas>
+					<canvas class="animationSlide"></canvas>
+				</div>
+				<canvas id="animationDisplay"></canvas>
+			</div>
+			<div id="layersContainer">
+				<div id="layerSlidesContainer">
+					<canvas class="layerSlide"></canvas>
+					<canvas class="layerSlide"></canvas>
+					<canvas class="layerSlide"></canvas>
+					<canvas class="layerSlide"></canvas>
+					<canvas class="layerSlide"></canvas>
+					<canvas class="layerSlide"></canvas>
+					<canvas class="layerSlide"></canvas>
+					<canvas class="layerSlide"></canvas>
+					<canvas class="layerSlide"></canvas>
+					<canvas class="layerSlide"></canvas>
+				</div>
+			</div>
+			<div id="spritesContainer">
+				<div id="spriteSlidesContainer">
+					<canvas class="spriteSlide"></canvas>
+					<canvas class="spriteSlide"></canvas>
+					<canvas class="spriteSlide"></canvas>
+					<canvas class="spriteSlide"></canvas>
+					<canvas class="spriteSlide"></canvas>
+					<canvas class="spriteSlide"></canvas>
+					<canvas class="spriteSlide"></canvas>
+					<canvas class="spriteSlide"></canvas>
+					<canvas class="spriteSlide"></canvas>
+					<canvas class="spriteSlide"></canvas>
+				</div>
+			</div>
+		</div>
+		<canvas id="mainCanvas"></canvas>
+		<!-- LOAD ALL NECESSARY SCRIPTS -->
+		<script src="grid.js"></script>
+		<script src="color_palette.js"></script>
+		<script src="mobile_ui_manager.js"></script>
+	</body>
+</html>

@@ -50,4 +50,4 @@ function createTestWindows() {
 	updateScreen();
 }
 
-createTestWindows();
+//createTestWindows();

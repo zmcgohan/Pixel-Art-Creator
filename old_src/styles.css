@@ -27,7 +27,6 @@ html, body {
 div {
 	position: absolute;
 	vertical-align: top;
-	z-index: 1;
 	background: none;
 }
 /* No highlighting (at least in FF?) -- looks nicer :) */
@@ -45,36 +44,126 @@ div {
 	width: 100%;
 	height: 100%;
 }
+
+/* CURRENT TOOL */
+#currentTool {
+	position: absolute;
+	top: 1vmax;
+	left: 1vmax;
+	width: 3.3vmax;
+	height: 3.3vmax;
+	background-color: rgb(140,140,140);
+	background-size: 2.1vmax 2.1vmax;
+	background-position: center;
+	background-repeat: no-repeat;
+	border: solid .15vmax rgba(34,34,34,0.4);
+	border-radius: 0.5vmax;
+	z-index: 1;
+	opacity: 0.8;
+	cursor: pointer;
+}
+#currentTool:hover {
+	opacity: 1.0;
+}
+#currentToolActive {
+	position: absolute;
+	top: 1vmax;
+	left: 1vmax;
+	width: 3.3vmax;
+	height: 3.3vmax;
+	background-color: rgb(140,140,140);
+	background-size: 2.1vmax 2.1vmax;
+	background-position: center;
+	background-repeat: no-repeat;
+	border: solid .15vmax rgba(34,34,34,0.4);
+	border-radius: 0.5vmax;
+	z-index: 1;
+	opacity: 1.0;
+	cursor: pointer;
+}
+
+/* TOOL BOX */
+
+/* Positioned relative to #currentTool */
+#toolBox {
+	display: none;
+	position: absolute;
+	padding-top: 0.5vmax;
+	left: 1vmax;
+	top: 5.3vmax;
+	height: 7.5vmax;
+	width: 7.5vmax;
+	background-color: #cccccc;
+	z-index: 2;
+	border-radius: 0.5vmax;
+}
+	.toolBoxIcon, .curToolIcon {
+		display: inline-block;
+		float: left;
+		margin: 0 0 0.5vmax 0.5vmax;
+		width: 3vmax;
+		height: 3vmax;
+		background-color: rgb(140,140,140);
+		background-size: 1.8vmax 1.8vmax;
+		background-position: center;
+		background-repeat: no-repeat;
+		cursor: pointer;
+		border: solid .15vmax rgba(34,34,34,0.4);
+		border-radius: 0.5vmax;
+	}
+	.toolBoxIcon {
+		opacity: 0.6;
+	}
+	.toolBoxIcon:hover {
+		opacity: 1.0;
+	}
+	.curToolIcon {
+		opacity: 1.0;
+	}
+
 /* COLOR PALETTE */
 #colorPalette {
 	position: absolute;
-	right: -3vmax;
-	top: 3vmax;
+	left: 6.3vmax;
+	top: 1vmax;
 	width: 22vmax;
 	height: 4vmax;
 	vertical-align: top;
 	z-index: 1;
 	background: none;
 }
-.colorSlide, #newColorSlide {
-	position: relative;
-	display: inline-block;
-	float: left;
-	width: 4vmax;
-	height: 4vmax;
-}
-.colorSlide {
-	margin: 0 0.5vmax 0 0;
-}
-#newColorSlide {
-	background: rgba(34,34,34,0.25);
-	text-align: center;
-}
-.curSlide {
-	border-style: dashed;
-	border-color: rgba(34,34,34,0.7);
-	border-width: 3px;
-}
+	.colorSlide {
+		position: relative;
+		display: inline-block;
+		float: left;
+		width: 3.3vmax;
+		height: 3.3vmax;
+		margin: 0 0.5vmax 0 0;
+		border: solid .15vmax rgba(34,34,34,0.4);
+		border-radius: 0.5vmax;
+	}
+	.curSlide {
+		border-style: dashed;
+		border-color: rgba(34,34,34,0.7);
+		border-width: .2vmax;
+	}
+	#newColorSlideButton {
+		position: absolute;
+		top: 2.4vmax;
+		left: 17.6vmax;
+		height: 1.3vmax;
+		width: 1.3vmax;
+		background: linear-gradient(rgb(120,120,120),rgb(180,180,180));
+		border: solid 1px rgb(100,100,100);
+		border-radius: 0.3vmax;
+		font-size: 1.1vmax;
+		font-weight: 500;
+		text-align: center;
+		line-height: 1.2vmax;
+		opacity: 0.95;
+		cursor: pointer;
+	}
+
 #newColorDialog {
 	display: none;
 	width: 22vmax;
@@ -84,126 +173,209 @@ div {
 	top: 4.6vmax;
 	background: rgba(34,34,34,0.85);
 	overflow: hidden;
+	z-index: 1;
 }
-#saturationBrightnessBox {
+	#saturationBrightnessBox {
+		position: absolute;
+		top: 0.6vmax;
+		left: 0.6vmax;
+		width: 13.5vmax;
+		height: 12.6vmax;
+		border: 1px solid rgb(100,100,100);
+		border-radius: 2px;
+	}
+	#hueBar {
+		position: absolute;
+		top: 0.6vmax;
+		left: 15.15vmax;
+		height: 12.6vmax;
+		width: 2.6vmax;
+		border: 1px solid rgb(100,100,100);
+		border-radius: 2px;
+		margin-right: 0.5%;
+	}
+	#hueBarArrowCanvasLeft, #hueBarArrowCanvasRight {
+		position: absolute;
+		top: 0;
+		width: 0.6vmax;
+		height: 13.8vmax;
+		opacity: 0.8;
+	}
+	#hueBarArrowCanvasLeft { left: 14.55vmax; }
+	#hueBarArrowCanvasRight { left: 17.75vmax; }
+	.colorDisplay {
+		position: absolute;
+		height: 6vmax;
+		width: 2.6vmax;
+		right: 0.6vmax;
+		border: 1px solid rgb(100,100,100);
+		border-radius: 2px;
+	}
+	#chosenColorDisplay {
+		top: 0.6vmax;
+	}
+	#lastColorDisplay {
+		top: 7.2vmax;
+	}
+	.colorInputContainer, #hexValueContainer {
+		position: absolute;
+		padding-left: .2vmax;
+		height: 1.9vmax;
+		line-height: 1.9vmax;
+		background: #777;
+		color: #dadada;
+		font-size: 1.3vmax;
+		border: 1px solid rgb(100,100,100);
+		border-radius: 2px;
+	}
+	.colorInputContainer {
+		width: 5.3vmax;
+	}
+	#rValueContainer {
+		top: 13.8vmax;
+		left: 1.8vmax;
+	}
+	#gValueContainer {
+		top: 13.8vmax;
+		left: 8.35vmax;
+	}
+	#bValueContainer {
+		top: 13.8vmax;
+		right: 1.8vmax;
+	}
+	#hValueContainer {
+		top: 16.3vmax;
+		left: 1.8vmax;
+	}
+	#sValueContainer {
+		top: 16.3vmax;
+		left: 8.35vmax;
+	}
+	#vValueContainer {
+		top: 16.3vmax;
+		right: 1.8vmax;
+	}
+	#hexValueContainer {
+		top: 18.8vmax;
+		left: 1.8vmax;
+		width: 8vmax;
+	}
+	#newColorDialog input[type="text"] {
+		position: absolute;
+		top: 0;
+		right: 0.5vmax;
+		background: none;
+		outline: none;
+		height: calc(1.9vmax - 2px);
+		line-height: calc(1.9vmax-2px);
+		font-size: 1.2vmax;
+		color: #dadada;
+		border: none;
+		font-family: Helvetica, sans-serif;
+	}
+	.rgbHsvInput {
+		width: 2.5vmax;
+	}
+	#hexInput {
+		width: 4.5vmax;
+	}
+	#saveButton {
+		position: absolute;
+		bottom: 0.6vmax;
+		right: 1.8vmax;
+		width: 2.2vmax;
+		height: 1.9vmax;
+		line-height: 1.9vmax;
+		background: #666666;
+		font-size: 1.4vmax;
+		color: #bbbbbb;
+		border: 1px solid #999999;
+		border-radius: 2px;
+		text-align: center;
+	}
+	#saveButton:hover {
+		border-color: #bbbbbb;
+		color: #00ff00;
+	}
+
+/* ANIMATION STUFF */
+
+#animationContainer {
 	position: absolute;
-	top: 0.6vmax;
-	left: 0.6vmax;
-	width: 13.5vmax;
-	height: 12.6vmax;
-	border: 1px solid rgb(100,100,100);
-	border-radius: 2px;
+	top: 1vmax;
+	right: 1vmax;
+	width: 26.8vmax;
+	height: 7.6vmax;
 }
-#hueBar {
+	#animationSlidesContainer {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 18.5vmax;
+		height: 3.3vmax;
+		white-space: nowrap;
+		overflow-x: auto;
+		overflow-y: hidden;
+	}
+		.animationSlide {
+			display: inline-block;
+			width: 3.3vmax;
+			height: 3.3vmax;
+			margin-right: 0.5vmax;
+			background: rgba(180,180,180,0.6);
+			border: solid .15vmax rgba(34,34,34,0.4);
+			border-radius: 0.5vmax;
+		}
+	#newAnimationSlideButton {
+		position: absolute;
+		top: 2.4vmax;
+		left: 17.6vmax;
+		height: 1.3vmax;
+		width: 1.3vmax;
+		background: linear-gradient(rgb(120,120,120),rgb(180,180,180));
+		border: solid 1px rgb(100,100,100);
+		border-radius: 0.3vmax;
+		font-size: 1.1vmax;
+		font-weight: 500;
+		text-align: center;
+		line-height: 1.2vmax;
+		opacity: 0.95;
+		cursor: pointer;
+	}
+	#newAnimationSlideButton:hover {
+		opacity: 1.0;
+	}
+	#animationDisplay {
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 7.6vmax;
+		height: 7.6vmax;
+		background-color: #fafafa;
+		border: solid .15vmax rgba(34,34,34,0.4);
+		border-radius: 0.5vmax;
+	}
+
+/* DIMENSIONS DISPLAY */
+
+#dimensionsDisplay {
+	display: none;
 	position: absolute;
-	top: 0.6vmax;
-	left: 15.15vmax;
-	height: 12.6vmax;
-	width: 2.6vmax;
-	border: 1px solid rgb(100,100,100);
-	border-radius: 2px;
-	margin-right: 0.5%;
+	bottom: 1vmax;
+	left: 1vmax;
+	font-size: 2vmax;
+	line-height: 2vmax;
+	color: #222222;
 }
-#hueBarArrowCanvasLeft, #hueBarArrowCanvasRight {
-	position: absolute;
-	top: 0;
-	width: 0.6vmax;
-	height: 13.8vmax;
-	opacity: 0.8;
+
+#dimensionsDisplay img {
+	position: relative;
+	top: 0.1vmax;
+	height: 1.5vmax;
+	opacity: 0.6;
 }
-#hueBarArrowCanvasLeft { left: 14.55vmax; }
-#hueBarArrowCanvasRight { left: 17.75vmax; }
-.colorDisplay {
-	position: absolute;
-	height: 6vmax;
-	width: 2.6vmax;
-	right: 0.6vmax;
-	border: 1px solid rgb(100,100,100);
-	border-radius: 2px;
-}
-#chosenColorDisplay {
-	top: 0.6vmax;
-}
-#lastColorDisplay {
-	top: 7.2vmax;
-}
-.colorInputContainer, #hexValueContainer {
-	position: absolute;
-	padding-left: .2vmax;
-	height: 1.9vmax;
-	line-height: 1.9vmax;
-	background: #777;
-	color: #dadada;
-	font-size: 1.3vmax;
-	border: 1px solid rgb(100,100,100);
-	border-radius: 2px;
-}
-.colorInputContainer {
-	width: 5.3vmax;
-}
-#rValueContainer {
-	top: 13.8vmax;
-	left: 1.8vmax;
-}
-#gValueContainer {
-	top: 13.8vmax;
-	left: 8.35vmax;
-}
-#bValueContainer {
-	top: 13.8vmax;
-	right: 1.8vmax;
-}
-#hValueContainer {
-	top: 16.3vmax;
-	left: 1.8vmax;
-}
-#sValueContainer {
-	top: 16.3vmax;
-	left: 8.35vmax;
-}
-#vValueContainer {
-	top: 16.3vmax;
-	right: 1.8vmax;
-}
-#hexValueContainer {
-	top: 18.8vmax;
-	left: 1.8vmax;
-	width: 8vmax;
-}
-#newColorDialog input[type="text"] {
-	position: absolute;
-	top: 0;
-	right: 0.5vmax;
-	background: none;
-	outline: none;
-	height: calc(1.9vmax - 2px);
-	line-height: calc(1.9vmax-2px);
-	font-size: 1.2vmax;
-	color: #dadada;
-	border: none;
-	font-family: Helvetica, sans-serif;
-}
-.rgbHsvInput {
-	width: 2.5vmax;
-}
-#hexInput {
-	width: 4.5vmax;
-}
-#saveButton {
-	position: absolute;
-	bottom: 0.6vmax;
-	right: 1.8vmax;
-	width: 2.2vmax;
-	height: 1.9vmax;
-	line-height: 1.9vmax;
-	background: #666666;
-	font-size: 1.4vmax;
-	color: #bbbbbb;
-	border: 1px solid #999999;
-	border-radius: 2px;
-	text-align: center;
-}
-#saveButton:hover {
-	border-color: #bbbbbb;
-	color: #00ff00;
+
+#dimensionsDisplay img:hover {
+	opacity: 1.0;
+	cursor: pointer;
 }

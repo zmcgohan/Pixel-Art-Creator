@@ -9,6 +9,7 @@ Changes:
 	- Mobile and touch events handled as necessary (weird laptops with touch/click should work)
 	- Event-handling only uses necessary information rather than passing whole events (pass coordinates of click, amount of scroll/move, etc.)
 	- Windows are their own entities, have their own global variables and not housed in an array
+	- Windows handle their own updates -- no point in updating with the grid
 	- Windows immovable for now (most likely add that in later -- just adds complexity at this point)
 	- Making sure that only the parts of the screen that -need updated- get updated -- more efficient, faster
 	- All displayable things render themselves (their own render() functions)

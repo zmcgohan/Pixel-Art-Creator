@@ -15,9 +15,16 @@
 				</tr>
 			</table>
 		</noscript>
+		<div id="currentTool"></div>
+		<div id="toolBox">
+			<span id="penToolIcon" class="toolBoxIcon" style="background-image: url(icons/pen.png)"></span>
+			<span id="eraserToolIcon" class="toolBoxIcon" style="background-image: url(icons/eraser.png)"></span>
+			<span class="toolBoxIcon"></span>
+			<span class="toolBoxIcon"></span>
+		</div>
 		<div id="colorPalette">
 			<span id="colorSlidesContainer"></span>
-			<div id="newColorSlide">+</div>
+			<div id="newColorSlideButton">+</div>
 			<div id="newColorDialog">
 				<canvas id="saturationBrightnessBox"></canvas>
 				<canvas id="hueBarArrowCanvasLeft"></canvas>
@@ -35,6 +42,14 @@
 				<div id="saveButton">&#10003;</div>
 			</div>
 		</div>
+		<div id="animationContainer">
+			<div id="animationSlidesContainer">
+				<canvas class="animationSlide"></canvas><canvas class="animationSlide"></canvas><canvas class="animationSlide"></canvas><canvas class="animationSlide"></canvas><canvas class="animationSlide"></canvas>
+			</div>
+			<div id="newAnimationSlideButton">+</div>
+			<canvas id="animationDisplay"></canvas>
+		</div>
+		<div id="dimensionsDisplay"><span id="dimensionsDisplayText">10x10</span> <img id="dimensionsLockedImage" src="icons/unlocked.png" alt="" /></div>
 		<canvas id="mainCanvas"></canvas>
 		<!-- General Functions -->
 		<script src="misc_funcs.js"></script>
@@ -46,13 +61,11 @@
 		<script src="windows/color_palette.js"></script>
 		<script src="windows/tool_box.js"></script>
 		<script src="windows/dimensions_display.js"></script>
+		<script src="windows/animation_window.js"></script>
 		<script src="tools.js"></script>
 
 		<!-- Execution start -->
 		<script src="pixel_art.js"></script>
-
-		<!-- Events -->
-		<script src="canvas_events.js"></script>
 
 		<!-- Testing Stuff -->
 		<script src="tests.js"></script>

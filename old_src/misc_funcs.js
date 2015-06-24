@@ -1,4 +1,4 @@
-/* Miscellaneous functions */
+/* Utility functions (that don't fit with one single class) */
 
 function setUp() {
 	// set up canvas and add to body
@@ -19,22 +19,10 @@ function updatePositionsAndSizes() {
 		canvases[i].width = parseInt(window.getComputedStyle(canvases[i]).getPropertyValue('width')) * AR;
 		canvases[i].height = parseInt(window.getComputedStyle(canvases[i]).getPropertyValue('height')) * AR;
 	}
-	// reposition windows (TODO make it better)
-	for(i = 0; i < windows.length; ++i) {
-		var topPos = parseInt(windows[i].window.style.top),
-			leftPos = parseInt(windows[i].window.style.left);
-		windows[i].setPosition(topPos, leftPos);
-		// redraw canvases (resizing seems to disrupt it..)
-		windows[i].updateNeeded = true;
-		windows[i].update();
-	}
 }
 
 function updateScreen() {
-	for(var i = 0; i < windows.length; ++i) {
-		windows[i].update();
-	}
-	mainGrid.render();
+	grid.render();
 }
 
 /* Converts HSV values to a string representing RGB. Requires 0 <= hue < 360, 0 <= saturation <= 1.0 and 0 <= brightness <= 1.0. 

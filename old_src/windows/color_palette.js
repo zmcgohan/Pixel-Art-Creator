@@ -1,12 +1,9 @@
-var TOP_OFFSET = 20, LEFT_OFFSET = 20;
-
 function ColorPalette() {
 	Window.call(this);
 	this.window = document.getElementById('colorPalette');
-	this.colors = [ curColor, '#fafafa', '#0000FF', '#00FF00' ];
+	this.colors = [ curColor, '#fafafa', '#0000FF', '#00FF00', '#00ffff' ];
 	this.updateNeeded = true;
 	this.update();
-	this.setPosition(TOP_OFFSET, window.innerWidth-LEFT_OFFSET-this.window.offsetWidth);
 }
 
 ColorPalette.prototype = Object.create(Window.prototype);
@@ -24,9 +21,12 @@ ColorPalette.prototype.update = function() {
 		newSlide.pixelArtColor = this.colors[i];
 		newSlide.style.background = this.colors[i];
 		if(curColor === this.colors[i]) {
+			newSlide.className += ' curSlide';
+			/*
 			newSlide.style.borderWidth = '3px';
 			newSlide.style.borderColor = 'rgba(0,0,0,0.3)';
 			newSlide.style.borderStyle = 'dashed';
+			*/
 		}
 		colorSlidesContainer.appendChild(newSlide);
 		var slideClickListener = function(event) {
@@ -38,13 +38,13 @@ ColorPalette.prototype.update = function() {
 		}
 		newSlide.addEventListener('click', slideClickListener.bind(this), false);
 	}
-	var newColorSlide = document.getElementById('newColorSlide');
+	var newColorSlideButton = document.getElementById('newColorSlideButton');
 	var newColorClickListener = function(event) {
 		if(!this.dragged) {
 			this.activateColorDialog();
 		}
 	}
-	newColorSlide.addEventListener('click', newColorClickListener.bind(this), false);
+	newColorSlideButton.addEventListener('click', newColorClickListener.bind(this), false);
 	// successfully changed -- don't need to update until next needed
 	this.updateNeeded = false;
 }
@@ -81,13 +81,16 @@ ColorPalette.prototype.activateColorDialog = function() {
 	function hueBarUpdate() {
 		var hue = hueBar.pixelArtHue;
 		var ctx = hueBar.getContext('2d');
-		for(var i = 0; i < hueBar.height; ++i) {
-			ctx.beginPath();
-			ctx.moveTo(0,i);
-			ctx.lineTo(hueBar.width,i);
-			ctx.closePath();
-			ctx.strokeStyle = 'hsl(' + ((i / hueBar.height) * 360) + ', 100%, 50%)';
-			ctx.stroke();
+		if(this.hueBarDrawn === undefined) {
+			for(var i = 0; i < hueBar.height; ++i) {
+				ctx.beginPath();
+				ctx.moveTo(0,i);
+				ctx.lineTo(hueBar.width,i);
+				ctx.closePath();
+				ctx.strokeStyle = 'hsl(' + ((i / hueBar.height) * 360) + ', 100%, 50%)';
+				ctx.stroke();
+			}
+			this.hueBarDrawn = true;
 		}
 		// draw left hue bar arrow
 		var ctx = hueBarArrowCanvasLeft.getContext('2d'),

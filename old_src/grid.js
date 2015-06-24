@@ -6,20 +6,41 @@ var DEFAULT_BG_COLORS = [ '#fafafa', '#dedede' ],
 	SPRITE_DEFAULT_BG_COLOR = '#fdfdfd';
 
 function Grid() {
-	this.curSprite = undefined; // current sprite being edited
 	this.bgSprites = undefined; // bg sprites (onion-skinning)
+	this.sprites = [];
+	this.curSprite = undefined; // current sprite being edited
 	this.topLeftViewPos = { x: 0, y: 0 }; // top left view position (in pixels)
 	this.lineColor = DEFAULT_LINE_COLOR; // color of cell separation lines
 	this.bgColors = DEFAULT_BG_COLORS; // color of background cells
 	this.numCols = Math.floor(10 + (canvas.width - MIN_SCREEN_WIDTH) / 100);
 	this.numRows = Math.floor((canvas.height / canvas.width) * this.numCols);
+	// TODO (possibly) make getters and setters for cellWidth/cellHeight -- Math.ceil() for values so no empty lines drawn on canvas?
 	this.cellWidth = canvas.width / this.numCols;
 	this.cellHeight = canvas.height / this.numRows;
 	this.activeCell = { x: undefined, y: undefined };
 	this.activeCellColor = DEFAULT_ACTIVE_CELL_COLOR;
 	this.activeCellAlpha = DEFAULT_ACTIVE_CELL_ALPHA;
+
+	this.addEventListeners();
 }
 
+// sets new cellWidth & cellHeight values based on a given new width
+Grid.prototype.setCellWidth = function(newWidth) {
+	var widthHeightRatio = this.cellWidth / this.cellHeight,
+		MIN_CELL_WIDTH = 30 + Math.abs(canvas.width-MIN_SCREEN_WIDTH) / 150,
+		MAX_CELL_WIDTH = canvas.width / 3;
+
+	this.cellWidth = newWidth;
+	// cellWidth not in required bounds? make it in bounds
+	if(this.cellWidth < MIN_CELL_WIDTH) this.cellWidth = MIN_CELL_WIDTH;
+	else if(this.cellWidth > MAX_CELL_WIDTH) this.cellWidth = MAX_CELL_WIDTH;
+	this.cellHeight = this.cellWidth / widthHeightRatio;
+
+	// recalculate number of cells in grid
+	this.recalculateNumCells();
+}
+
+// recalculates the number of grid columns/rows esp. after a grid size change
 Grid.prototype.recalculateNumCells = function() {
 	this.numCols = Math.ceil(canvas.width / this.cellWidth);
 	this.numRows = Math.ceil(canvas.height / this.cellHeight);
@@ -31,17 +52,17 @@ Grid.prototype.getCellAtPos = function(x, y) {
 }
 
 Grid.prototype.render = function() {
-	ctx.clearRect(0,0,canvas.width,canvas.height);
+	ctx.clearRect(0,0,canvas.width,canvas.height); // clear canvas
 	var i, j,
 		pxDiffX = this.topLeftViewPos.x % this.cellWidth,
 		pxDiffY = this.topLeftViewPos.y % this.cellHeight,
-		topLeftCellX = Math.floor((this.topLeftViewPos.x) / this.cellWidth),
-		topLeftCellY = Math.floor((this.topLeftViewPos.y) / this.cellHeight);
+		topLeftCellX = Math.floor(this.topLeftViewPos.x / this.cellWidth),
+		topLeftCellY = Math.floor(this.topLeftViewPos.y / this.cellHeight);
 
 	// DRAW VISIBLE CELLS
 	for(i = 0; i < this.numRows+1; ++i) {
 		for(j = 0; j < this.numCols+1; ++j) {
-			var drawXPos, drawYPos;
+			var drawXPos, drawYPos; // cell top left draw coordinates
 			// if x difference is negative, have to compensate
 			if(pxDiffX >= 0) drawXPos = j*this.cellWidth-pxDiffX;
 			else drawXPos = j*this.cellWidth-(this.cellWidth+pxDiffX);
@@ -51,11 +72,16 @@ Grid.prototype.render = function() {
 			// TODO: make the following sprite rendering more efficient.. because it's not. at all.
 			// render current sprite
 			var spriteCellColor = undefined;
-			if(this.curSprite !== undefined && this.curSprite.pos.x <= topLeftCellX+j && this.curSprite.pos.x+this.curSprite.sprite.width >= topLeftCellX && this.curSprite.pos.y <= topLeftCellY+i && this.curSprite.pos.y+this.curSprite.sprite.height >= topLeftCellY) {
-				var spritePxRow = (topLeftCellY+i)-this.curSprite.pos.y,
-					spritePxCol = (topLeftCellX+j)-this.curSprite.pos.x;
-				if(this.curSprite.sprite.frames[0].layers[0].pixels[spritePxRow] !== undefined && this.curSprite.sprite.frames[0].layers[0].pixels[spritePxRow][spritePxCol] !== undefined)
-					spriteCellColor = this.curSprite.sprite.frames[0].layers[0].pixels[spritePxRow][spritePxCol];
+
+			// pixel of a current sprite in cell? get its color
+			for(var k = 0; k < this.sprites.length; ++k) {
+				if(this.sprites[k].pos.x <= topLeftCellX+j && this.sprites[k].pos.x+this.sprites[k].sprite.width >= topLeftCellX && this.sprites[k].pos.y <= topLeftCellY+i && this.sprites[k].pos.y+this.sprites[k].sprite.height >= topLeftCellY) {
+					var spritePxRow = (topLeftCellY+i)-this.sprites[k].pos.y,
+						spritePxCol = (topLeftCellX+j)-this.sprites[k].pos.x;
+					spriteCellColor = this.sprites[k].sprite.getPixel(spritePxRow, spritePxCol);
+					if(spriteCellColor !== undefined)
+						break;
+				}
 			}
 			if(spriteCellColor !== undefined) { // sprite cell found -- draw it
 				if(spriteCellColor !== '') ctx.fillStyle = spriteCellColor;
@@ -81,8 +107,10 @@ Grid.prototype.render = function() {
 		}
 	}
 
+	/*
 	// DRAW GRID LINES
 	ctx.strokeStyle = this.lineColor;
+	ctx.lineWidth = 1;
 	for(i = 0; i <= this.numCols; ++i) {
 		var xPos = Math.floor(this.cellWidth * i - pxDiffX);
 		ctx.beginPath();
@@ -99,4 +127,98 @@ Grid.prototype.render = function() {
 		ctx.closePath();
 		ctx.stroke();
 	}
+	*/
+}
+
+Grid.prototype.addEventListeners = function() {
+	// screen (grid) resized
+	window.addEventListener("resize", function(event) {
+		updatePositionsAndSizes();
+		canvas.width = window.innerWidth * AR;
+		canvas.height = window.innerHeight * AR;
+		canvas.style.width = window.innerWidth + 'px';
+		canvas.style.height = window.innerHeight + 'px';
+		grid.recalculateNumCells();
+		updateScreen();
+	}, false);
+
+	// moving around the grid and zooming in/out
+	canvas.addEventListener("mousewheel", function(event) {
+		event.preventDefault();
+		if(!event.ctrlKey) { // basic scrolling (moves grid)
+			grid.topLeftViewPos.x -= event.wheelDeltaX;
+			grid.topLeftViewPos.y -= event.wheelDeltaY;
+			grid.render();
+		} else { // Chrome sets ctrlKey flag for pinching -- zoom grid
+			var MIN_CELL_WIDTH = 30 + Math.abs(canvas.width-MIN_SCREEN_WIDTH) / 150,
+				MAX_CELL_WIDTH = canvas.width / 3,
+				widthHeightRatio = grid.cellHeight / grid.cellWidth,
+				zoomAmount = event.deltaY,
+				gridPosRatioX = grid.topLeftViewPos.x / grid.cellWidth,
+				xCursorRatio = event.x*AR / grid.cellWidth,
+				gridPosRatioY = grid.topLeftViewPos.y / grid.cellHeight,
+				yCursorRatio = event.y*AR / grid.cellHeight;
+			// prevent default behavior
+			event.preventDefault();
+			event.stopImmediatePropagation();
+			// scale grid's cell width and cell height
+			grid.setCellWidth(grid.cellWidth - zoomAmount);
+			// keep cursor at same pixel (if not at min or max -- then it just moves the grid)
+			if(grid.cellWidth !== MIN_CELL_WIDTH && grid.cellWidth !== MAX_CELL_WIDTH) {
+				grid.topLeftViewPos.x = gridPosRatioX * grid.cellWidth - xCursorRatio*zoomAmount;
+				grid.topLeftViewPos.y = gridPosRatioY * grid.cellHeight - yCursorRatio*zoomAmount;
+			}
+			grid.render();
+		}
+	}, false);
+
+	// highlight moused-over cell
+	canvas.addEventListener("mousemove", function(event) {
+		grid.activeCell = grid.getCellAtPos(grid.topLeftViewPos.x+event.x*AR, grid.topLeftViewPos.y+event.y*AR);
+
+		toolBox.curTool.handleEvent(event);
+
+		updateScreen();
+	}, false);
+
+	// handle mouse button being depressed
+	canvas.addEventListener("mousedown", function(event) {
+		mouseDown = true;
+
+		toolBox.curTool.handleEvent(event);
+
+		updateScreen();
+	}, false);
+
+	canvas.addEventListener("touchend", function(event) {
+		console.log(event);
+		event.preventDefault();
+
+		toolBox.curTool.handleEvent(event);
+
+		updateScreen();
+	}, false);
+
+	// handle mouse button being released
+	canvas.addEventListener("mouseup", function(event) {
+		mouseDown = false;
+
+		toolBox.curTool.handleEvent(event);
+
+		updateScreen();
+	}, false);
+
+	// handle key clicks
+	window.addEventListener("keydown", function(event) {
+		if(event.which === 32) {
+			if(toolBox.curTool === tools.pen) {
+				console.log("Tool: Eraser");
+				toolBox.curTool = tools.eraser;
+			} else if(toolBox.curTool === tools.eraser) {
+				console.log("Tool: Pen");
+				toolBox.curTool = tools.pen;
+			}
+			toolBox.update();
+		}
+	}, false);
 }
