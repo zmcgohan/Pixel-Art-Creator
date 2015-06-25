@@ -30,7 +30,6 @@ ToolBox.prototype.addCurrentToolEventListeners = function() {
 	closeToolBox = closeToolBox.bind(this);
 
 	var currentToolClicked = (function(event) {
-		console.log("Test");
 		if(this.toolBoxDiv.style.display !== 'block') {
 			this.currentToolDiv.id = 'currentToolActive';
 			this.toolBoxDiv.style.display = 'block';

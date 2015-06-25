@@ -21,10 +21,6 @@ function updatePositionsAndSizes() {
 	}
 }
 
-function updateScreen() {
-	grid.render();
-}
-
 /* Converts HSV values to a string representing RGB. Requires 0 <= hue < 360, 0 <= saturation <= 1.0 and 0 <= brightness <= 1.0. 
  *
  * Ex. hsbToRGBString(0,1.0,1.0) returns 'rgb(255,0,0)' */

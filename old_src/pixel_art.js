@@ -31,4 +31,4 @@ toolBox = new ToolBox();
 animationWindow = new AnimationWindow();
 dimensionsDisplay = new DimensionsDisplay();
 
-updateScreen();
+grid.render();

@@ -76,69 +76,78 @@ Sprite.prototype.colorPixel = function(row, col, color) {
 	}
 	curLayer.pixels[row][col] = color;
 	dimensionsDisplay.update();
+	return true;
 }
 
 Sprite.prototype.erasePixel = function(row, col) {
 	var dimensionChanges = { top: 0, right: 0, bottom: 0, left: 0 };
 	// make sure the affected row and col is actually a part of the sprite
 	if(row >= 0 && row < this.height && col >= 0 && col < this.width) {
-		var i, j,
-			curFrame = this.frames[this.curFrameI],
+		var curFrame = this.frames[this.curFrameI],
 			curLayer = curFrame.layers[curFrame.curLayerI];
 		// clear pixel
 		curLayer.pixels[row][col] = '';
-		// if dimensions are locked, don't worry about resizing sprite
-		if(this.dimensionsLocked)
-			return dimensionChanges;
-		// remove each side if empty (trim the sprite)
-		var oldWidth = this.width;
-		leftSide:
-		for(i = 0; i < oldWidth; ++i) {
-			for(j = 0; j < this.height; ++j) {
-				if(curLayer.pixels[j][0] !== '')
-					break leftSide;
-			}
-			for(j = 0; j < this.height; ++j) {
-				curLayer.pixels[j].splice(0, 1);
-			}
-			--this.width;
-			++dimensionChanges.left;
-		}
-		rightSide:
-		for(i = this.width-1; i >= 0; --i) {
-			for(j = 0; j < this.height; ++j) {
-				if(curLayer.pixels[j][i] !== '')
-					break rightSide;
-			}
-			for(j = 0; j < this.height; ++j) {
-				curLayer.pixels[j].splice(this.width-1, 1);
-			}
-			--this.width;
-			++dimensionChanges.right;
-		}
-		var oldHeight = this.height;
-		topSide:
-		for(i = 0; i < oldHeight; ++i) {
-			for(j = 0; j < this.width; ++j) {
-				if(curLayer.pixels[0][j] !== '')
-					break topSide;
-			}
-			curLayer.pixels.splice(0,1);
-			--this.height;
-			++dimensionChanges.top;
-		}
-		bottomSide:
-		for(i = this.height-1; i >= 0; --i) {
-			for(j = 0; j < this.width; ++j) {
-				if(curLayer.pixels[i][j] !== '')
-					break bottomSide;
-			}
-			curLayer.pixels.splice(i,1);
-			--this.height;
-			++dimensionChanges.bottom;
-		}
+		dimensionChanges = this.trimSize();
 	}
 	dimensionsDisplay.update();
+	return dimensionChanges;
+}
+
+Sprite.prototype.trimSize = function() {
+	var dimensionChanges = { top: 0, right: 0, bottom: 0, left: 0 };
+	// if dimensions are locked, no trimming
+	if(this.dimensionsLocked)
+		return dimensionChanges;
+	var i, j,
+		curFrame = this.frames[this.curFrameI],
+		curLayer = curFrame.layers[curFrame.curLayerI];
+	// remove each side if empty (trim the sprite)
+	var oldWidth = this.width;
+	leftSide:
+	for(i = 0; i < oldWidth; ++i) {
+		for(j = 0; j < this.height; ++j) {
+			if(curLayer.pixels[j][0] !== '')
+				break leftSide;
+		}
+		for(j = 0; j < this.height; ++j) {
+			curLayer.pixels[j].splice(0, 1);
+		}
+		--this.width;
+		++dimensionChanges.left;
+	}
+	rightSide:
+	for(i = this.width-1; i >= 0; --i) {
+		for(j = 0; j < this.height; ++j) {
+			if(curLayer.pixels[j][i] !== '')
+				break rightSide;
+		}
+		for(j = 0; j < this.height; ++j) {
+			curLayer.pixels[j].splice(this.width-1, 1);
+		}
+		--this.width;
+		++dimensionChanges.right;
+	}
+	var oldHeight = this.height;
+	topSide:
+	for(i = 0; i < oldHeight; ++i) {
+		for(j = 0; j < this.width; ++j) {
+			if(curLayer.pixels[0][j] !== '')
+				break topSide;
+		}
+		curLayer.pixels.splice(0,1);
+		--this.height;
+		++dimensionChanges.top;
+	}
+	bottomSide:
+	for(i = this.height-1; i >= 0; --i) {
+		for(j = 0; j < this.width; ++j) {
+			if(curLayer.pixels[i][j] !== '')
+				break bottomSide;
+		}
+		curLayer.pixels.splice(i,1);
+		--this.height;
+		++dimensionChanges.bottom;
+	}
 	return dimensionChanges;
 }
 

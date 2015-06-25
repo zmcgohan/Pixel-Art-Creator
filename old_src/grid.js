@@ -6,7 +6,6 @@ var DEFAULT_BG_COLORS = [ '#fafafa', '#dedede' ],
 	SPRITE_DEFAULT_BG_COLOR = '#fdfdfd';
 
 function Grid() {
-	this.bgSprites = undefined; // bg sprites (onion-skinning)
 	this.sprites = [];
 	this.curSprite = undefined; // current sprite being edited
 	this.topLeftViewPos = { x: 0, y: 0 }; // top left view position (in pixels)
@@ -108,7 +107,7 @@ Grid.prototype.render = function() {
 	}
 
 	/*
-	// DRAW GRID LINES
+	// DRAW GRID LINES (TODO figure out whether this should even be here.. looks better without)
 	ctx.strokeStyle = this.lineColor;
 	ctx.lineWidth = 1;
 	for(i = 0; i <= this.numCols; ++i) {
@@ -139,15 +138,16 @@ Grid.prototype.addEventListeners = function() {
 		canvas.style.width = window.innerWidth + 'px';
 		canvas.style.height = window.innerHeight + 'px';
 		grid.recalculateNumCells();
-		updateScreen();
+		grid.render();
 	}, false);
 
 	// moving around the grid and zooming in/out
-	canvas.addEventListener("mousewheel", function(event) {
+	var SCROLL_MULTIPLIER = 1.8;
+	canvas.addEventListener("wheel", function(event) {
 		event.preventDefault();
 		if(!event.ctrlKey) { // basic scrolling (moves grid)
-			grid.topLeftViewPos.x -= event.wheelDeltaX;
-			grid.topLeftViewPos.y -= event.wheelDeltaY;
+			grid.topLeftViewPos.x += Math.floor(event.deltaX*SCROLL_MULTIPLIER);
+			grid.topLeftViewPos.y += Math.floor(event.deltaY*SCROLL_MULTIPLIER);
 			grid.render();
 		} else { // Chrome sets ctrlKey flag for pinching -- zoom grid
 			var MIN_CELL_WIDTH = 30 + Math.abs(canvas.width-MIN_SCREEN_WIDTH) / 150,
@@ -155,12 +155,12 @@ Grid.prototype.addEventListeners = function() {
 				widthHeightRatio = grid.cellHeight / grid.cellWidth,
 				zoomAmount = event.deltaY,
 				gridPosRatioX = grid.topLeftViewPos.x / grid.cellWidth,
-				xCursorRatio = event.x*AR / grid.cellWidth,
+				xCursorRatio = event.clientX*AR / grid.cellWidth,
 				gridPosRatioY = grid.topLeftViewPos.y / grid.cellHeight,
-				yCursorRatio = event.y*AR / grid.cellHeight;
+				yCursorRatio = event.clientY*AR / grid.cellHeight;
 			// prevent default behavior
 			event.preventDefault();
-			event.stopImmediatePropagation();
+			//event.stopImmediatePropagation();
 			// scale grid's cell width and cell height
 			grid.setCellWidth(grid.cellWidth - zoomAmount);
 			// keep cursor at same pixel (if not at min or max -- then it just moves the grid)
@@ -174,11 +174,12 @@ Grid.prototype.addEventListeners = function() {
 
 	// highlight moused-over cell
 	canvas.addEventListener("mousemove", function(event) {
-		grid.activeCell = grid.getCellAtPos(grid.topLeftViewPos.x+event.x*AR, grid.topLeftViewPos.y+event.y*AR);
+		// TODO if activeCell stays the same, no reason to update (and later, when optimizing, can draw ONLY the cells that need updated)
+		grid.activeCell = grid.getCellAtPos(grid.topLeftViewPos.x+event.clientX*AR, grid.topLeftViewPos.y+event.clientY*AR);
 
 		toolBox.curTool.handleEvent(event);
 
-		updateScreen();
+		grid.render();
 	}, false);
 
 	// handle mouse button being depressed
@@ -187,7 +188,7 @@ Grid.prototype.addEventListeners = function() {
 
 		toolBox.curTool.handleEvent(event);
 
-		updateScreen();
+		grid.render();
 	}, false);
 
 	canvas.addEventListener("touchend", function(event) {
@@ -196,7 +197,7 @@ Grid.prototype.addEventListeners = function() {
 
 		toolBox.curTool.handleEvent(event);
 
-		updateScreen();
+		grid.render();
 	}, false);
 
 	// handle mouse button being released
@@ -205,7 +206,7 @@ Grid.prototype.addEventListeners = function() {
 
 		toolBox.curTool.handleEvent(event);
 
-		updateScreen();
+		grid.render();
 	}, false);
 
 	// handle key clicks

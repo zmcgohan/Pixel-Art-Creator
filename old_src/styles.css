@@ -5,11 +5,16 @@
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-webkit-touch-callout: none;
+	/*
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	*/
+}
+*:focus {
+	outline: none;
 }
 canvas {
 	-webkit-tap-highlight-color: transparent;
@@ -30,14 +35,21 @@ div {
 	background: none;
 }
 /* No highlighting (at least in FF?) -- looks nicer :) */
+/*
 ::selection {
-	background-color: transparent;
-	color: #000000;
+	background-color: rgba(49,211,255,0.3);
+	color: #222222;
 }
 ::-moz-selection {
-	background-color: transparent;
-	color: #000000;
+	background-color: rgba(49,211,255,0.3);
+	color: #222222;
 }
+::-webkit-selection {
+	background-color: rgba(49,211,255,0.3);
+	color: #222222;
+}
+*/
+
 /* MAIN CANVAS */
 #mainCanvas {
 	z-index: 0;
@@ -91,7 +103,6 @@ div {
 	padding-top: 0.5vmax;
 	left: 1vmax;
 	top: 5.3vmax;
-	height: 7.5vmax;
 	width: 7.5vmax;
 	background-color: #cccccc;
 	z-index: 2;
@@ -162,6 +173,9 @@ div {
 		line-height: 1.2vmax;
 		opacity: 0.95;
 		cursor: pointer;
+	}
+	#newColorSlideButton:hover {
+		opacity: 1.0;
 	}
 
 #newColorDialog {
@@ -359,13 +373,14 @@ div {
 /* DIMENSIONS DISPLAY */
 
 #dimensionsDisplay {
-	display: none;
+	display: none; 
 	position: absolute;
 	bottom: 1vmax;
 	left: 1vmax;
 	font-size: 2vmax;
 	line-height: 2vmax;
 	color: #222222;
+	z-index: 100;
 }
 
 #dimensionsDisplay img {
@@ -378,4 +393,8 @@ div {
 #dimensionsDisplay img:hover {
 	opacity: 1.0;
 	cursor: pointer;
+}
+
+#dimensionsDisplayText {
+	cursor: text;
 }

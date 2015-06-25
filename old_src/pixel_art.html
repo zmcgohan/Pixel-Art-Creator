@@ -3,6 +3,7 @@
 	<head>
 		<title>Pixel Art Testing</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta charset="utf-8" />
 		<link rel="stylesheet" type="text/css" href="styles.css" />
 	</head>
 	<body>
@@ -19,8 +20,6 @@
 		<div id="toolBox">
 			<span id="penToolIcon" class="toolBoxIcon" style="background-image: url(icons/pen.png)"></span>
 			<span id="eraserToolIcon" class="toolBoxIcon" style="background-image: url(icons/eraser.png)"></span>
-			<span class="toolBoxIcon"></span>
-			<span class="toolBoxIcon"></span>
 		</div>
 		<div id="colorPalette">
 			<span id="colorSlidesContainer"></span>
@@ -49,8 +48,8 @@
 			<div id="newAnimationSlideButton">+</div>
 			<canvas id="animationDisplay"></canvas>
 		</div>
-		<div id="dimensionsDisplay"><span id="dimensionsDisplayText">10x10</span> <img id="dimensionsLockedImage" src="icons/unlocked.png" alt="" /></div>
-		<canvas id="mainCanvas"></canvas>
+		<div id="dimensionsDisplay"><span id="dimensionsDisplayText" contenteditable="true"></span> <img id="dimensionsLockedImage" src="icons/unlocked.png" alt="" /></div>
+		<canvas id="mainCanvas" tabindex="1"></canvas>
 		<!-- General Functions -->
 		<script src="misc_funcs.js"></script>
 

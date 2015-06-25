@@ -9,7 +9,7 @@ PenTool.prototype.handleEvent = function(event) {
 	if(event.type === 'mousedown' || (event.type === 'mousemove' && mouseDown) || event.type === 'touchend') {
 		var clickedCell = undefined; 
 		if(event.type !== 'touchend') {
-			clickedCell = grid.getCellAtPos(grid.topLeftViewPos.x+event.x*AR, grid.topLeftViewPos.y+event.y*AR);
+			clickedCell = grid.getCellAtPos(grid.topLeftViewPos.x+event.clientX*AR, grid.topLeftViewPos.y+event.clientY*AR);
 		} else {
 			clickedCell = grid.getCellAtPos(grid.topLeftViewPos.x+event.changedTouches[0].pageX*AR, grid.topLeftViewPos.y+event.changedTouches[0].pageY*AR);
 			console.log(clickedCell);
@@ -21,7 +21,7 @@ PenTool.prototype.handleEvent = function(event) {
 			grid.sprites.push(grid.curSprite);
 			grid.curSprite.sprite.colorPixel(0, 0, curColor);
 		} else {
-				// if successfully colored pixel of current sprite, move sprite if need be (so it stays in same position on canvas)
+			// if successfully colored pixel of current sprite, move sprite if need be (so it stays in same position on canvas)
 			var changedRow = clickedCell.y - grid.curSprite.pos.y,
 				changedCol = clickedCell.x - grid.curSprite.pos.x;
 			if(grid.curSprite.sprite.colorPixel(changedRow, changedCol, curColor)) {
@@ -42,13 +42,14 @@ function EraserTool() {
 EraserTool.prototype.handleEvent = function(event) {
 	if(event.type === 'mousedown' || (event.type === 'mousemove' && mouseDown)) {
 		if(grid.curSprite !== undefined) {
-			var clickedCell = grid.getCellAtPos(grid.topLeftViewPos.x+event.x*AR, grid.topLeftViewPos.y+event.y*AR),
+			var clickedCell = grid.getCellAtPos(grid.topLeftViewPos.x+event.clientX*AR, grid.topLeftViewPos.y+event.clientY*AR),
 				changedRow = clickedCell.y - grid.curSprite.pos.y,
 				changedCol = clickedCell.x - grid.curSprite.pos.x;
 			var changedDimensions = grid.curSprite.sprite.erasePixel(changedRow, changedCol);
 			if(grid.curSprite.sprite.width === 0 || grid.curSprite.sprite.height === 0) {
 				grid.sprites.splice(grid.sprites.indexOf(grid.curSprite));
 				grid.curSprite = undefined;
+				dimensionsDisplay.update();
 			} else {
 				grid.curSprite.pos.x += changedDimensions.left;
 				grid.curSprite.pos.y += changedDimensions.top;
