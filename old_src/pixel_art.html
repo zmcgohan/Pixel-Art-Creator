@@ -42,13 +42,12 @@
 			</div>
 		</div>
 		<div id="animationContainer">
-			<div id="animationSlidesContainer">
-				<canvas class="animationSlide"></canvas><canvas class="animationSlide"></canvas><canvas class="animationSlide"></canvas><canvas class="animationSlide"></canvas><canvas class="animationSlide"></canvas>
-			</div>
+			<div id="animationSlidesContainer"></div>
 			<div id="newAnimationSlideButton">+</div>
 			<canvas id="animationDisplay"></canvas>
 		</div>
-		<div id="dimensionsDisplay"><span id="dimensionsDisplayText" contenteditable="true"></span> <img id="dimensionsLockedImage" src="icons/unlocked.png" alt="" /></div>
+		<!-- <div id="dimensionsDisplay"><span id="dimensionsDisplayText" contenteditable="true"></span> <img id="dimensionsLockedImage" src="icons/unlocked.png" alt="" /></div> -->
+		<div id="dimensionsDisplay"><div id="dimensionsDisplayWidthText" contenteditable="true"></div>x<div id="dimensionsDisplayHeightText" contenteditable="true"></div> <img id="dimensionsLockedImage" src="icons/unlocked.png" alt="" /></div>
 		<canvas id="mainCanvas" tabindex="1"></canvas>
 		<!-- General Functions -->
 		<script src="misc_funcs.js"></script>

@@ -1,7 +1,8 @@
 // displays the dimensions of the current sprite
 
 var DIMENSIONS_DISPLAY_DIV_ID = 'dimensionsDisplay';
-	DIMENSIONS_DISPLAY_TEXT_ID = 'dimensionsDisplayText',
+	DIMENSIONS_DISPLAY_WIDTH_TEXT_ID = 'dimensionsDisplayWidthText',
+	DIMENSIONS_DISPLAY_HEIGHT_TEXT_ID = 'dimensionsDisplayHeightText',
 	DIMENSIONS_LOCKED_IMAGE_ID = 'dimensionsLockedImage';
 
 var DIMENSIONS_LOCKED_IMAGE = 'icons/locked.png',
@@ -11,7 +12,8 @@ function DimensionsDisplay() {
 	Window.call(this);
 
 	this.dimensionsDisplayDiv = document.getElementById(DIMENSIONS_DISPLAY_DIV_ID);
-	this.dimensionsDisplayText = document.getElementById(DIMENSIONS_DISPLAY_TEXT_ID);
+	this.dimensionsDisplayWidthText = document.getElementById(DIMENSIONS_DISPLAY_WIDTH_TEXT_ID);
+	this.dimensionsDisplayHeightText = document.getElementById(DIMENSIONS_DISPLAY_HEIGHT_TEXT_ID);
 	this.dimensionsLockedImage = document.getElementById(DIMENSIONS_LOCKED_IMAGE_ID);
 
 	this.addEventListeners();
@@ -25,7 +27,8 @@ DimensionsDisplay.prototype.update = function() {
 			this.dimensionsDisplayDiv.style.display = 'block';
 		}
 		// show dimensions text (ex. '8x8')
-		this.dimensionsDisplayText.innerHTML = grid.curSprite.sprite.width + 'x' + grid.curSprite.sprite.height;
+		this.dimensionsDisplayWidthText.innerHTML = String(grid.curSprite.sprite.width);
+		this.dimensionsDisplayHeightText.innerHTML = String(grid.curSprite.sprite.height);
 		// set the correct lock image
 		this.dimensionsLockedImage.src = !grid.curSprite.sprite.dimensionsLocked ? DIMENSIONS_UNLOCKED_IMAGE : DIMENSIONS_LOCKED_IMAGE;
 	} else {
@@ -56,77 +59,80 @@ DimensionsDisplay.prototype.addEventListeners = function() {
 		this.update();
 	}).bind(this), false);
 
-	function selectWidthText() {
-
+	// highlights the text inside of textNode
+	function highlightText(textNode) {
+			var selection = window.getSelection(),
+				newRange = document.createRange();
+			newRange.selectNodeContents(textNode);
+			selection.removeAllRanges();
+			selection.addRange(newRange);
 	}
-	function selectHeightText() {
 
+	// removes any current ranges (highlighting and caret position) in the window
+	// NOTE: as a side effect, apparently causes blur in Chrome (whoop whoop)
+	function removeAllRanges() {
+		var selection = window.getSelection();
+		selection.removeAllRanges();
 	}
 
-	// TODO change dimension texts into TWO spans -- no worries about backspacing the x or anything at that point
-	/*
-	// handles initial focus on dimensions text display
-	this.dimensionsDisplayText.addEventListener('focus', (function(event) {
-		event.preventDefault();
-		var curSelection = window.getSelection(),
-			curRange = curSelection.getRangeAt(0),
-			cursorPos = curSelection.anchorOffset,
-			charXPos = this.dimensionsDisplayText.innerHTML.indexOf('x'),
-			newRange = document.createRange();
-		console.log(curSelection);
-		console.log(this.dimensionsDisplayText.childNodes[0]);
-		if(cursorPos <= charXPos) {
-				newRange.setStart(curSelection.focusNode, 0);
-				newRange.setEnd(curSelection.focusNode, charXPos);
-		} else {
-				newRange.setStart(curSelection.focusNode, charXPos+1);
-				newRange.setEnd(curSelection.focusNode, this.dimensionsDisplayText.innerHTML.length);
-		}
-		curSelection.removeAllRanges();
-		curSelection.addRange(newRange);
-	}).bind(this), false);
-	*/
+	var fixInvalidDimensions = (function() {
+		// if width or height are empty or 0, replace with old value
+		if(this.dimensionsDisplayWidthText.innerHTML.length === 0 || this.dimensionsDisplayWidthText.innerHTML == '0')
+			this.dimensionsDisplayWidthText.innerHTML = String(grid.curSprite.sprite.width);
+		if(this.dimensionsDisplayHeightText.innerHTML.length === 0 || this.dimensionsDisplayHeightText.innerHTML == '0')
+			this.dimensionsDisplayHeightText.innerHTML = String(grid.curSprite.sprite.height);
+		// entered "05" or "005"? parse it
+		this.dimensionsDisplayWidthText.innerHTML = parseInt(this.dimensionsDisplayWidthText.innerHTML);
+		this.dimensionsDisplayHeightText.innerHTML = parseInt(this.dimensionsDisplayHeightText.innerHTML);
+	}).bind(this);
 
-	// handles key presses in dimension display's text
-	this.dimensionsDisplayText.addEventListener('keydown', (function(event) {
-		var curSelection = window.getSelection(),
-			curRange = curSelection.getRangeAt(0),
-			cursorPos = curSelection.anchorOffset,
-			keyPressed = event.which || event.keyCode,
-			charXPos = this.dimensionsDisplayText.innerHTML.indexOf('x');
-		if(keyPressed === 8 && ((cursorPos === 0 || cursorPos-1 === charXPos) && curRange.startOffset === curRange.endOffset) // make sure backspace isn't at beginning or before the 'x'
-			|| (keyPressed < 48 || keyPressed > 57) && keyPressed !== 8 && keyPressed !== 9 && keyPressed !== 13 && keyPressed !== 37 && keyPressed !== 39) {
+	var BACKSPACE = 8, TAB = 9, ENTER = 13, LEFT_ARROW = 37, RIGHT_ARROW = 39;
+	var handleDimensionsKeyPress = (function(event) {
+		var keyCode = event.keyCode || event.which;
+		if(keyCode === ENTER) {
+			// defocus from input
+			removeAllRanges();
+			document.activeElement.blur();
 			event.preventDefault();
-		} else if(keyPressed === 13) { // correct Enter functionality
+			// resize current sprite if necessary
+			fixInvalidDimensions();
+			var newNumCols = parseInt(this.dimensionsDisplayWidthText.innerHTML, 10),
+				newNumRows = parseInt(this.dimensionsDisplayHeightText.innerHTML, 10);
+			if(newNumCols !== grid.curSprite.sprite.width || newNumRows !== grid.curSprite.sprite.height)
+				grid.curSprite.sprite.resize(newNumRows, newNumCols);
+		} else if(keyCode === TAB) {
 			event.preventDefault();
-			console.log("Enter pressed.");
-		} else if(keyPressed === 9) { // tab
-			event.preventDefault();
-			var newRange = document.createRange();
-			if(cursorPos <= charXPos) { // before 'x' -- highlight height
-				// if width is empty, put original value back
-				if(charXPos === 0) { 
-					this.dimensionsDisplayText.innerHTML = grid.curSprite.sprite.width + this.dimensionsDisplayText.innerHTML;
-					charXPos += String(grid.curSprite.sprite.width).length;
-				}
-				newRange.setStart(curRange.startContainer, charXPos+1);
-				newRange.setEnd(curRange.endContainer, this.dimensionsDisplayText.innerHTML.length);
-			} else { // ahead of 'x' -- highlight width
-				if(charXPos === this.dimensionsDisplayText.innerHTML.length-1) { 
-					this.dimensionsDisplayText.innerHTML += grid.curSprite.sprite.height;
-				}
-				newRange.setStart(curRange.startContainer, 0);
-				newRange.setEnd(curRange.endContainer, charXPos);
+			fixInvalidDimensions(); // make sure width/height are valid upon change
+			if(event.target.id === DIMENSIONS_DISPLAY_WIDTH_TEXT_ID) { // currently in width text
+				// focus and highlight height
+				this.dimensionsDisplayHeightText.focus();
+				highlightText(this.dimensionsDisplayHeightText.childNodes[0]);
+			} else { // currently in height text
+				// focus and highlight width
+				this.dimensionsDisplayWidthText.focus();
+				highlightText(this.dimensionsDisplayWidthText.childNodes[0]);
 			}
-			curSelection.removeAllRanges();
-			curSelection.addRange(newRange);
+		} else if((keyCode < 48 || keyCode > 57) && keyCode != LEFT_ARROW && keyCode != RIGHT_ARROW && keyCode != BACKSPACE) { // all other keys
+			event.preventDefault();
 		}
-	}).bind(this), false);
+	}).bind(this);
 
-	document.addEventListener('selectionchange', (function(event) {
-		var curSelection = window.getSelection(),
-			curRange = curSelection.getRangeAt(0),
-			cursorPos = curSelection.anchorOffset,
-			charXPos = this.dimensionsDisplayText.innerHTML.indexOf('x');
-	}).bind(this), false);
+	this.dimensionsDisplayWidthText.addEventListener('keydown', handleDimensionsKeyPress, false);
+	this.dimensionsDisplayHeightText.addEventListener('keydown', handleDimensionsKeyPress, false);
+
+	// highlight text on first click, don't highlight if already focused (assumes that focus event fires before click)
+	var handleDimensionsDisplayTextFocus = (function(event) {
+		this.nodeNeedsHighlighting = event.target.childNodes[0];
+	}).bind(this);
+	var handleDimensionsDisplayTextClick = (function(event) {
+		if(this.nodeNeedsHighlighting) {
+			highlightText(this.nodeNeedsHighlighting);
+			delete this.nodeNeedsHighlighting;
+		}
+		event.preventDefault();
+	}).bind(this);
+	this.dimensionsDisplayWidthText.addEventListener('focus', handleDimensionsDisplayTextFocus, false);
+	this.dimensionsDisplayHeightText.addEventListener('focus', handleDimensionsDisplayTextFocus, false);
+	this.dimensionsDisplayWidthText.addEventListener('click', handleDimensionsDisplayTextClick, false);
+	this.dimensionsDisplayHeightText.addEventListener('click', handleDimensionsDisplayTextClick, false);
 }

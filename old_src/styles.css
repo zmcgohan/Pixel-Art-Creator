@@ -326,10 +326,10 @@ div {
 		top: 0;
 		left: 0;
 		width: 18.5vmax;
-		height: 3.3vmax;
 		white-space: nowrap;
 		overflow-x: auto;
 		overflow-y: hidden;
+		text-align: right;
 	}
 		.animationSlide {
 			display: inline-block;
@@ -339,6 +339,11 @@ div {
 			background: rgba(180,180,180,0.6);
 			border: solid .15vmax rgba(34,34,34,0.4);
 			border-radius: 0.5vmax;
+		}
+		#curAnimationSlide {
+			border-style: dashed;
+			border-color: rgba(34,34,34,0.7);
+			border-width: .2vmax;
 		}
 	#newAnimationSlideButton {
 		position: absolute;
@@ -373,7 +378,7 @@ div {
 /* DIMENSIONS DISPLAY */
 
 #dimensionsDisplay {
-	display: none; 
+	display: none;
 	position: absolute;
 	bottom: 1vmax;
 	left: 1vmax;
@@ -395,6 +400,8 @@ div {
 	cursor: pointer;
 }
 
-#dimensionsDisplayText {
+#dimensionsDisplayWidthText, #dimensionsDisplayHeightText {
+	display: inline;
+	position: relative;
 	cursor: text;
 }
