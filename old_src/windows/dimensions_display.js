@@ -101,6 +101,7 @@ DimensionsDisplay.prototype.addEventListeners = function() {
 			if(newNumCols !== grid.curSprite.sprite.width || newNumRows !== grid.curSprite.sprite.height)
 				grid.curSprite.sprite.resize(newNumRows, newNumCols);
 		} else if(keyCode === TAB) {
+			// TODO when backspaced in Firefox, displays NaN
 			event.preventDefault();
 			fixInvalidDimensions(); // make sure width/height are valid upon change
 			if(event.target.id === DIMENSIONS_DISPLAY_WIDTH_TEXT_ID) { // currently in width text

@@ -3,15 +3,19 @@ var DEFAULT_BG_COLORS = [ '#fafafa', '#dedede' ],
 	DEFAULT_ACTIVE_CELL_COLOR = '#888888',
 	DEFAULT_ACTIVE_CELL_ALPHA = 0.3,
 	MIN_SCREEN_WIDTH = 300,
-	SPRITE_DEFAULT_BG_COLOR = '#fdfdfd';
+	SPRITE_DEFAULT_BG_COLOR = '#fdfdfd',
+	MIN_CELL_WIDTH,
+	MAX_CELL_WIDTH;
 
 function Grid() {
+	// TODO setting for min/max cell width -- pixel art can get very detailed
+	MIN_CELL_WIDTH = Math.floor(canvas.width / 150); MAX_CELL_WIDTH = Math.floor(canvas.width / 3);
 	this.sprites = [];
 	this.curSprite = undefined; // current sprite being edited
 	this.topLeftViewPos = { x: 0, y: 0 }; // top left view position (in pixels)
 	this.lineColor = DEFAULT_LINE_COLOR; // color of cell separation lines
 	this.bgColors = DEFAULT_BG_COLORS; // color of background cells
-	this.numCols = Math.floor(10 + (canvas.width - MIN_SCREEN_WIDTH) / 100);
+	this.numCols = Math.floor(10 + (canvas.width - MIN_SCREEN_WIDTH) / 50);
 	this.numRows = Math.floor((canvas.height / canvas.width) * this.numCols);
 	// TODO (possibly) make getters and setters for cellWidth/cellHeight -- Math.ceil() for values so no empty lines drawn on canvas?
 	this.cellWidth = canvas.width / this.numCols;
@@ -25,9 +29,7 @@ function Grid() {
 
 // sets new cellWidth & cellHeight values based on a given new width
 Grid.prototype.setCellWidth = function(newWidth) {
-	var widthHeightRatio = this.cellWidth / this.cellHeight,
-		MIN_CELL_WIDTH = 30 + Math.abs(canvas.width-MIN_SCREEN_WIDTH) / 150,
-		MAX_CELL_WIDTH = canvas.width / 3;
+	var widthHeightRatio = this.cellWidth / this.cellHeight;
 
 	this.cellWidth = newWidth;
 	// cellWidth not in required bounds? make it in bounds
@@ -139,6 +141,8 @@ Grid.prototype.addEventListeners = function() {
 		canvas.style.height = window.innerHeight + 'px';
 		grid.recalculateNumCells();
 		grid.render();
+		// TODO this might be better-placed in a general 'events' area (not Grid-specific)
+		animationWindow.update();
 	}, false);
 
 	// moving around the grid and zooming in/out
@@ -150,9 +154,7 @@ Grid.prototype.addEventListeners = function() {
 			grid.topLeftViewPos.y += Math.floor(event.deltaY*SCROLL_MULTIPLIER);
 			grid.render();
 		} else { // Chrome sets ctrlKey flag for pinching -- zoom grid
-			var MIN_CELL_WIDTH = 30 + Math.abs(canvas.width-MIN_SCREEN_WIDTH) / 150,
-				MAX_CELL_WIDTH = canvas.width / 3,
-				widthHeightRatio = grid.cellHeight / grid.cellWidth,
+			var widthHeightRatio = grid.cellHeight / grid.cellWidth,
 				zoomAmount = event.deltaY,
 				gridPosRatioX = grid.topLeftViewPos.x / grid.cellWidth,
 				xCursorRatio = event.clientX*AR / grid.cellWidth,

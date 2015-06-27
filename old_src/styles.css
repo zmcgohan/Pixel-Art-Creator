@@ -164,7 +164,7 @@ div {
 		left: 17.6vmax;
 		height: 1.3vmax;
 		width: 1.3vmax;
-		background: linear-gradient(rgb(120,120,120),rgb(180,180,180));
+		background: linear-gradient(rgb(140,140,140),rgb(180,180,180));
 		border: solid 1px rgb(100,100,100);
 		border-radius: 0.3vmax;
 		font-size: 1.1vmax;
@@ -325,7 +325,7 @@ div {
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 18.5vmax;
+		width: 19.0vmax;
 		white-space: nowrap;
 		overflow-x: auto;
 		overflow-y: hidden;
@@ -351,7 +351,7 @@ div {
 		left: 17.6vmax;
 		height: 1.3vmax;
 		width: 1.3vmax;
-		background: linear-gradient(rgb(120,120,120),rgb(180,180,180));
+		background: linear-gradient(rgb(140,140,140),rgb(180,180,180));
 		border: solid 1px rgb(100,100,100);
 		border-radius: 0.3vmax;
 		font-size: 1.1vmax;
@@ -405,3 +405,71 @@ div {
 	position: relative;
 	cursor: text;
 }
+
+/* LAYERS */
+#layersMinimized, #spritesMinimized {
+	position: absolute;
+	bottom: 1vmax;
+	height: 1.5vmax;
+	line-height: 1.5vmax;
+	padding: 0 0.5vmax;
+	background: rgba(170,170,170,0.6); 
+	color: rgba(34,34,34,0.8);
+	border-radius: 0.3vmax;
+	font-size: 1.1vmax;
+	cursor: pointer;
+}
+#layersMinimized:hover, #spritesMinimized:hover {
+	background: rgba(170,170,170,0.8); 
+	color: rgba(34,34,34,1.0);
+}
+#layersMinimized {
+	display: none;
+	right: 1vmax;
+	width: 7.6vmax;
+}
+#spritesMinimized {
+	right: 9.6vmax;
+	width: 19vmax;
+}
+	.floatLeft {
+		float: left;
+	}
+	.floatRight {
+		float: right;
+	}
+
+#layersContainer {
+	position: absolute;
+	bottom: 1vmax;
+	right: 1vmax;
+	height: 22.5vmax;
+	width: 7.6vmax;
+	background: rgba(210,210,210,0.6);
+	border-style: solid;
+	border-width: 0 1px 1px 1px;
+	border-color: rgba(34,34,34,0.4);
+	border-radius: 0 0 0.5vmax 0.5vmax;
+}
+	#layersContainerTitle {
+		position: absolute;
+		top: -1.5vmax;
+		height: 1.5vmax;
+		line-height: 1.5vmax;
+		left: -1px;
+		width: 7.6vmax;
+		font-size: 1.1vmax;
+		padding: 0 0.5vmax;
+		border-style: solid;
+		border-width: 1px 1px 0 1px;
+		border-color: rgba(34,34,34,0.4);
+		border-radius: 0.5vmax 0.5vmax 0 0;
+		background: rgba(170,170,170,0.6); 
+		color: rgba(34,34,34,0.8);
+		cursor: pointer;
+	}
+	#layersContainerTitle:hover {
+		background: rgba(170,170,170,0.8); 
+	}
+
+/* SPRITES */

@@ -14,6 +14,7 @@ function Sprite() {
 
 // adds pixel to specified side (which is a value of SpriteSide
 Sprite.prototype.addPixels = function(side, numPixels) {
+	if(numPixels <= 0) return;
 	var frame, layer, row, col;
 	var addPixels = (function() {
 		switch(side) {
@@ -64,6 +65,64 @@ Sprite.prototype.addPixels = function(side, numPixels) {
 			addPixels(this, frame, layer);
 		}
 	}
+	switch(side) {
+		case SpriteSide.TOP:
+		case SpriteSide.BOTTOM:
+			this.height += numPixels;
+			break;
+		case SpriteSide.RIGHT:
+		case SpriteSide.LEFT:
+			this.width += numPixels;
+			break;
+	}
+}
+
+Sprite.prototype.removePixels = function(side, numPixels) {
+	if(numPixels <= 0) return;
+	var frame, layer, row, col;
+	var removePixels = (function() {
+		switch(side) {
+			case SpriteSide.TOP:
+				return function(sprite, frame, layer) {
+					sprite.frames[frame].layers[layer].pixels.splice(0, numPixels);
+				}
+				break;
+			case SpriteSide.RIGHT:
+				return function(sprite, frame, layer) {
+					for(row = 0; row < sprite.frames[frame].layers[layer].pixels.length; ++row) {
+						sprite.frames[frame].layers[layer].pixels[row].splice(sprite.width-numPixels, numPixels);
+					}
+				}
+				break;
+			case SpriteSide.BOTTOM:
+				return function(sprite, frame, layer) {
+					sprite.frames[frame].layers[layer].pixels.splice(sprite.height-numPixels, numPixels);
+				}
+				break;
+			case SpriteSide.LEFT:
+				return function(sprite, frame, layer) {
+					for(row = 0; row < sprite.frames[frame].layers[layer].pixels.length; ++row) {
+						sprite.frames[frame].layers[layer].pixels[row].splice(0, numPixels);
+					}
+				}
+				break;
+		}
+	})();
+	for(frame = 0; frame < this.frames.length; ++frame) {
+		for(layer = 0; layer < this.frames[frame].layers.length; ++layer) {
+			removePixels(this, frame, layer);
+		}
+	}
+	switch(side) {
+		case SpriteSide.TOP:
+		case SpriteSide.BOTTOM:
+			this.height -= numPixels;
+			break;
+		case SpriteSide.RIGHT:
+		case SpriteSide.LEFT:
+			this.width -= numPixels;
+			break;
+	}
 }
 
 // adds a new frame to sprite
@@ -102,55 +161,19 @@ Sprite.prototype.colorPixel = function(row, col, color) {
 	// resize if necessary
 	var frameI, layerI, rowI, colI;
 	if(col < 0) { // col is less than 0 (add cols in front)
-		this.width += -col;
 		this.addPixels(SpriteSide.LEFT, -col);
-		/*
-		for(i = 0; i < curLayer.pixels.length; ++i) {
-			for(j = 0; j > col; --j) {
-				curLayer.pixels[i].unshift('');
-			}
-		}
-		*/
 		col = 0;
 	} else if(col > this.width-1) { // col is greater than current cols
 		var widthDiff = col - (this.width-1);
-		this.width += widthDiff;
 		this.addPixels(SpriteSide.RIGHT, widthDiff);
-		/*
-		for(i = 0; i < curLayer.pixels.length; ++i) {
-			for(j = 0; j < widthDiff; ++j) {
-				curLayer.pixels[i].push('');
-			}
-		}
-		*/
 	}
 	if(row < 0) { // row is above current rows
-		this.height += -row;
 		this.addPixels(SpriteSide.TOP, -row);
-		/*
-		for(i = 0; i > row; --i) {
-			var newRow = [];
-			for(j = 0; j < this.width; ++j) {
-				newRow.push('');
-			}
-			curLayer.pixels.unshift(newRow);
-		}
-		*/
 		row = 0;
 	} else if(row > this.height-1) { // row is below current rows
 		var heightDiff = row - (this.height-1),
 			newRow;
-		this.height += heightDiff;
 		this.addPixels(SpriteSide.BOTTOM, heightDiff);
-		/*
-		for(i = 0; i < heightDiff; ++i) {
-			newRow = [];
-			for(j = 0; j < this.width; ++j) {
-				newRow.push('');
-			}
-			curLayer.pixels.push(newRow);
-		}
-		*/
 	}
 	curLayer.pixels[row][col] = color;
 	dimensionsDisplay.update();
@@ -176,6 +199,7 @@ Sprite.prototype.erasePixel = function(row, col) {
 }
 
 Sprite.prototype.trimSize = function() {
+	// TODO change so checks each frame/layer's row/col for emptiness before deleting it from all
 	var dimensionChanges = { top: 0, right: 0, bottom: 0, left: 0 };
 	// if dimensions are locked, no trimming
 	if(this.dimensionsLocked)
@@ -239,25 +263,15 @@ Sprite.prototype.trimSize = function() {
  *
  * When reducing size, simply cuts off needed pixels. When increasing, simply adds blank ('') pixels. */
 Sprite.prototype.resize = function(numRows, numCols) {
+	// TODO change with this.addPixels() and this.removePixels()
 	var frameI, layerI, i, j,
 		widthDiff = Math.abs(this.width - numCols),
 		heightDiff = Math.abs(this.height - numRows);
 
+	var layer;
 	for(frameI = 0; frameI < this.frames.length; ++frameI) {
 		for(layerI = 0; layerI < this.frames[frameI].layers.length; ++layerI) {
-			var layer = this.frames[frameI].layers[layerI];
-			if(numCols < this.width) { // reducing width -- remove pixels from each row
-				for(i = 0; i < layer.pixels.length; ++i) {
-					layer.pixels[i].splice(this.width-widthDiff, widthDiff);
-				}
-			} else if(numCols > this.width) { // increasing width -- add blank pixels to each row
-				for(i = 0; i < layer.pixels.length; ++i) {
-					for(j = 0; j < widthDiff; ++j) {
-						layer.pixels[i].push('');
-					}
-				}
-			}
-			this.width = this.frames[0].layers[0].pixels[0].length;
+			layer = this.frames[frameI].layers[layerI];
 
 			if(numRows < this.height) { // decreasing height -- remove rows
 				layer.pixels.splice(this.height-heightDiff, heightDiff);
@@ -269,9 +283,22 @@ Sprite.prototype.resize = function(numRows, numCols) {
 					}	
 				}
 			}
-			this.height = this.frames[0].layers[0].pixels.length;
+			
+			if(numCols < this.width) { // reducing width -- remove pixels from each row
+				for(i = 0; i < layer.pixels.length; ++i) {
+					layer.pixels[i].splice(this.width-widthDiff, widthDiff);
+				}
+			} else if(numCols > this.width) { // increasing width -- add blank pixels to each row
+				for(i = 0; i < layer.pixels.length; ++i) {
+					for(j = 0; j < widthDiff; ++j) {
+						layer.pixels[i].push('');
+					}
+				}
+			}
 		}
 	}
+	this.width = this.frames[0].layers[0].pixels[0].length;
+	this.height = this.frames[0].layers[0].pixels.length;
 	grid.render();
 	dimensionsDisplay.update();
 	// TODO change to per-frame updating

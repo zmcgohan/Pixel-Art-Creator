@@ -13,6 +13,7 @@ function AnimationWindow() {
 	this.newAnimationSlideButton = document.getElementById(NEW_ANIMATION_SLIDE_BUTTON_ID);
 	this.animationSlides = [];
 
+	this.addSlide();
 	this.addEventListeners();
 }
 
@@ -28,10 +29,24 @@ AnimationWindow.prototype.addEventListeners = function() {
 	// add a new slide on button click
 	this.newAnimationSlideButton.addEventListener('mouseup', (function(event) {
 		if(grid.curSprite) {
+			// add frame to current sprite and animation window's list
 			grid.curSprite.sprite.addFrame();
+			grid.curSprite.sprite.frames[grid.curSprite.sprite.frames.length-1].layers[0].initPixels(grid.curSprite.sprite.height, grid.curSprite.sprite.width);
+			// set current frame to new frame
 			this.update();
+			// scroll as right as possible
+			this.slidesContainer.scrollLeft = this.slidesContainer.scrollWidth;
+			this.setCurrentFrame(grid.curSprite.sprite.frames.length - 1);
+			grid.render();
 		}
 	}).bind(this), false);
+}
+
+AnimationWindow.prototype.setCurrentFrame = function(frameI) {
+		this.animationSlides[grid.curSprite.sprite.curFrameI].removeAttribute('id');
+		grid.curSprite.sprite.curFrameI = frameI;
+		this.animationSlides[frameI].id = 'curAnimationSlide';
+		grid.render();
 }
 
 AnimationWindow.prototype.update = function() {
@@ -80,7 +95,7 @@ AnimationWindow.prototype.update = function() {
 		for(rows = 0; rows < grid.curSprite.sprite.height; ++rows) {
 			for(cols = 0; cols < grid.curSprite.sprite.width; ++cols) {
 				// TODO change 0 to curLayerI
-				var curPxColor = grid.curSprite.sprite.frames[i].layers[0].pixels[rows][cols];
+				var curPxColor = grid.curSprite.sprite.frames[i].layers[grid.curSprite.sprite.frames[i].curLayerI].pixels[rows][cols];
 				if(curPxColor !== '') {
 					ctx.fillStyle = curPxColor;
 					ctx.fillRect(drawOffset + cols*pixelWidth, drawOffset + rows*pixelWidth, pixelWidth, pixelWidth);
@@ -97,6 +112,17 @@ AnimationWindow.prototype.addSlide = function() {
 	this.slidesContainer.appendChild(newSlide);
 	newSlide.width = newSlide.offsetWidth * AR;
 	newSlide.height = newSlide.offsetHeight * AR;
+	// on slide click, change to its frame
+	var newSlideIndex = this.animationSlides.length; // hasn't been added yet
+	newSlide.addEventListener('mouseup', (function(event) {
+		if(!grid.curSprite) return; // TODO if have minimum one active sprite, remove this
+		var slideIndex;
+		// get current index of this slide
+		for(slideIndex = 0; slideIndex < this.animationSlides.length; ++slideIndex) {
+			if(this.animationSlides[slideIndex] === event.target) break;
+		}
+		this.setCurrentFrame(slideIndex);
+	}).bind(this), false);
 	this.animationSlides.push(newSlide);
 }
 
