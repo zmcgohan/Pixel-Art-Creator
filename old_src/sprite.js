@@ -12,7 +12,17 @@ function Sprite() {
 	this.dimensionsLocked = false; // true = sprite will resize when pixels out of current dimensions are added
 }
 
-// adds pixel to specified side (which is a value of SpriteSide
+// calls func(layer) on all frames and their layers
+// TODO not currently used -- but should be implemented
+Sprite.prototype.affectAllLayers = function(func) {
+	for(var frameI = 0; frameI < this.frames.length; ++frameI) {
+		for(var layerI = 0; layerI < curFrame.layers.length; ++layerI) {
+			func(this.frames[frameI].layers[layerI]);
+		}
+	}
+}
+
+// adds pixel to specified side (which is a value of SpriteSide)
 Sprite.prototype.addPixels = function(side, numPixels) {
 	if(numPixels <= 0) return;
 	var frame, layer, row, col;
@@ -156,6 +166,7 @@ Sprite.prototype.colorPixel = function(row, col, color) {
 		dimensionsDisplay.update();
 		// TODO change to per-frame updating
 		animationWindow.update();
+		layersWindow.fullUpdate();
 		return;
 	}
 	// resize if necessary
@@ -177,8 +188,9 @@ Sprite.prototype.colorPixel = function(row, col, color) {
 	}
 	curLayer.pixels[row][col] = color;
 	dimensionsDisplay.update();
-	// TODO change to per-frame updating
+	// TODO change to per-frame updating (for layers, sprites and animation)
 	animationWindow.update();
+	layersWindow.fullUpdate();
 	return true;
 }
 
@@ -195,11 +207,12 @@ Sprite.prototype.erasePixel = function(row, col) {
 	dimensionsDisplay.update();
 	// TODO change to per-frame updating
 	animationWindow.update();
+	layersWindow.fullUpdate();
 	return dimensionChanges;
 }
 
+// TODO this is huge. Too huge. And very repeated.
 Sprite.prototype.trimSize = function() {
-	// TODO change so checks each frame/layer's row/col for emptiness before deleting it from all
 	var dimensionChanges = { top: 0, right: 0, bottom: 0, left: 0 };
 	// if dimensions are locked, no trimming
 	if(this.dimensionsLocked)
@@ -211,24 +224,48 @@ Sprite.prototype.trimSize = function() {
 	var oldWidth = this.width;
 	leftSide:
 	for(i = 0; i < oldWidth; ++i) {
-		for(j = 0; j < this.height; ++j) {
-			if(curLayer.pixels[j][0] !== '')
-				break leftSide;
+		for(var curFrameI = 0; curFrameI < this.frames.length; ++curFrameI) {
+			curFrame = this.frames[curFrameI];
+			for(var curLayerI = 0; curLayerI < curFrame.layers.length; ++curLayerI) {
+				curLayer = curFrame.layers[curLayerI];
+				for(j = 0; j < this.height; ++j) {
+					if(curLayer.pixels[j][0] !== '')
+						break leftSide;
+				}
+			}
 		}
-		for(j = 0; j < this.height; ++j) {
-			curLayer.pixels[j].splice(0, 1);
+		for(var curFrameI = 0; curFrameI < this.frames.length; ++curFrameI) {
+			curFrame = this.frames[curFrameI];
+			for(var curLayerI = 0; curLayerI < curFrame.layers.length; ++curLayerI) {
+				curLayer = curFrame.layers[curLayerI];
+				for(j = 0; j < this.height; ++j) {
+					curLayer.pixels[j].splice(0, 1);
+				}
+			}
 		}
 		--this.width;
 		++dimensionChanges.left;
 	}
 	rightSide:
 	for(i = this.width-1; i >= 0; --i) {
-		for(j = 0; j < this.height; ++j) {
-			if(curLayer.pixels[j][i] !== '')
-				break rightSide;
+		for(var curFrameI = 0; curFrameI < this.frames.length; ++curFrameI) {
+			curFrame = this.frames[curFrameI];
+			for(var curLayerI = 0; curLayerI < curFrame.layers.length; ++curLayerI) {
+				curLayer = curFrame.layers[curLayerI];
+				for(j = 0; j < this.height; ++j) {
+					if(curLayer.pixels[j][i] !== '')
+						break rightSide;
+				}
+			}
 		}
-		for(j = 0; j < this.height; ++j) {
-			curLayer.pixels[j].splice(this.width-1, 1);
+		for(var curFrameI = 0; curFrameI < this.frames.length; ++curFrameI) {
+			curFrame = this.frames[curFrameI];
+			for(var curLayerI = 0; curLayerI < curFrame.layers.length; ++curLayerI) {
+				curLayer = curFrame.layers[curLayerI];
+				for(j = 0; j < this.height; ++j) {
+					curLayer.pixels[j].splice(this.width-1, 1);
+				}
+			}
 		}
 		--this.width;
 		++dimensionChanges.right;
@@ -236,26 +273,51 @@ Sprite.prototype.trimSize = function() {
 	var oldHeight = this.height;
 	topSide:
 	for(i = 0; i < oldHeight; ++i) {
-		for(j = 0; j < this.width; ++j) {
-			if(curLayer.pixels[0][j] !== '')
-				break topSide;
+		for(var curFrameI = 0; curFrameI < this.frames.length; ++curFrameI) {
+			curFrame = this.frames[curFrameI];
+			for(var curLayerI = 0; curLayerI < curFrame.layers.length; ++curLayerI) {
+				curLayer = curFrame.layers[curLayerI];
+				for(j = 0; j < this.width; ++j) {
+					if(curLayer.pixels[0][j] !== '')
+						break topSide;
+				}
+			}
 		}
-		curLayer.pixels.splice(0,1);
+		for(var curFrameI = 0; curFrameI < this.frames.length; ++curFrameI) {
+			curFrame = this.frames[curFrameI];
+			for(var curLayerI = 0; curLayerI < curFrame.layers.length; ++curLayerI) {
+				curLayer = curFrame.layers[curLayerI];
+				curLayer.pixels.splice(0,1);
+			}
+		}
 		--this.height;
 		++dimensionChanges.top;
 	}
 	bottomSide:
 	for(i = this.height-1; i >= 0; --i) {
-		for(j = 0; j < this.width; ++j) {
-			if(curLayer.pixels[i][j] !== '')
-				break bottomSide;
+		for(var curFrameI = 0; curFrameI < this.frames.length; ++curFrameI) {
+			curFrame = this.frames[curFrameI];
+			for(var curLayerI = 0; curLayerI < curFrame.layers.length; ++curLayerI) {
+				curLayer = curFrame.layers[curLayerI];
+				for(j = 0; j < this.width; ++j) {
+					if(curLayer.pixels[i][j] !== '')
+						break bottomSide;
+				}
+			}
 		}
-		curLayer.pixels.splice(i,1);
+		for(var curFrameI = 0; curFrameI < this.frames.length; ++curFrameI) {
+			curFrame = this.frames[curFrameI];
+			for(var curLayerI = 0; curLayerI < curFrame.layers.length; ++curLayerI) {
+				curLayer = curFrame.layers[curLayerI];
+				curLayer.pixels.splice(i,1);
+			}
+		}
 		--this.height;
 		++dimensionChanges.bottom;
 	}
 	// TODO change to per-frame updating
 	animationWindow.update();
+	layersWindow.fullUpdate();
 	return dimensionChanges;
 }
 
@@ -303,6 +365,7 @@ Sprite.prototype.resize = function(numRows, numCols) {
 	dimensionsDisplay.update();
 	// TODO change to per-frame updating
 	animationWindow.update();
+	layersWindow.fullUpdate();
 }
 
 function Frame() {

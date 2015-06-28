@@ -146,6 +146,7 @@ Grid.prototype.addEventListeners = function() {
 	}, false);
 
 	// moving around the grid and zooming in/out
+	// TODO "jumpy" at MIN and MAX_CELL_WIDTH -- very low priority, but would like to smooth it out
 	var SCROLL_MULTIPLIER = 1.8;
 	canvas.addEventListener("wheel", function(event) {
 		event.preventDefault();

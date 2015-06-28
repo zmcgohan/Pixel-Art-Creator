@@ -47,6 +47,7 @@ AnimationWindow.prototype.setCurrentFrame = function(frameI) {
 		grid.curSprite.sprite.curFrameI = frameI;
 		this.animationSlides[frameI].id = 'curAnimationSlide';
 		grid.render();
+		layersWindow.fullUpdate();
 }
 
 AnimationWindow.prototype.update = function() {

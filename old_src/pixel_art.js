@@ -7,7 +7,7 @@ var AR = 2, // aspect ratio
 
 var canvas, ctx;
 
-var grid, colorPalette, toolBox, animationWindow, dimensionsDisplay;
+var grid, colorPalette, toolBox, animationWindow, dimensionsDisplay, layersWindow, spritesWindow;
 
 var tools = {};
 
@@ -30,5 +30,7 @@ colorPalette = new ColorPalette();
 toolBox = new ToolBox();
 animationWindow = new AnimationWindow();
 dimensionsDisplay = new DimensionsDisplay();
+layersWindow = new LayersWindow();
+spritesWindow = new SpritesWindow();
 
 grid.render();

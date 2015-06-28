@@ -429,6 +429,7 @@ div {
 	width: 7.6vmax;
 }
 #spritesMinimized {
+	display: block;
 	right: 9.6vmax;
 	width: 19vmax;
 }
@@ -439,37 +440,160 @@ div {
 		float: right;
 	}
 
-#layersContainer {
+#layersContainer, #spritesContainer {
 	position: absolute;
 	bottom: 1vmax;
-	right: 1vmax;
 	height: 22.5vmax;
-	width: 7.6vmax;
-	background: rgba(210,210,210,0.6);
+	background: rgba(240,240,240,0.8);
 	border-style: solid;
 	border-width: 0 1px 1px 1px;
 	border-color: rgba(34,34,34,0.4);
 	border-radius: 0 0 0.5vmax 0.5vmax;
 }
-	#layersContainerTitle {
+#layersContainer {
+	display: block;
+	right: 1vmax;
+	width: 7.6vmax;
+}
+	#layersScrollContainer {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 22.5vmax;
+		width: calc(7.6vmax - 2px);
+		overflow-y: auto;
+		border-radius: 0 0 0.5vmax 0.5vmax;
+	}
+	.layerContainer {
+		position: relative;
+		display: block;
+		width: calc(7.6vmax - 2px);
+		height: 3.9vmax;
+		cursor: pointer;
+		border-style: solid;
+		border-width: 1px 0 0 0;
+		border-color: rgba(210,210,210,0.8);
+		opacity: 0.4;
+		/* margin: 0 0 0.2vmax 0; */
+	}
+	.layerContainer:nth-of-type(1) { border: none; }
+	#addLayerButton {
+		position: relative;
+		display: block;
+		width: calc(7.6vmax - 2px);
+		height: 2vmax;
+		line-height: 1.6vmax;
+		color: rgba(34,34,34,0.4);
+		text-align: center;
+		background: rgba(210,210,210,0.3);
+		cursor: pointer;
+		font-size: 1.8vmax;
+
+		border-style: solid;
+		border-width: 1px 0 0 0;
+		border-color: rgba(210,210,210,0.6);
+	}
+	#addLayerButton:hover {
+		color: rgba(34,34,34,1.0);
+		background: rgba(170,170,170,0.2);
+	}
+	.layerContainer:hover, #activeLayerContainer:hover {
+		opacity: 1.0;
+		background: rgba(170,170,170,0.2);
+	}
+	#activeLayerContainer {
+		background: rgba(210,210,210,0.3);
+		opacity: 1.0;
+	}
+		.layerDisplay {
+			position: absolute;
+			top: 1.4vmax;
+			right: 0.5vmax;
+			width: 2.2vmax;
+			height: 2.2vmax;
+			background: rgba(180,180,180,0.6);
+			border: solid .15vmax rgba(34,34,34,0.4);
+			border-radius: 0.5vmax;
+		}
+		.layerTitle {
+			position: absolute;
+			top: 0.3vmax;
+			right: 0.3vmax;
+			height: 1.1vmax;
+			line-height: 0.9vmax;
+			font-size: 0.8vmax;
+			width: 6.6vmax;
+			text-align: left;
+			border-radius: 0 0 0.5vmax 0.5vmax;
+		}
+		.layerViewEye {
+			position: absolute;
+			bottom: 0.3vmax;
+			right: 3.2vmax;
+			width: 0.9vmax;
+			height: 0.9vmax;
+			opacity: 1.0;
+			content: url('icons/view_layer.png');
+		}
+		.layerUpArrow {
+			position: absolute;
+			bottom: 0.4vmax;
+			left: 0.5vmax;
+			width: 0.8vmax;
+			height: 0.6vmax;
+			opacity: 0.2;
+			content: url('icons/up_arrow.png');
+		}
+		.layerDownArrow {
+			position: absolute;
+			bottom: 0.4vmax;
+			left: 1.5vmax;
+			width: 0.8vmax;
+			height: 0.6vmax;
+			opacity: 0.2;
+			content: url('icons/down_arrow.png');
+		}
+		.layerViewEye:hover, .layerUpArrow:hover, .layerDownArrow:hover {
+			opacity: 1.0;
+		}
+		/*
+		.layerOptionsContainer {
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			height: 1.2vmax;
+			width: 3.3vmax;
+			background: #ccc;
+		}
+		*/
+#spritesContainer {
+	display: none;
+	right: 9.6vmax;
+	width: 19vmax;
+}
+	#layersContainerTitle, #spritesContainerTitle {
 		position: absolute;
 		top: -1.5vmax;
 		height: 1.5vmax;
 		line-height: 1.5vmax;
 		left: -1px;
-		width: 7.6vmax;
 		font-size: 1.1vmax;
 		padding: 0 0.5vmax;
 		border-style: solid;
 		border-width: 1px 1px 0 1px;
 		border-color: rgba(34,34,34,0.4);
 		border-radius: 0.5vmax 0.5vmax 0 0;
-		background: rgba(170,170,170,0.6); 
+		background: rgba(170,170,170,0.8); 
 		color: rgba(34,34,34,0.8);
 		cursor: pointer;
 	}
-	#layersContainerTitle:hover {
-		background: rgba(170,170,170,0.8); 
+	#layersContainerTitle {
+		width: 7.6vmax;
+	}
+	#spritesContainerTitle {
+		width: 19vmax;
+	}
+	#layersContainerTitle:hover, #spritesContainerTitle:hover {
+		background: rgba(170,170,170,1.0); 
 	}
 
-/* SPRITES */
