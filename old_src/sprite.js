@@ -11,6 +11,7 @@ function Sprite() {
 	this.height = 0;
 	this.frames = [ new Frame() ];
 	this.curFrameI = 0; // current frame index
+	this.curLayerI = 0; // current layer index
 	this.dimensionsLocked = false; // true = sprite will resize when pixels out of current dimensions are added
 }
 
@@ -178,13 +179,17 @@ Sprite.prototype.colorPixel = function(row, col, color) {
 		return undefined;
 	var i, j,
 		curFrame = this.frames[this.curFrameI],
-		curLayer = curFrame.layers[curFrame.curLayerI];
+		curLayer = curFrame.layers[this.curLayerI];
 	// if current layer isn't visible, don't draw anything
 	// TODO double-check this doesn't break anything. Seems too simple. I'm tired
 	if(!curLayer.visible) return undefined;
 	// sprite is currently empty -- create first pixel and return
-	if(this.width === 0 && this.height === 0) {
-		curLayer.pixels.push([color]);
+	if(this.width === 0) {
+		// push pixel to all layers
+		for(var layerI = 0; layerI < this.frames[0].layers.length; ++layerI) {
+			if(curFrame.layers[layerI] !== curLayer) curFrame.layers[layerI].pixels.push(['']);
+			else curLayer.pixels.push([color]);
+		}
 		this.width = this.height = 1;
 		dimensionsDisplay.update();
 		// TODO change to per-frame updating
@@ -224,7 +229,7 @@ Sprite.prototype.erasePixel = function(row, col) {
 	// make sure the affected row and col is actually a part of the sprite
 	if(row >= 0 && row < this.height && col >= 0 && col < this.width) {
 		var curFrame = this.frames[this.curFrameI],
-			curLayer = curFrame.layers[curFrame.curLayerI];
+			curLayer = curFrame.layers[this.curLayerI];
 		// clear pixel
 		curLayer.pixels[row][col] = '';
 		dimensionChanges = this.trimSize();
@@ -245,7 +250,7 @@ Sprite.prototype.trimSize = function() {
 		return dimensionChanges;
 	var i, j,
 		curFrame = this.frames[this.curFrameI],
-		curLayer = curFrame.layers[curFrame.curLayerI];
+		curLayer = curFrame.layers[this.curLayerI];
 	// remove each side if empty (trim the sprite)
 	var oldWidth = this.width;
 	leftSide:
@@ -400,10 +405,10 @@ Sprite.prototype.switchLayers = function(layerOne, layerTwo) {
 		this.frames[frameI].layers[layerTwo] = this.frames[frameI].layers[layerOne];
 		this.frames[frameI].layers[layerOne] = tempRef;
 	}
-	if(this.frames[this.curFrameI].curLayerI === layerOne) {
-		this.frames[this.curFrameI].curLayerI = layerTwo;
-	} else if(this.frames[this.curFrameI].curLayerI === layerTwo) {
-		this.frames[this.curFrameI].curLayerI = layerOne;
+	if(this.curLayerI === layerOne) {
+		this.curLayerI = layerTwo;
+	} else if(this.curLayerI === layerTwo) {
+		this.curLayerI = layerOne;
 	}
 }
 

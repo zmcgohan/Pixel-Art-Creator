@@ -13,7 +13,6 @@ function AnimationWindow() {
 	this.newAnimationSlideButton = document.getElementById(NEW_ANIMATION_SLIDE_BUTTON_ID);
 	this.animationSlides = [];
 
-	this.addSlide();
 	this.addEventListeners();
 }
 

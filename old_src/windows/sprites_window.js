@@ -73,7 +73,6 @@ SpritesWindow.prototype.getDisplayIndex = function(display) {
 // handle sprite display click to change current sprite
 SpritesWindow.prototype.handleDisplayClick = function(event) {
 	var displayI = this.getDisplayIndex(event.target);
-	console.log(displayI);
 	grid.curSprite = grid.sprites[displayI];
 
 	// update screen

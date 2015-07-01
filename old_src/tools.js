@@ -16,9 +16,11 @@ PenTool.prototype.handleEvent = function(event) {
 		}
 
 		// no sprites currently -- create first one
-		if(grid.sprites.length === 0) {
-			grid.curSprite = { pos: clickedCell, sprite: new Sprite() };
-			grid.sprites.push(grid.curSprite);
+		//if(grid.sprites.length === 0) {
+		if(grid.curSprite.pos.x === undefined) {
+			//grid.curSprite = { pos: clickedCell, sprite: new Sprite() };
+			//grid.sprites.push(grid.curSprite);
+			grid.curSprite.pos = clickedCell;
 			grid.curSprite.sprite.colorPixel(0, 0, curColor);
 		} else {
 			// if successfully colored pixel of current sprite, move sprite if need be (so it stays in same position on canvas)

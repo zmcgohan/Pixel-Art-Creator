@@ -24,6 +24,10 @@ function Grid() {
 	this.activeCellColor = DEFAULT_ACTIVE_CELL_COLOR;
 	this.activeCellAlpha = DEFAULT_ACTIVE_CELL_ALPHA;
 
+	// create initial sprite
+	this.addSprite();
+	this.curSprite = this.sprites[0];
+
 	this.addEventListeners();
 }
 
@@ -32,9 +36,10 @@ Grid.prototype.addSprite = function() {
 	var newSprite = new Sprite();
 	this.sprites.push({
 		//pos: { x: undefined, y: undefined },
-		pos: { x: 0, y: 0 },
+		pos: { x: undefined, y: undefined },
 		sprite: newSprite
 	});
+
 }
 
 // sets new cellWidth & cellHeight values based on a given new width

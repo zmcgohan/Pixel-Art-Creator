@@ -33,4 +33,8 @@ dimensionsDisplay = new DimensionsDisplay();
 layersWindow = new LayersWindow();
 spritesWindow = new SpritesWindow();
 
+// initial visual setup
 grid.render();
+animationWindow.update();
+layersWindow.fullUpdate();
+spritesWindow.fullUpdate();

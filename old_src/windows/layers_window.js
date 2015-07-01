@@ -48,8 +48,6 @@ LayersWindow.prototype.addEventListeners = function() {
 
 // completely updates layers window
 LayersWindow.prototype.fullUpdate = function() {
-	if(grid.curSprite.sprite.height === 0) return; // no need to update if current sprite is empty
-
 	var i;
 	// add layers if needed
 	var numLayers = grid.curSprite.sprite.frames[0].layers.length;
@@ -60,12 +58,18 @@ LayersWindow.prototype.fullUpdate = function() {
 	// set current layer visually
 	var curFrame = grid.curSprite.sprite.frames[grid.curSprite.sprite.curFrameI];
 	for(i = 0; i < this.layerContainers.length; ++i) {
-		if(i !== curFrame.curLayerI) this.layerContainers[i].removeAttribute('id');
+		if(i !== grid.curSprite.sprite.curLayerI) this.layerContainers[i].removeAttribute('id');
 		else this.layerContainers[i].id = 'activeLayerContainer';
 		// TODO [2] should not be a constant -- have to implement a more fool-proof way (no internet right now doe)
 		this.layerContainers[i].getElementsByTagName('img')[2].className = curFrame.layers[i].visible ? 'layerViewEyeShown' : 'layerViewEyeHidden';
 		this.layerContainers[i].getElementsByClassName('layerTitle')[0].innerHTML = curFrame.layers[i].title;
 	}
+	// clear canvases
+	for(i = 0; i < numLayers; ++i) {
+		var ctx = this.layerContainers[i].getElementsByTagName('canvas')[0].getContext('2d');
+		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	}
+	if(grid.curSprite.sprite.width === 0) return; // no need to draw layers if sprite is empty
 	// draw each layer of current frame
 	for(i = 0; i < numLayers; ++i) {
 		var maxDimension = curFrame.layers[i].pixels[0].length > curFrame.layers[i].pixels.length ? curFrame.layers[i].pixels[0].length : curFrame.layers[i].pixels.length,
@@ -73,8 +77,6 @@ LayersWindow.prototype.fullUpdate = function() {
 			canvasWidth = ctx.canvas.width,
 			pixelWidth, framePadding, usableWidth, 
 			drawOffsetX, drawOffsetY;
-		// clear canvas
-		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		if(maxDimension <= MAX_LAYER_DISPLAY_PADDING_SIZE) framePadding = MAX_LAYER_DISPLAY_PADDING;
 		else if(maxDimension >= MIN_LAYER_DISPLAY_PADDING_SIZE) framePadding = MIN_LAYER_DISPLAY_PADDING;
 		else framePadding = MAX_LAYER_DISPLAY_PADDING - (MAX_LAYER_DISPLAY_PADDING - MIN_LAYER_DISPLAY_PADDING) * ((MAX_LAYER_DISPLAY_PADDING_SIZE + maxDimension) / MIN_LAYER_DISPLAY_PADDING_SIZE);
@@ -106,10 +108,10 @@ LayersWindow.prototype.handleContainerClick = function(event) {
 	var layerI = this.getLayerContainerPos(containerElem);
 	// TODO update curSprite's curLayerI
 	// change visually active container
-	this.layerContainers[grid.curSprite.sprite.frames[0].curLayerI].removeAttribute('id');
+	this.layerContainers[grid.curSprite.sprite.curLayerI].removeAttribute('id');
 	containerElem.id = 'activeLayerContainer';
 	// change curLayerI
-	grid.curSprite.sprite.frames[grid.curSprite.sprite.curFrameI].curLayerI = layerI;
+	grid.curSprite.sprite.curLayerI = layerI;
 	grid.render();
 }
 
@@ -139,6 +141,7 @@ LayersWindow.prototype.handleUpArrowClick = function(event) {
 
 		grid.render();
 		animationWindow.update();
+		spritesWindow.fullUpdate();
 		layersWindow.fullUpdate();
 	}
 	event.stopPropagation(); // so it doesn't go to the layer-changing container click event .. might have to change
@@ -153,6 +156,7 @@ LayersWindow.prototype.handleDownArrowClick = function(event) {
 
 		grid.render();
 		animationWindow.update();
+		spritesWindow.fullUpdate();
 		layersWindow.fullUpdate();
 	}
 	event.stopPropagation(); // so it doesn't go to the layer-changing container click event .. might have to change
