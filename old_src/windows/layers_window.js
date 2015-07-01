@@ -20,6 +20,12 @@ function LayersWindow() {
 	this.addEventListeners();
 }
 
+LayersWindow.prototype.getLayerContainerPos = function(layerContainer) {
+	var layerI = 0;
+	while(this.layerContainers[layerI] !== layerContainer) ++layerI;
+	return layerI;
+}
+
 LayersWindow.prototype.addEventListeners = function() {
 	// open layers window from minimized 
 	this.layersMinimizedDiv.addEventListener('mouseup', (function(event) {
@@ -32,10 +38,18 @@ LayersWindow.prototype.addEventListeners = function() {
 		this.layersContainer.style.display = 'none'; // hide layers container
 		this.layersMinimizedDiv.style.display = 'block'; // show layers minimized div
 	}).bind(this), false);
+
+	// add a layer
+	this.addLayerButton.addEventListener('mouseup', (function(event) {
+		grid.curSprite.sprite.addLayer();
+		this.fullUpdate();
+	}).bind(this), false);
 }
 
 // completely updates layers window
 LayersWindow.prototype.fullUpdate = function() {
+	if(grid.curSprite.sprite.height === 0) return; // no need to update if current sprite is empty
+
 	var i;
 	// add layers if needed
 	var numLayers = grid.curSprite.sprite.frames[0].layers.length;
@@ -43,33 +57,147 @@ LayersWindow.prototype.fullUpdate = function() {
 		this.addLayer();
 	while(this.layerContainers.length > numLayers)
 		this.removeLayer();
-	// set current layer
+	// set current layer visually
 	var curFrame = grid.curSprite.sprite.frames[grid.curSprite.sprite.curFrameI];
-	this.layerContainers[curFrame.curLayerI].id = 'activeLayerContainer';
+	for(i = 0; i < this.layerContainers.length; ++i) {
+		if(i !== curFrame.curLayerI) this.layerContainers[i].removeAttribute('id');
+		else this.layerContainers[i].id = 'activeLayerContainer';
+		// TODO [2] should not be a constant -- have to implement a more fool-proof way (no internet right now doe)
+		this.layerContainers[i].getElementsByTagName('img')[2].className = curFrame.layers[i].visible ? 'layerViewEyeShown' : 'layerViewEyeHidden';
+		this.layerContainers[i].getElementsByClassName('layerTitle')[0].innerHTML = curFrame.layers[i].title;
+	}
 	// draw each layer of current frame
 	for(i = 0; i < numLayers; ++i) {
-		// TODO center the drawing
 		var maxDimension = curFrame.layers[i].pixels[0].length > curFrame.layers[i].pixels.length ? curFrame.layers[i].pixels[0].length : curFrame.layers[i].pixels.length,
 			ctx = this.layerContainers[i].getElementsByTagName('canvas')[0].getContext('2d'),
 			canvasWidth = ctx.canvas.width,
-			pixelWidth, framePadding, usableWidth, drawOffset;
+			pixelWidth, framePadding, usableWidth, 
+			drawOffsetX, drawOffsetY;
 		// clear canvas
 		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 		if(maxDimension <= MAX_LAYER_DISPLAY_PADDING_SIZE) framePadding = MAX_LAYER_DISPLAY_PADDING;
 		else if(maxDimension >= MIN_LAYER_DISPLAY_PADDING_SIZE) framePadding = MIN_LAYER_DISPLAY_PADDING;
 		else framePadding = MAX_LAYER_DISPLAY_PADDING - (MAX_LAYER_DISPLAY_PADDING - MIN_LAYER_DISPLAY_PADDING) * ((MAX_LAYER_DISPLAY_PADDING_SIZE + maxDimension) / MIN_LAYER_DISPLAY_PADDING_SIZE);
 		usableWidth = canvasWidth - canvasWidth * framePadding;
-		drawOffset = framePadding / 2 * canvasWidth;
 		pixelWidth = usableWidth / maxDimension;
+		if(curFrame.layers[i].pixels[0].length > curFrame.layers[i].pixels.length) { // width > height
+			drawOffsetX = (framePadding / 2) * canvasWidth;
+			drawOffsetY = canvasWidth / 2 - curFrame.layers[i].pixels.length / 2 * pixelWidth;
+		} else {
+			drawOffsetY = (framePadding / 2) * canvasWidth;
+			drawOffsetX = canvasWidth / 2 - curFrame.layers[i].pixels[0].length / 2 * pixelWidth;
+		}
 		for(rows = 0; rows < curFrame.layers[i].pixels.length; ++rows) {
 			for(cols = 0; cols < curFrame.layers[i].pixels[0].length; ++cols) {
 				var curPxColor = curFrame.layers[i].pixels[rows][cols];
 				if(curPxColor !== '') {
 					ctx.fillStyle = curPxColor;
-					ctx.fillRect(drawOffset + cols*pixelWidth, drawOffset + rows*pixelWidth, pixelWidth, pixelWidth);
+					ctx.fillRect(drawOffsetX + cols*pixelWidth, drawOffsetY + rows*pixelWidth, pixelWidth, pixelWidth);
 				}
 			}
 		}
+	}
+}
+
+LayersWindow.prototype.handleContainerClick = function(event) {
+	// TODO getting parent container is (or will be) repeated. Should function it off (if that's even a phrase)
+	var containerElem = event.target;
+	while(containerElem.className !== 'layerContainer') containerElem = containerElem.parentNode;
+	var layerI = this.getLayerContainerPos(containerElem);
+	// TODO update curSprite's curLayerI
+	// change visually active container
+	this.layerContainers[grid.curSprite.sprite.frames[0].curLayerI].removeAttribute('id');
+	containerElem.id = 'activeLayerContainer';
+	// change curLayerI
+	grid.curSprite.sprite.frames[grid.curSprite.sprite.curFrameI].curLayerI = layerI;
+	grid.render();
+}
+
+LayersWindow.prototype.handleViewEyeClick = function(event) {
+	var containerElem = event.target;
+	while(containerElem.className !== 'layerContainer') containerElem = containerElem.parentNode;
+	var layerI = this.getLayerContainerPos(containerElem);
+	// TODO probably not in this class, but when eye isn't visible shouldn't be able to draw on that layer
+	if(grid.curSprite.sprite.frames[0].layers[layerI].visible) {
+		grid.curSprite.sprite.hideLayer(layerI);
+		event.target.className = 'layerViewEyeHidden';
+	} else {
+		grid.curSprite.sprite.showLayer(layerI);
+		event.target.className = 'layerViewEyeShown';
+	}
+	grid.render();
+	animationWindow.update();
+	event.stopPropagation(); // so it doesn't go to the layer-changing container click event .. might have to change
+}
+
+LayersWindow.prototype.handleUpArrowClick = function(event) {
+	var containerElem = event.target;
+	while(containerElem.className !== 'layerContainer') containerElem = containerElem.parentNode;
+	var layerI = this.getLayerContainerPos(containerElem);
+	if(layerI > 0) {
+		grid.curSprite.sprite.switchLayers(layerI, layerI - 1);
+
+		grid.render();
+		animationWindow.update();
+		layersWindow.fullUpdate();
+	}
+	event.stopPropagation(); // so it doesn't go to the layer-changing container click event .. might have to change
+}
+
+LayersWindow.prototype.handleDownArrowClick = function(event) {
+	var containerElem = event.target;
+	while(containerElem.className !== 'layerContainer') containerElem = containerElem.parentNode;
+	var layerI = this.getLayerContainerPos(containerElem);
+	if(layerI < this.layerContainers.length-1) {
+		grid.curSprite.sprite.switchLayers(layerI, layerI + 1);
+
+		grid.render();
+		animationWindow.update();
+		layersWindow.fullUpdate();
+	}
+	event.stopPropagation(); // so it doesn't go to the layer-changing container click event .. might have to change
+}
+
+// handles a double-click on title
+LayersWindow.prototype.handleTitleEvent = function(event) {
+	function changeTitle() {
+		// TODO accepts only whitespace right now
+		if(event.target.innerHTML.trim().length === 0) event.target.innerHTML = curLayer.title;
+		else {
+			curLayer.title = event.target.innerHTML.trim();
+		}
+	}
+	var containerElem = event.target;
+	while(containerElem.className !== 'layerContainer') containerElem = containerElem.parentNode;
+	var layerI = this.getLayerContainerPos(containerElem);
+	var curLayer = grid.curSprite.sprite.frames[grid.curSprite.sprite.curFrameI].layers[layerI];
+	if(event.type === 'dblclick') {
+		// make title text editable
+		event.target.contentEditable = true;
+		// highlight current title
+		var selection = window.getSelection(),
+			range = document.createRange();
+		range.selectNodeContents(event.target.childNodes[0]);
+		selection.removeAllRanges();
+		selection.addRange(range);
+	} else if(event.type === 'keypress') {
+		var keyCode = event.keyCode || event.which;
+		var BACKSPACE = 8, TAB = 9, ENTER = 13;
+		var isAlphaNumeric = /[a-zA-Z0-9-_ ]/.test(String.fromCharCode(keyCode));
+		if(keyCode === ENTER || keyCode === TAB) {
+			event.preventDefault();
+			window.getSelection().removeAllRanges(); // clear highlighting
+			event.target.blur(); // unfocus
+			event.target.contentEditable = false;
+			changeTitle();
+		} else if(!isAlphaNumeric && keyCode !== BACKSPACE) {
+			event.preventDefault();
+		}
+		event.stopPropagation(); // keeps changing the current tool
+	} else if(event.type === 'blur') {
+		// TODO click fires before blur, so it always changes back to default
+		event.target.contentEditable = false;
+		changeTitle();
 	}
 }
 
@@ -88,15 +216,21 @@ LayersWindow.prototype.addLayer = function() {
 	newLayerTitle.className = 'layerTitle';
 	newUpArrow.className = 'layerUpArrow';
 	newDownArrow.className = 'layerDownArrow';
-	newViewEye.className = 'layerViewEye';
-	// set layer title
-	newLayerTitle.innerHTML = 'Layer ' + (this.layerContainers.length + 1);
+	newViewEye.className = 'layerViewEyeShown';
 	// add container's children to it
 	newContainer.appendChild(newLayerDisplay);
 	newContainer.appendChild(newLayerTitle);
 	newContainer.appendChild(newUpArrow);
 	newContainer.appendChild(newDownArrow);
 	newContainer.appendChild(newViewEye);
+	// add click handler for container and its elements
+	newContainer.addEventListener('mouseup', this.handleContainerClick.bind(this), false);
+	newUpArrow.addEventListener('mouseup', this.handleUpArrowClick.bind(this), false);
+	newDownArrow.addEventListener('mouseup', this.handleDownArrowClick.bind(this), false);
+	newViewEye.addEventListener('mouseup', this.handleViewEyeClick.bind(this), false);
+	newLayerTitle.addEventListener('dblclick', this.handleTitleEvent.bind(this), false);
+	newLayerTitle.addEventListener('keypress', this.handleTitleEvent.bind(this), false);
+	newLayerTitle.addEventListener('blur', this.handleTitleEvent.bind(this), false);
 	// add container to scroll container
 	this.layersScrollContainer.insertBefore(newContainer, this.addLayerButton);
 	// update display's dimensions (uses offsetWidth -- think that needs to be displayed first)

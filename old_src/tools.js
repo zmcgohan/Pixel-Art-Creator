@@ -58,6 +58,7 @@ EraserTool.prototype.handleEvent = function(event) {
 	}
 }
 
+// TODO should be case-insensitive -- keyCode/which are weird.. figure it out
 function addToolKeyHandlers() {
 	window.addEventListener('keypress', function(event) {
 		var keyPressed = event.which || event.keyCode || event.charCode;

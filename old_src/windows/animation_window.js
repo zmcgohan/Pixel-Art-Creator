@@ -59,7 +59,7 @@ AnimationWindow.prototype.update = function() {
 		framePadding, // padding around each drawn frame inside of canvas
 		frameWidth, // width of frame slide
 		usableWidth, // width of drawable area (frameWidth * framePadding)
-		drawOffset, // offset into the canvas to draw first pixel
+		drawOffsetX, drawOffsetY, // offset into the canvas to draw first pixel
 		pixelWidth; // width of each drawn frame pixel
 	// add or remove slides as needed
 	if(numFrames > this.animationSlides.length) {
@@ -82,9 +82,14 @@ AnimationWindow.prototype.update = function() {
 	// draw each frame to its slide
 	frameWidth = this.animationSlides[0].width;
 	usableWidth = frameWidth - frameWidth * framePadding;
-	drawOffset = (framePadding / 2) * frameWidth;
 	pixelWidth = usableWidth / maxDimension;
-	// TODO center the lesser dimension
+	if(grid.curSprite.sprite.width > grid.curSprite.sprite.height) {
+		drawOffsetX = (framePadding / 2) * frameWidth;
+		drawOffsetY = frameWidth / 2 - grid.curSprite.sprite.height / 2 * pixelWidth;
+	} else {
+		drawOffsetY = (framePadding / 2) * frameWidth;
+		drawOffsetX = frameWidth / 2 - grid.curSprite.sprite.width / 2 * pixelWidth;
+	}
 	// TODO very inefficient -- probably draw as-needed onto off-screen canvas for each frame, then just drawImage?
 	for(i = 0; i < numFrames; ++i) {
 		// highlight current frame
@@ -93,13 +98,16 @@ AnimationWindow.prototype.update = function() {
 		}
 		var ctx = this.animationSlides[i].getContext('2d');
 		ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height);
+		// go through layers and draw their pixels
 		for(rows = 0; rows < grid.curSprite.sprite.height; ++rows) {
 			for(cols = 0; cols < grid.curSprite.sprite.width; ++cols) {
-				// TODO change 0 to curLayerI
-				var curPxColor = grid.curSprite.sprite.frames[i].layers[grid.curSprite.sprite.frames[i].curLayerI].pixels[rows][cols];
-				if(curPxColor !== '') {
-					ctx.fillStyle = curPxColor;
-					ctx.fillRect(drawOffset + cols*pixelWidth, drawOffset + rows*pixelWidth, pixelWidth, pixelWidth);
+				for(var layerI = 0; layerI < grid.curSprite.sprite.frames[i].layers.length; ++layerI) {
+					var curLayer = grid.curSprite.sprite.frames[i].layers[layerI];
+					if(curLayer.visible && curLayer.pixels[rows][cols] !== '') {
+						ctx.fillStyle = curLayer.pixels[rows][cols];
+						ctx.fillRect(drawOffsetX + cols*pixelWidth, drawOffsetY + rows*pixelWidth, pixelWidth, pixelWidth);
+						break;
+					}
 				}
 			}
 		}

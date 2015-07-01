@@ -27,6 +27,16 @@ function Grid() {
 	this.addEventListeners();
 }
 
+// adds a new sprite to grid
+Grid.prototype.addSprite = function() {
+	var newSprite = new Sprite();
+	this.sprites.push({
+		//pos: { x: undefined, y: undefined },
+		pos: { x: 0, y: 0 },
+		sprite: newSprite
+	});
+}
+
 // sets new cellWidth & cellHeight values based on a given new width
 Grid.prototype.setCellWidth = function(newWidth) {
 	var widthHeightRatio = this.cellWidth / this.cellHeight;
@@ -84,10 +94,15 @@ Grid.prototype.render = function() {
 						break;
 				}
 			}
+			// floor pos and ceil width/height to avoid lines
+			drawXPos = Math.floor(drawXPos);
+			drawYPos = Math.floor(drawYPos);
+			var drawCellWidth = Math.ceil(this.cellWidth),
+				drawCellHeight = Math.ceil(this.cellHeight);
 			if(spriteCellColor !== undefined) { // sprite cell found -- draw it
 				if(spriteCellColor !== '') ctx.fillStyle = spriteCellColor;
 				else ctx.fillStyle = SPRITE_DEFAULT_BG_COLOR;
-				ctx.fillRect(drawXPos, drawYPos, this.cellWidth, this.cellHeight);
+				ctx.fillRect(drawXPos, drawYPos, drawCellWidth, drawCellHeight);
 			} else { // empty cell -- default bg color
 				// calculate background color -- different if in negative cells
 				if(topLeftCellX+j >= 0 && topLeftCellY+i >= 0) ctx.fillStyle = this.bgColors[(topLeftCellX+topLeftCellY+i+j)%this.bgColors.length];
@@ -96,13 +111,13 @@ Grid.prototype.render = function() {
 					var yAdd = topLeftCellY+i >= 0 ? topLeftCellY : this.bgColors.length + (topLeftCellY % this.bgColors.length);
 					ctx.fillStyle = this.bgColors[(xAdd+yAdd+i+j)%this.bgColors.length];
 				}
-				ctx.fillRect(drawXPos, drawYPos, this.cellWidth, this.cellHeight);
+				ctx.fillRect(drawXPos, drawYPos, drawCellWidth, drawCellHeight);
 			}
 			// if active cell, shade it
 			if(topLeftCellX+j === this.activeCell.x && topLeftCellY+i === this.activeCell.y) {
 				ctx.globalAlpha = this.activeCellAlpha;
 				ctx.fillStyle = this.activeCellColor;
-				ctx.fillRect(drawXPos, drawYPos, this.cellWidth, this.cellHeight);
+				ctx.fillRect(drawXPos, drawYPos, drawCellWidth, drawCellHeight);
 				ctx.globalAlpha = 1.0;
 			}
 		}
@@ -143,6 +158,8 @@ Grid.prototype.addEventListeners = function() {
 		grid.render();
 		// TODO this might be better-placed in a general 'events' area (not Grid-specific)
 		animationWindow.update();
+		layersWindow.fullUpdate();
+		spritesWindow.fullUpdate();
 	}, false);
 
 	// moving around the grid and zooming in/out
@@ -210,19 +227,5 @@ Grid.prototype.addEventListeners = function() {
 		toolBox.curTool.handleEvent(event);
 
 		grid.render();
-	}, false);
-
-	// handle key clicks
-	window.addEventListener("keydown", function(event) {
-		if(event.which === 32) {
-			if(toolBox.curTool === tools.pen) {
-				console.log("Tool: Eraser");
-				toolBox.curTool = tools.eraser;
-			} else if(toolBox.curTool === tools.eraser) {
-				console.log("Tool: Pen");
-				toolBox.curTool = tools.pen;
-			}
-			toolBox.update();
-		}
 	}, false);
 }

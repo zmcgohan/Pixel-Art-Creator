@@ -4,6 +4,8 @@
 
 var SpriteSide = { TOP: 0, RIGHT: 1, BOTTOM: 2, LEFT: 3 };
 
+var SPRITE_DEFAULT_BG_COLOR = '#fdfdfd';
+
 function Sprite() {
 	this.width = 0;
 	this.height = 0;
@@ -137,19 +139,37 @@ Sprite.prototype.removePixels = function(side, numPixels) {
 
 // adds a new frame to sprite
 Sprite.prototype.addFrame = function() {
-	this.frames.push(new Frame());
-	this.frames[this.frames.length-1].layers[0].initPixels(this.height, this.width);
+	var newFrame = new Frame();
+	newFrame.layers[0].initPixels(this.height, this.width);
+	for(var i = 1; i < this.frames[0].layers.length; ++i) {
+		var newLayer = new Layer();
+		newLayer.initPixels(this.height, this.width);
+		newFrame.layers.push(newLayer);
+	}
+	this.frames.push(newFrame);
+}
+
+// adds a new layer to sprite
+Sprite.prototype.addLayer = function() {
+	for(var frameI = 0; frameI < this.frames.length; ++frameI) {
+		this.frames[frameI].layers.push(new Layer());
+		this.frames[frameI].layers[this.frames[frameI].layers.length-1].initPixels(this.height, this.width);
+	}
 }
 
 // gets the pixel at specified row and col of current frame/layer
 Sprite.prototype.getPixel = function(row, col) {
 	var curFrame = this.frames[this.curFrameI],
-		curLayer = curFrame.layers[curFrame.curLayerI];
-	if(curLayer.pixels[row] !== undefined && curLayer.pixels[row][col] !== undefined) {
-		return curLayer.pixels[row][col];
-	} else {
-		return undefined;
+		curLayer,
+		pxColor = undefined;
+	for(var layerI = 0; layerI < curFrame.layers.length; ++layerI) {
+		curLayer = curFrame.layers[layerI];
+		if(curLayer.pixels[row] !== undefined && curLayer.pixels[row][col] !== undefined) {
+			pxColor = curLayer.visible ? curLayer.pixels[row][col] : ''; // if curLayer isn't visible, blank cell (rather than undefined)
+			if(pxColor !== '') break;
+		}
 	}
+	return pxColor;
 }
 
 Sprite.prototype.colorPixel = function(row, col, color) {
@@ -159,6 +179,9 @@ Sprite.prototype.colorPixel = function(row, col, color) {
 	var i, j,
 		curFrame = this.frames[this.curFrameI],
 		curLayer = curFrame.layers[curFrame.curLayerI];
+	// if current layer isn't visible, don't draw anything
+	// TODO double-check this doesn't break anything. Seems too simple. I'm tired
+	if(!curLayer.visible) return undefined;
 	// sprite is currently empty -- create first pixel and return
 	if(this.width === 0 && this.height === 0) {
 		curLayer.pixels.push([color]);
@@ -167,6 +190,7 @@ Sprite.prototype.colorPixel = function(row, col, color) {
 		// TODO change to per-frame updating
 		animationWindow.update();
 		layersWindow.fullUpdate();
+		spritesWindow.fullUpdate();
 		return;
 	}
 	// resize if necessary
@@ -188,9 +212,10 @@ Sprite.prototype.colorPixel = function(row, col, color) {
 	}
 	curLayer.pixels[row][col] = color;
 	dimensionsDisplay.update();
-	// TODO change to per-frame updating (for layers, sprites and animation)
+	// TODO change to per-frame updating (for layers, sprites and animation) for efficiency
 	animationWindow.update();
 	layersWindow.fullUpdate();
+	spritesWindow.fullUpdate();
 	return true;
 }
 
@@ -205,9 +230,10 @@ Sprite.prototype.erasePixel = function(row, col) {
 		dimensionChanges = this.trimSize();
 	}
 	dimensionsDisplay.update();
-	// TODO change to per-frame updating
+	// TODO change to per-frame updating for efficiency
 	animationWindow.update();
 	layersWindow.fullUpdate();
+	spritesWindow.fullUpdate();
 	return dimensionChanges;
 }
 
@@ -363,18 +389,80 @@ Sprite.prototype.resize = function(numRows, numCols) {
 	this.height = this.frames[0].layers[0].pixels.length;
 	grid.render();
 	dimensionsDisplay.update();
-	// TODO change to per-frame updating
+	// TODO change to per-frame updating for efficiency
 	animationWindow.update();
 	layersWindow.fullUpdate();
 }
 
+Sprite.prototype.switchLayers = function(layerOne, layerTwo) {
+	for(var frameI = 0; frameI < this.frames.length; ++frameI) {
+		var tempRef = this.frames[frameI].layers[layerTwo];
+		this.frames[frameI].layers[layerTwo] = this.frames[frameI].layers[layerOne];
+		this.frames[frameI].layers[layerOne] = tempRef;
+	}
+	if(this.frames[this.curFrameI].curLayerI === layerOne) {
+		this.frames[this.curFrameI].curLayerI = layerTwo;
+	} else if(this.frames[this.curFrameI].curLayerI === layerTwo) {
+		this.frames[this.curFrameI].curLayerI = layerOne;
+	}
+}
+
+Sprite.prototype.hideLayer = function(layerI) {
+	for(var frameI = 0; frameI < this.frames.length; ++frameI) {
+		this.frames[frameI].layers[layerI].visible = false;
+	}
+}
+
+Sprite.prototype.showLayer = function(layerI) {
+	for(var frameI = 0; frameI < this.frames.length; ++frameI) {
+		this.frames[frameI].layers[layerI].visible = true;
+	}
+}
+
+// renders frame index frameI of sprite onto ctx starting at startXPos, startYPos with each pixel being pixelWidth pxs wide
+// if bgVisible isn't specified, === false -- no background drawn
+Sprite.prototype.render = function(ctx, frameI, startXPos, startYPos, pixelWidth, bgVisible) {
+	bgVisible = bgVisible || false;
+	var layerI, row, col,
+		curLayer,
+		curPxColor,
+		drawPxWidth = Math.ceil(pixelWidth);
+	//pixelWidth = Math.ceil(pixelWidth);
+	for(row = 0; row < this.height; ++row) {
+		for(col = 0; col < this.width; ++col) {
+			curPxColor = '';
+			for(layerI = 0; layerI < this.frames[frameI].layers.length; ++layerI) {
+				curLayer = this.frames[frameI].layers[layerI];
+				if(!curLayer.visible) continue; // layer hidden? don't worry about it
+				if(curLayer.pixels[row][col] !== '') {
+					curPxColor = curLayer.pixels[row][col];
+					break;
+				}
+			}
+			if(curPxColor !== '') {
+				ctx.fillStyle = curPxColor;
+				ctx.fillRect(Math.floor(startXPos + col * pixelWidth), Math.floor(startYPos + row * pixelWidth),
+						drawPxWidth, drawPxWidth);
+			} else if(bgVisible) { // bg is visible -- draw it
+				ctx.fillStyle = SPRITE_DEFAULT_BG_COLOR;
+				ctx.fillRect(Math.floor(startXPos + col * pixelWidth), Math.floor(startYPos + row * pixelWidth),
+						drawPxWidth, drawPxWidth);
+			}
+		}
+	}
+}
+
 function Frame() {
 	this.layers = [ new Layer() ];
+	// TODO curLayerI should be in Sprite class -- should stay the same between frames
 	this.curLayerI = 0; // current layer index
 }
 
 function Layer() {
 	this.pixels = [];
+	// TODO only render visible layers -- not to be put in this class obv
+	this.visible = true;
+	this.title = 'New Layer';
 }
 
 // initializes this.pixels to an empty array ('' pixels) of size cols x rows
