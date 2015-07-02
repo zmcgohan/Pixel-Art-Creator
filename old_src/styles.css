@@ -137,7 +137,7 @@ div {
 	position: absolute;
 	left: 6.3vmax;
 	top: 1vmax;
-	width: 22vmax;
+	width: 25.8vmax;
 	height: 4vmax;
 	vertical-align: top;
 	z-index: 1;
@@ -161,7 +161,7 @@ div {
 	#newColorSlideButton {
 		position: absolute;
 		top: 2.4vmax;
-		left: 17.6vmax;
+		left: 21.4vmax;
 		height: 1.3vmax;
 		width: 1.3vmax;
 		background: linear-gradient(rgb(140,140,140),rgb(180,180,180));
@@ -183,8 +183,8 @@ div {
 	width: 22vmax;
 	height: 21.3vmax;
 	position: absolute;
-	left: 0;
-	top: 4.6vmax;
+	left: 6.3vmax;
+	top: 5.3vmax;
 	background: rgba(34,34,34,0.85);
 	overflow: hidden;
 	z-index: 1;
@@ -197,6 +197,17 @@ div {
 		height: 12.6vmax;
 		border: 1px solid rgb(100,100,100);
 		border-radius: 2px;
+	}
+	#brightnessOverlay {
+		position: absolute;
+		top: 0.6vmax;
+		left: 0.6vmax;
+		width: 13.5vmax;
+		height: 12.6vmax;
+		border: 1px solid rgb(100,100,100);
+		border-radius: 2px;
+		z-index: 2;
+		background: linear-gradient(rgba(0,0,0,0.0),rgba(0,0,0,1.0));
 	}
 	#hueBar {
 		position: absolute;
@@ -227,9 +238,12 @@ div {
 	}
 	#chosenColorDisplay {
 		top: 0.6vmax;
+		height: 12.6vmax;
 	}
+	/* No need for this right now, but might later */
 	#lastColorDisplay {
 		top: 7.2vmax;
+		display: none;
 	}
 	.colorInputContainer, #hexValueContainer {
 		position: absolute;
@@ -274,24 +288,17 @@ div {
 		left: 1.8vmax;
 		width: 8vmax;
 	}
-	#newColorDialog input[type="text"] {
+	.rgbHsvInput, #hexValueInput {
 		position: absolute;
-		top: 0;
 		right: 0.5vmax;
-		background: none;
-		outline: none;
-		height: calc(1.9vmax - 2px);
-		line-height: calc(1.9vmax-2px);
-		font-size: 1.2vmax;
-		color: #dadada;
-		border: none;
-		font-family: Helvetica, sans-serif;
+		text-align: right;
+		cursor: text;
 	}
 	.rgbHsvInput {
-		width: 2.5vmax;
+		width: 3vmax;
 	}
-	#hexInput {
-		width: 4.5vmax;
+	#hexValueInput {
+		width: 6vmax;
 	}
 	#saveButton {
 		position: absolute;
@@ -318,7 +325,7 @@ div {
 	position: absolute;
 	top: 1vmax;
 	right: 1vmax;
-	width: 26.8vmax;
+	width: 30.6vmax;
 	height: 7.6vmax;
 }
 	/* TODO animationSlidesContainer gets in the way of grid if it doesn't have enough slides */
@@ -326,7 +333,7 @@ div {
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 19.0vmax;
+		width: 22.8vmax;
 		white-space: nowrap;
 		overflow-x: auto;
 		overflow-y: hidden;
@@ -349,7 +356,7 @@ div {
 	#newAnimationSlideButton {
 		position: absolute;
 		top: 2.4vmax;
-		left: 17.6vmax;
+		left: 21.4vmax;
 		height: 1.3vmax;
 		width: 1.3vmax;
 		background: linear-gradient(rgb(140,140,140),rgb(180,180,180));
@@ -589,6 +596,8 @@ div {
 		padding: 0 0.5vmax;
 		width: 8vmax;
 		height: 1.6vmax;
+		line-height: 1.6vmax;
+		font-size: 0.9vmax;
 		background: rgba(245,245,245,0.8);
 		border: solid 1px rgba(34,34,34,0.4);
 		border-radius: 0.5vmax;
@@ -611,6 +620,9 @@ div {
 			border-radius: 0.5vmax;
 			border: solid .15vmax rgba(34,34,34,0.4);
 			cursor: pointer;
+		}
+		#curSpriteDisplay {
+			border: dashed 0.2vmax rgba(34,34,34,0.7);
 		}
 		#newSpriteButton {
 			text-align: center;

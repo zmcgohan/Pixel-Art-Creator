@@ -164,17 +164,17 @@ LayersWindow.prototype.handleDownArrowClick = function(event) {
 
 // handles a double-click on title
 LayersWindow.prototype.handleTitleEvent = function(event) {
-	function changeTitle() {
-		// TODO accepts only whitespace right now
-		if(event.target.innerHTML.trim().length === 0) event.target.innerHTML = curLayer.title;
-		else {
-			curLayer.title = event.target.innerHTML.trim();
-		}
-	}
 	var containerElem = event.target;
 	while(containerElem.className !== 'layerContainer') containerElem = containerElem.parentNode;
 	var layerI = this.getLayerContainerPos(containerElem);
 	var curLayer = grid.curSprite.sprite.frames[grid.curSprite.sprite.curFrameI].layers[layerI];
+	function changeTitle() {
+		// TODO accepts only whitespace right now
+		if(event.target.innerHTML.trim().length === 0) event.target.innerHTML = curLayer.title;
+		else {
+			grid.curSprite.sprite.setLayerTitle(layerI, event.target.innerHTML.trim());
+		}
+	}
 	if(event.type === 'dblclick') {
 		// make title text editable
 		event.target.contentEditable = true;

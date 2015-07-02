@@ -34,7 +34,10 @@ SpritesWindow.prototype.addEventListeners = function() {
 	// new sprite button click (add sprite)
 	this.newSpriteButton.addEventListener('mouseup', (function(event) {
 		grid.addSprite();
+		grid.curSprite = grid.sprites[grid.sprites.length-1];
 		this.fullUpdate();
+		layersWindow.fullUpdate();
+		animationWindow.update();
 	}).bind(this), false);
 }
 
@@ -46,6 +49,13 @@ SpritesWindow.prototype.fullUpdate = function() {
 	// add sprite displays as needed
 	while(this.spriteDisplays.length < grid.sprites.length) this.addSpriteDisplay();
 	while(this.spriteDisplays.length > grid.sprites.length) this.removeSpriteDisplay();
+	// set current sprite display
+	for(spriteI = 0; spriteI < grid.sprites.length; ++spriteI) {
+		if(grid.sprites[spriteI].sprite !== grid.curSprite.sprite)
+			this.spriteDisplays[spriteI].removeAttribute('id');
+		else
+			this.spriteDisplays[spriteI].id = 'curSpriteDisplay';
+	}
 	// render each sprite
 	for(spriteI = 0; spriteI < grid.sprites.length; ++spriteI) {
 		curSprite = grid.sprites[spriteI].sprite;

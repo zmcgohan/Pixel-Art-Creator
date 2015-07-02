@@ -24,22 +24,23 @@
 		<div id="colorPalette">
 			<span id="colorSlidesContainer"></span>
 			<div id="newColorSlideButton">+</div>
-			<div id="newColorDialog">
-				<canvas id="saturationBrightnessBox"></canvas>
-				<canvas id="hueBarArrowCanvasLeft"></canvas>
-				<canvas id="hueBar"></canvas>
-				<canvas id="hueBarArrowCanvasRight"></canvas>
-				<canvas class="colorDisplay" id="chosenColorDisplay"></canvas>
-				<canvas class="colorDisplay" id="lastColorDisplay"></canvas>
-				<div class="colorInputContainer" id="rValueContainer">R <input type="text" class="rgbHsvInput" id="rValueInput" maxlength="3" /></div>
-				<div class="colorInputContainer" id="gValueContainer">G <input type="text" class="rgbHsvInput" id="gValueInput" maxlength="3" /></div>
-				<div class="colorInputContainer" id="bValueContainer">B <input type="text" class="rgbHsvInput" id="bValueInput" maxlength="3" /></div>
-				<div class="colorInputContainer" id="hValueContainer">H <input type="text" class="rgbHsvInput" id="hValueInput" maxlength="3" /></div>
-				<div class="colorInputContainer" id="sValueContainer">S <input type="text" class="rgbHsvInput" id="sValueInput" maxlength="3" /></div>
-				<div class="colorInputContainer" id="vValueContainer">V <input type="text" class="rgbHsvInput" id="vValueInput" maxlength="3" /></div>
-				<div id="hexValueContainer"># <input type="text" id="hexInput" maxlength="6" /></div>
-				<div id="saveButton">&#10003;</div>
-			</div>
+		</div>
+		<div id="newColorDialog">
+			<canvas id="brightnessOverlay"></canvas>
+			<canvas id="saturationBrightnessBox"></canvas>
+			<canvas id="hueBarArrowCanvasLeft"></canvas>
+			<canvas id="hueBar"></canvas>
+			<canvas id="hueBarArrowCanvasRight"></canvas>
+			<canvas class="colorDisplay" id="chosenColorDisplay"></canvas>
+			<canvas class="colorDisplay" id="lastColorDisplay"></canvas>
+			<div class="colorInputContainer" id="rValueContainer">R <span id="redValueInput" class="rgbHsvInput" contenteditable="true"></span></div>
+			<div class="colorInputContainer" id="gValueContainer">G <span id="greenValueInput" class="rgbHsvInput" contenteditable="true"></span></div>
+			<div class="colorInputContainer" id="bValueContainer">B <span id="blueValueInput" class="rgbHsvInput" contenteditable="true"></span></div>
+			<div class="colorInputContainer" id="hValueContainer">H <span id="hueValueInput" class="rgbHsvInput" contenteditable="true">211</span></div>
+			<div class="colorInputContainer" id="sValueContainer">S <span id="saturationValueInput" class="rgbHsvInput" contenteditable="true">175</span></div>
+			<div class="colorInputContainer" id="vValueContainer">V <span id="valueValueInput" class="rgbHsvInput" contenteditable="true">57</span></div>
+			<div id="hexValueContainer"># <span id="hexValueInput" class="rgbHsvInput" contenteditable="true">FF0000</span></div>
+			<div id="saveButton">&#10003;</div>
 		</div>
 		<div id="animationContainer">
 			<div id="animationSlidesContainer"></div>
@@ -73,6 +74,7 @@
 		<script src="sprite.js"></script>
 		<script src="windows/window.js"></script>
 		<script src="windows/color_palette.js"></script>
+		<script src="windows/color_picker.js"></script>
 		<script src="windows/tool_box.js"></script>
 		<script src="windows/dimensions_display.js"></script>
 		<script src="windows/animation_window.js"></script>

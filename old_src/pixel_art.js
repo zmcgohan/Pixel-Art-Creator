@@ -7,7 +7,14 @@ var AR = 2, // aspect ratio
 
 var canvas, ctx;
 
-var grid, colorPalette, toolBox, animationWindow, dimensionsDisplay, layersWindow, spritesWindow;
+var grid, 
+	colorPalette,
+   	toolBox, 
+	animationWindow, 
+	dimensionsDisplay, 
+	layersWindow, 
+	spritesWindow,
+	colorPicker;
 
 var tools = {};
 
@@ -32,9 +39,18 @@ animationWindow = new AnimationWindow();
 dimensionsDisplay = new DimensionsDisplay();
 layersWindow = new LayersWindow();
 spritesWindow = new SpritesWindow();
+colorPicker = new ColorPicker();
 
 // initial visual setup
 grid.render();
 animationWindow.update();
 layersWindow.fullUpdate();
 spritesWindow.fullUpdate();
+colorPicker.fullUpdate();
+
+colorPicker.show();
+
+var startTime = (new Date()).getTime();
+for(var i = 0; i < 100; i++) {
+	colorPicker.satBrightBoxUpdate();
+}

@@ -18,8 +18,9 @@ function Sprite() {
 // calls func(layer) on all frames and their layers
 // TODO not currently used -- but should be implemented
 Sprite.prototype.affectAllLayers = function(func) {
+	var numLayers = this.frames[0].layers.length;
 	for(var frameI = 0; frameI < this.frames.length; ++frameI) {
-		for(var layerI = 0; layerI < curFrame.layers.length; ++layerI) {
+		for(var layerI = 0; layerI < numLayers; ++layerI) {
 			func(this.frames[frameI].layers[layerI]);
 		}
 	}
@@ -142,9 +143,11 @@ Sprite.prototype.removePixels = function(side, numPixels) {
 Sprite.prototype.addFrame = function() {
 	var newFrame = new Frame();
 	newFrame.layers[0].initPixels(this.height, this.width);
+	newFrame.layers[0].title = this.frames[0].layers[0].title;
 	for(var i = 1; i < this.frames[0].layers.length; ++i) {
 		var newLayer = new Layer();
 		newLayer.initPixels(this.height, this.width);
+		newLayer.title = this.frames[0].layers[i].title;
 		newFrame.layers.push(newLayer);
 	}
 	this.frames.push(newFrame);
@@ -186,9 +189,11 @@ Sprite.prototype.colorPixel = function(row, col, color) {
 	// sprite is currently empty -- create first pixel and return
 	if(this.width === 0) {
 		// push pixel to all layers
-		for(var layerI = 0; layerI < this.frames[0].layers.length; ++layerI) {
-			if(curFrame.layers[layerI] !== curLayer) curFrame.layers[layerI].pixels.push(['']);
-			else curLayer.pixels.push([color]);
+		for(var frameI = 0; frameI < this.frames.length; ++frameI) {
+			for(var layerI = 0; layerI < this.frames[0].layers.length; ++layerI) {
+				if(this.frames[frameI].layers[layerI] !== curLayer) this.frames[frameI].layers[layerI].pixels.push(['']);
+				else curLayer.pixels.push([color]);
+			}
 		}
 		this.width = this.height = 1;
 		dimensionsDisplay.update();
@@ -457,15 +462,20 @@ Sprite.prototype.render = function(ctx, frameI, startXPos, startYPos, pixelWidth
 	}
 }
 
+// changes a layer's title across all frames
+Sprite.prototype.setLayerTitle = function(layerI, newTitle) {
+	var frameI;
+	for(frameI = 0; frameI < this.frames.length; ++frameI) {
+		this.frames[frameI].layers[layerI].title = newTitle;
+	}
+}
+
 function Frame() {
 	this.layers = [ new Layer() ];
-	// TODO curLayerI should be in Sprite class -- should stay the same between frames
-	this.curLayerI = 0; // current layer index
 }
 
 function Layer() {
 	this.pixels = [];
-	// TODO only render visible layers -- not to be put in this class obv
 	this.visible = true;
 	this.title = 'New Layer';
 }

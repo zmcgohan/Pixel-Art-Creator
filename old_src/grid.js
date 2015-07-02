@@ -9,7 +9,7 @@ var DEFAULT_BG_COLORS = [ '#fafafa', '#dedede' ],
 
 function Grid() {
 	// TODO setting for min/max cell width -- pixel art can get very detailed
-	MIN_CELL_WIDTH = Math.floor(canvas.width / 150); MAX_CELL_WIDTH = Math.floor(canvas.width / 3);
+	MIN_CELL_WIDTH = Math.floor(canvas.width / 250); MAX_CELL_WIDTH = Math.floor(canvas.width / 3);
 	this.sprites = [];
 	this.curSprite = undefined; // current sprite being edited
 	this.topLeftViewPos = { x: 0, y: 0 }; // top left view position (in pixels)
@@ -165,6 +165,7 @@ Grid.prototype.addEventListeners = function() {
 		animationWindow.update();
 		layersWindow.fullUpdate();
 		spritesWindow.fullUpdate();
+		colorPicker.fullUpdate();
 	}, false);
 
 	// moving around the grid and zooming in/out
