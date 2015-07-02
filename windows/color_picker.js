@@ -23,6 +23,9 @@ function ColorPicker() {
 	this.valueValueInput = document.getElementById('valueValueInput');
 	this.hexValueInput = document.getElementById('hexValueInput');
 
+	// color picker visible or not
+	this.visible = false;
+
 	// is hue bar drawn?
 	this.hueBarDrawUpdateNeeded = true;
 	this.hueBarMouseDown = false;
@@ -128,11 +131,13 @@ ColorPicker.prototype.show = function() {
 	this.saturation = 50;
 	this.brightness = 50;
 	this.fullUpdate();
+	this.visible = true;
 	this.newColorDialog.style.display = 'block';
 }
 
 ColorPicker.prototype.hide = function() {
 	this.newColorDialog.style.display = 'none';
+	this.visible = false;
 }
 
 ColorPicker.prototype.fullUpdate = function() {

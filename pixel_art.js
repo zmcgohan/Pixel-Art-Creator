@@ -46,11 +46,3 @@ grid.render();
 animationWindow.update();
 layersWindow.fullUpdate();
 spritesWindow.fullUpdate();
-colorPicker.fullUpdate();
-
-colorPicker.show();
-
-var startTime = (new Date()).getTime();
-for(var i = 0; i < 100; i++) {
-	colorPicker.satBrightBoxUpdate();
-}

@@ -40,6 +40,7 @@ DimensionsDisplay.prototype.update = function() {
 
 DimensionsDisplay.prototype.addEventListeners = function() {
 	// dimensions locked button functionality -- lock/unlock the current sprite
+	// TODO maybe flash the dimensions display if it's locked and they try and draw outside of sprite?
 	this.dimensionsLockedImage.addEventListener('mouseup', (function(event) {
 		grid.curSprite.sprite.dimensionsLocked = !grid.curSprite.sprite.dimensionsLocked ? true : false;
 		if(!grid.curSprite.sprite.dimensionsLocked) {
@@ -104,15 +105,10 @@ DimensionsDisplay.prototype.addEventListeners = function() {
 			// TODO when backspaced in Firefox, displays NaN
 			event.preventDefault();
 			fixInvalidDimensions(); // make sure width/height are valid upon change
-			if(event.target.id === DIMENSIONS_DISPLAY_WIDTH_TEXT_ID) { // currently in width text
-				// focus and highlight height
+			if(event.target.id === DIMENSIONS_DISPLAY_WIDTH_TEXT_ID) // currently in width text
 				this.dimensionsDisplayHeightText.focus();
-				highlightText(this.dimensionsDisplayHeightText.childNodes[0]);
-			} else { // currently in height text
-				// focus and highlight width
+			else // currently in height text
 				this.dimensionsDisplayWidthText.focus();
-				highlightText(this.dimensionsDisplayWidthText.childNodes[0]);
-			}
 		} else if((keyCode < 48 || keyCode > 57) && keyCode != LEFT_ARROW && keyCode != RIGHT_ARROW && keyCode != BACKSPACE) { // all other keys
 			event.preventDefault();
 		}
@@ -122,6 +118,7 @@ DimensionsDisplay.prototype.addEventListeners = function() {
 	this.dimensionsDisplayHeightText.addEventListener('keydown', handleDimensionsKeyPress, false);
 
 	// highlight text on first click, don't highlight if already focused (assumes that focus event fires before click)
+	/*
 	var handleDimensionsDisplayTextFocus = (function(event) {
 		this.nodeNeedsHighlighting = event.target.childNodes[0];
 	}).bind(this);
@@ -136,4 +133,9 @@ DimensionsDisplay.prototype.addEventListeners = function() {
 	this.dimensionsDisplayHeightText.addEventListener('focus', handleDimensionsDisplayTextFocus, false);
 	this.dimensionsDisplayWidthText.addEventListener('click', handleDimensionsDisplayTextClick, false);
 	this.dimensionsDisplayHeightText.addEventListener('click', handleDimensionsDisplayTextClick, false);
+	*/
+
+	this.dimensionsDisplayWidthText.onfocus = this.dimensionsDisplayHeightText.onfocus = (function(event) {
+		window.setTimeout(function() { highlightText(event.target.childNodes[0]); }, 1);
+	}).bind(this);
 }

@@ -210,6 +210,7 @@ Grid.prototype.addEventListeners = function() {
 
 	// handle mouse button being depressed
 	canvas.addEventListener("mousedown", function(event) {
+		if(event.which !== 1) return; // not a left click -- don't bother
 		mouseDown = true;
 
 		toolBox.curTool.handleEvent(event);

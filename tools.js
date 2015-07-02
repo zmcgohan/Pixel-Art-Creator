@@ -49,8 +49,7 @@ EraserTool.prototype.handleEvent = function(event) {
 				changedCol = clickedCell.x - grid.curSprite.pos.x;
 			var changedDimensions = grid.curSprite.sprite.erasePixel(changedRow, changedCol);
 			if(grid.curSprite.sprite.width === 0 || grid.curSprite.sprite.height === 0) {
-				grid.sprites.splice(grid.sprites.indexOf(grid.curSprite));
-				grid.curSprite = undefined;
+				grid.curSprite.pos = { x: undefined, y: undefined };
 				dimensionsDisplay.update();
 			} else {
 				grid.curSprite.pos.x += changedDimensions.left;

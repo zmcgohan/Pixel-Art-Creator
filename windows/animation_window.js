@@ -90,6 +90,7 @@ AnimationWindow.prototype.update = function() {
 		drawOffsetX = frameWidth / 2 - grid.curSprite.sprite.width / 2 * pixelWidth;
 	}
 	// TODO very inefficient -- probably draw as-needed onto off-screen canvas for each frame, then just drawImage?
+
 	for(i = 0; i < numFrames; ++i) {
 		// highlight current frame
 		if(i === grid.curSprite.sprite.curFrameI) {
@@ -104,7 +105,7 @@ AnimationWindow.prototype.update = function() {
 					var curLayer = grid.curSprite.sprite.frames[i].layers[layerI];
 					if(curLayer.visible && curLayer.pixels[rows][cols] !== '') {
 						ctx.fillStyle = curLayer.pixels[rows][cols];
-						ctx.fillRect(drawOffsetX + cols*pixelWidth, drawOffsetY + rows*pixelWidth, pixelWidth, pixelWidth);
+						ctx.fillRect(Math.floor(drawOffsetX + cols*pixelWidth), Math.floor(drawOffsetY + rows*pixelWidth), Math.ceil(pixelWidth), Math.ceil(pixelWidth));
 						break;
 					}
 				}

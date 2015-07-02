@@ -36,7 +36,7 @@ ColorPalette.prototype.update = function() {
 	var newColorSlideButton = document.getElementById('newColorSlideButton');
 	var newColorClickListener = (function(event) {
 		if(!this.dragged) {
-			if(colorPicker.newColorDialog.style.display !== 'block') {
+			if(!colorPicker.visible) {
 				colorPicker.show();
 			} else {
 				colorPicker.hide();
