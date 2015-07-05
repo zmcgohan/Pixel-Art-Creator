@@ -176,6 +176,7 @@ Grid.prototype.addEventListeners = function() {
 		if(!event.ctrlKey) { // basic scrolling (moves grid)
 			grid.topLeftViewPos.x += Math.floor(event.deltaX*SCROLL_MULTIPLIER);
 			grid.topLeftViewPos.y += Math.floor(event.deltaY*SCROLL_MULTIPLIER);
+			grid.activeCell = grid.getCellAtPos(grid.topLeftViewPos.x+event.clientX*AR, grid.topLeftViewPos.y+event.clientY*AR);
 			grid.render();
 		} else { // Chrome sets ctrlKey flag for pinching -- zoom grid
 			var widthHeightRatio = grid.cellHeight / grid.cellWidth,

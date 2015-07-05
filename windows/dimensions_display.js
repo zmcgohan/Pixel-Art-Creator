@@ -21,7 +21,7 @@ function DimensionsDisplay() {
 DimensionsDisplay.prototype = Object.create(Window.prototype);
 
 DimensionsDisplay.prototype.update = function() {
-	if(grid.curSprite !== undefined) {
+	if(grid.curSprite.sprite.width > 0) {
 		// make sure dimensions display isn't hidden
 		if(this.dimensionsDisplayDiv.style.display !== 'block') {
 			this.dimensionsDisplayDiv.style.display = 'block';

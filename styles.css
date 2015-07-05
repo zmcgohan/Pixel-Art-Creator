@@ -137,27 +137,101 @@ div {
 	position: absolute;
 	left: 6.3vmax;
 	top: 1vmax;
-	width: 22.8vmax;
-	height: 4vmax;
+	max-width: 19vmax;
 	vertical-align: top;
 	z-index: 1;
 	background: none;
 }
-	.colorSlide {
+	.colorSlideLarge, .colorSlideLargeUnused, #newColorSlide {
 		position: relative;
 		display: inline-block;
 		float: left;
 		width: 3.3vmax;
 		height: 3.3vmax;
-		margin: 0 0.5vmax 0 0;
+		margin: 0 0.25vmax 0 0.25vmax;
 		border: solid .15vmax rgba(34,34,34,0.4);
 		border-radius: 0.5vmax;
+		cursor: pointer;
+	}
+	.colorSlideLargeUnused {
+		background: rgba(60,60,60,0.4);
+		opacity: 0.3;
+	}
+	.colorSlideLargeUnused:hover {
+		opacity: 0.8;
+	}
+	#newColorSlide {
+		background: rgba(170,170,170,0.6);
+		text-align: center;
+		font-size: 2.5vmax;
+		line-height: 2.8vmax;
+		opacity: 0.5;
+		cursor: pointer;
+	}
+	#newColorSlide:hover {
+		opacity: 1.0;
+	}
+	/* TODO perhaps set FIRST unused to have background, and others to only have background when container is hovered over? */
+	.colorSlideSmall, .colorSlideSmallUnused {
+		position: relative;
+		display: inline-block;
+		float: left;
+		width: 1.5vmax;
+		height: 1.5vmax;
+		margin: 0 0.4vmax 0.3vmax 0;
+		border: solid .1vmax rgba(34,34,34,0.4);
+		border-radius: 0.2vmax;
+		background: #ff0000;
+		cursor: pointer;
+		background-clip: padding-box;
+	}
+	/*
+	#colorPalette:hover .colorSlideSmallUnused {
+		opacity: 0.3;
+	}
+	*/
+	.colorSlideSmallUnused {
+		background: rgba(60,60,60,0.4);
+		opacity: 0.3;
+	}
+	.colorSlideSmallUnused:hover {
+		opacity: 0.8;
 	}
 	.curSlide {
 		border-style: dashed;
 		border-color: rgba(34,34,34,0.7);
 		border-width: .2vmax;
 	}
+	#paletteChangeOptionsContainer {
+		position: absolute;
+		top: 1vmax;
+		left: 25.6vmax;
+		width: 1vmax;
+		height: 3.3vmax;
+	}
+		#paletteUpArrow, #paletteDownArrow, #paletteChooseButton {
+			position: absolute;
+			width: 1vmax;
+			height: 1vmax;
+			opacity: 0.6;
+			cursor: pointer;
+		}
+		#paletteUpArrow:hover, #paletteDownArrow:hover, #paletteChooseButton:hover {
+			opacity: 1.0;
+		}
+		#paletteUpArrow {
+			top: 0; left: 0;
+		}
+		#paletteChooseButton {
+			text-align: center;
+			font-size: 1.2vmax;
+			line-height: 1.2vmax;
+			margin: auto; top: 0; right: 0; bottom: 0; left: 0;
+		}
+		#paletteDownArrow {
+			bottom: 0; right: 0;
+		}
+	/*
 	#newColorSlideButton {
 		position: absolute;
 		top: 2.4vmax;
@@ -174,6 +248,7 @@ div {
 		opacity: 0.95;
 		cursor: pointer;
 	}
+	*/
 	#newColorSlideButton:hover {
 		opacity: 1.0;
 	}
@@ -300,7 +375,7 @@ div {
 	#hexValueInput {
 		width: 6vmax;
 	}
-	#saveButton {
+	#saveColorButton {
 		position: absolute;
 		bottom: 0.6vmax;
 		right: 1.8vmax;
@@ -314,7 +389,7 @@ div {
 		border-radius: 2px;
 		text-align: center;
 	}
-	#saveButton:hover {
+	#saveColorButton:hover {
 		border-color: #bbbbbb;
 		color: #00ff00;
 	}

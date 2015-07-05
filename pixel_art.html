@@ -23,7 +23,15 @@
 		</div>
 		<div id="colorPalette">
 			<span id="colorSlidesContainer"></span>
-			<div id="newColorSlideButton">+</div>
+			<!--
+			<span id="newColorSlide">+</span>
+			-->
+			<!-- <div id="newColorSlideButton">+</div> -->
+		</div>
+		<div id="paletteChangeOptionsContainer">
+			<img src="icons/up_arrow.png" alt="" id="paletteUpArrow" />
+			<div id="paletteChooseButton">1</div>
+			<img src="icons/down_arrow.png" alt="" id="paletteDownArrow" />
 		</div>
 		<div id="newColorDialog">
 			<canvas id="brightnessOverlay"></canvas>
@@ -40,7 +48,7 @@
 			<div class="colorInputContainer" id="sValueContainer">S <span id="saturationValueInput" class="rgbHsvInput" contenteditable="true">175</span></div>
 			<div class="colorInputContainer" id="vValueContainer">V <span id="valueValueInput" class="rgbHsvInput" contenteditable="true">57</span></div>
 			<div id="hexValueContainer"># <span id="hexValueInput" class="rgbHsvInput" contenteditable="true">FF0000</span></div>
-			<div id="saveButton">&#10003;</div>
+			<div id="saveColorButton">&#10003;</div>
 		</div>
 		<div id="animationContainer">
 			<div id="animationSlidesContainer"></div>
@@ -66,10 +74,9 @@
 		<!-- <div id="dimensionsDisplay"><span id="dimensionsDisplayText" contenteditable="true"></span> <img id="dimensionsLockedImage" src="icons/unlocked.png" alt="" /></div> -->
 		<div id="dimensionsDisplay"><div id="dimensionsDisplayWidthText" contenteditable="true"></div>x<div id="dimensionsDisplayHeightText" contenteditable="true"></div> <img id="dimensionsLockedImage" src="icons/unlocked.png" alt="" /></div>
 		<canvas id="mainCanvas" tabindex="1"></canvas>
-		<!-- General Functions -->
+		<!-- SCRIPTS -->
 		<script src="misc_funcs.js"></script>
 
-		<!-- Classes -->
 		<script src="grid.js"></script>
 		<script src="sprite.js"></script>
 		<script src="windows/window.js"></script>
@@ -82,7 +89,6 @@
 		<script src="windows/sprites_window.js"></script>
 		<script src="tools.js"></script>
 
-		<!-- Execution start -->
 		<script src="pixel_art.js"></script>
 	</body>
 </html>

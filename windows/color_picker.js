@@ -22,6 +22,7 @@ function ColorPicker() {
 	this.saturationValueInput = document.getElementById('saturationValueInput');
 	this.valueValueInput = document.getElementById('valueValueInput');
 	this.hexValueInput = document.getElementById('hexValueInput');
+	this.saveColorButton = document.getElementById('saveColorButton');
 
 	// color picker visible or not
 	this.visible = false;
@@ -34,6 +35,9 @@ function ColorPicker() {
 	this.lastSBBoxClickLoc = { x: this.satBrightBox.width / 2, y: this.satBrightBox.height / 2 };
 	// mouse down on sat bright box?
 	this.satBrightBoxMouseDown = false;
+
+	// currently being edited slide
+	this.changingSlideI = undefined;
 
 	this.addEventListeners();
 }
@@ -124,20 +128,32 @@ ColorPicker.prototype.addEventListeners = function() {
 			selection.addRange(range);
 		}, 1);
 	}).bind(this);
+
+	/* ADD COLOR BUTTON */
+	this.saveColorButton.onclick = (function(event) {
+		var rgb = hsvToRGB(this.hue, this.saturation / 100, this.brightness / 100),
+			rgbString = 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')';
+		colorPalette.addColor(rgbString);
+		//colorPalette.palettes[colorPalette.curPaletteI][this.changingSlideI] = rgbString;
+		colorPalette.updateNeeded = true;
+		colorPalette.update();
+		this.toggleVisibility();
+	}).bind(this)
 }
 
-ColorPicker.prototype.show = function() {
-	this.hue = 180;
-	this.saturation = 50;
-	this.brightness = 50;
-	this.fullUpdate();
-	this.visible = true;
-	this.newColorDialog.style.display = 'block';
-}
-
-ColorPicker.prototype.hide = function() {
-	this.newColorDialog.style.display = 'none';
-	this.visible = false;
+ColorPicker.prototype.toggleVisibility = function() {
+	if(this.newColorDialog.style.display !== 'block') {
+		this.hue = 180;
+		this.saturation = 50;
+		this.brightness = 50;
+		this.fullUpdate();
+		this.newColorDialog.style.display = 'block';
+	} else {
+		this.newColorDialog.style.display = 'none';
+		// TODO isn't a very good spot for a color palette update (shouldn't be managed by this class)
+		colorPalette.updateNeeded = true;
+		colorPalette.update();
+	}
 }
 
 ColorPicker.prototype.fullUpdate = function() {
@@ -146,6 +162,13 @@ ColorPicker.prototype.fullUpdate = function() {
 	this.satBrightBoxUpdate();
 	this.updateColorDisplays();
 	this.updateColorInputs();
+	this.updateCurrentSlide();
+}
+
+ColorPicker.prototype.updateCurrentSlide = function() {
+	var curSlide = colorPalette.slides[this.changingSlideI],
+		rgb = hsvToRGB(this.hue, this.saturation / 100, this.brightness / 100);
+	curSlide.style.background = 'rgb(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')';
 }
 
 // handle a change in the HSV input fields (update values of ColorPicker and update displays if needed)
@@ -166,6 +189,7 @@ ColorPicker.prototype.handleHSVInputChange = function(event) {
 	this.satBrightBoxUpdate();
 	this.updateColorDisplays();
 	this.updateColorInputs('hsv');
+	this.updateCurrentSlide();
 }
 
 // handle a change in the RGB input fields (update values of ColorPicker and update displays if needed)
@@ -191,6 +215,7 @@ ColorPicker.prototype.handleRGBInputChange = function(event) {
 	this.satBrightBoxUpdate();
 	this.updateColorDisplays();
 	this.updateColorInputs('rgb');
+	this.updateCurrentSlide();
 }
 
 // handle a change in the hex input field (update values of ColorPicker and update displays if needed)
@@ -218,6 +243,7 @@ ColorPicker.prototype.handleHexInputChange = function(event) {
 	this.satBrightBoxUpdate();
 	this.updateColorDisplays();
 	this.updateColorInputs('hex');
+	this.updateCurrentSlide();
 }
 
 // handle events on the hue bar display
@@ -231,6 +257,7 @@ ColorPicker.prototype.handleHueBarEvent = function(event) {
 	this.satBrightBoxUpdate();
 	this.updateColorDisplays();
 	this.updateColorInputs();
+	this.updateCurrentSlide();
 }
 
 // handle events on the saturation/brightness box display
@@ -243,6 +270,7 @@ ColorPicker.prototype.handleSatBrightBoxEvent = function(event) {
 	this.satBrightBoxUpdate();
 	this.updateColorDisplays();
 	this.updateColorInputs();
+	this.updateCurrentSlide();
 }
 
 // update the hue bar's displays
