@@ -38,6 +38,9 @@ function ColorPicker() {
 
 	// currently being edited slide
 	this.changingSlideI = undefined;
+	// last color of current slide
+	this.lastSlideColor = undefined;
+	this.settingNewColor = false; // setting new or current slide's color?
 
 	this.addEventListeners();
 }
@@ -133,20 +136,49 @@ ColorPicker.prototype.addEventListeners = function() {
 	this.saveColorButton.onclick = (function(event) {
 		var rgb = hsvToRGB(this.hue, this.saturation / 100, this.brightness / 100),
 			rgbString = 'rgb(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ')';
-		colorPalette.addColor(rgbString);
-		//colorPalette.palettes[colorPalette.curPaletteI][this.changingSlideI] = rgbString;
+		if(!this.lastSlideColor)
+			colorPalette.addColor(rgbString);
+		else
+			colorPalette.palettes[colorPalette.curPaletteI][this.changingSlideI] = rgbString;
+		colorPalette.curSlideI = this.changingSlideI;
+		curColor = rgbString;
 		colorPalette.updateNeeded = true;
 		colorPalette.update();
 		this.toggleVisibility();
 	}).bind(this)
 }
 
+// begin setting a new slide's color
+ColorPicker.prototype.setNewSlideColor = function(slideI) {
+	// change class of slide so that its changing color can be viewed
+	colorPalette.slides[slideI].className = colorPalette.getSlideClass();
+	// set all needed variables inside this color picker
+	this.changingSlideI = slideI;
+	this.lastSlideColor = undefined;
+	this.settingNewColor = true;
+	this.chosenColorDisplayCtx.canvas.className = 'colorDisplay onlyColorDisplay';
+	// set default color picker settings
+	this.hue = 180;
+	this.saturation = 50;
+	this.brightness = 50;
+	this.fullUpdate();
+	// make picker visible
+	this.toggleVisibility();
+}
+
+// begin editing an already-set slide's color
+ColorPicker.prototype.updateSlideColor = function(slideI) {
+	this.changingSlideI = slideI;
+	this.lastSlideColor = colorPalette.palettes[colorPalette.curPaletteI][slideI];
+	this.settingNewColor = false;
+	this.chosenColorDisplayCtx.canvas.className = 'colorDisplay';
+	// TODO set color picker settings to current slide color
+	this.fullUpdate();
+	this.toggleVisibility();
+}
+
 ColorPicker.prototype.toggleVisibility = function() {
 	if(this.newColorDialog.style.display !== 'block') {
-		this.hue = 180;
-		this.saturation = 50;
-		this.brightness = 50;
-		this.fullUpdate();
 		this.newColorDialog.style.display = 'block';
 	} else {
 		this.newColorDialog.style.display = 'none';
@@ -166,6 +198,8 @@ ColorPicker.prototype.fullUpdate = function() {
 }
 
 ColorPicker.prototype.updateCurrentSlide = function() {
+	// if last slide's color is set, don't continue -- changing a current slide
+	if(this.lastSlideColor || !this.changingSlideI) return;
 	var curSlide = colorPalette.slides[this.changingSlideI],
 		rgb = hsvToRGB(this.hue, this.saturation / 100, this.brightness / 100);
 	curSlide.style.background = 'rgb(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')';
@@ -362,8 +396,10 @@ ColorPicker.prototype.updateColorDisplays = function() {
 		hexString = ('00' + rgb.r.toString(16)).slice(-2) + ('00' + rgb.g.toString(16)).slice(-2) + ('00' + rgb.b.toString(16)).slice(-2);
 	this.chosenColorDisplayCtx.fillStyle = rgbString;
 	this.chosenColorDisplayCtx.fillRect(0,0,this.chosenColorDisplayCtx.canvas.width,this.chosenColorDisplayCtx.canvas.height);
-	this.lastColorDisplayCtx.fillStyle = rgbString;
-	this.lastColorDisplayCtx.fillRect(0,0,this.lastColorDisplayCtx.canvas.width,this.lastColorDisplayCtx.canvas.height);
+	if(this.lastSlideColor) {
+		this.lastColorDisplayCtx.fillStyle = this.lastSlideColor;
+		this.lastColorDisplayCtx.fillRect(0,0,this.lastColorDisplayCtx.canvas.width,this.lastColorDisplayCtx.canvas.height);
+	}
 }
 
 // update RGB, HSV and hex inputs' text

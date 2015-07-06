@@ -79,25 +79,34 @@ ColorPalette.prototype.setNumSlides = function(numSlides) {
 	var newSlide;
 	while(this.slides.length < numSlides) {
 		newSlide = document.createElement('span');
+		// if slide currently has color, make it the current color -- if not, open up color picker to change it
 		newSlide.onmouseup = (function() {
 			var colorI = this.slides.length;
 			return (function(event) {
-				// TODO should set active slide while choosing -- if color is chosen, stay active -- if not, go back to other color
-				this.curSlideI = colorI;
+				// TODO choosing new colors is a MESS with the code right now (it's everywhere)
 				if(this.palettes[this.curPaletteI][colorI]) {
+					// currently choosing a color? cancel it on click
+					if(colorPicker.newColorDialog.style.display === 'block')
+						colorPicker.toggleVisibility();
+					// change the current color
 					curColor = this.palettes[this.curPaletteI][colorI];
+					this.curSlideI = colorI;
 					this.updateNeeded = true;
 					this.update();
 				} else {
-					this.slides[colorI].className = this.getSlideClass();
-					colorPicker.changingSlideI = colorI;
-					colorPicker.toggleVisibility();
+					colorPicker.setNewSlideColor(colorI);
 				}
 			}).bind(this);
 		}).bind(this)();
-		newSlide.ondblclick = (function(event) {
-			console.log('Double clicked');
-		}).bind(this);
+		// if clicked slide has a color, set up so it can be changed
+		newSlide.ondblclick = (function() {
+			var colorI = this.slides.length;
+			return (function(event) {
+				if(this.palettes[this.curPaletteI][colorI]) {
+					colorPicker.updateSlideColor(colorI);
+				}
+			}).bind(this);
+		}).bind(this)();
 		this.colorSlidesContainer.appendChild(newSlide);
 		this.slides.push(newSlide);
 	}

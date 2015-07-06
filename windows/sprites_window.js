@@ -90,6 +90,7 @@ SpritesWindow.prototype.handleDisplayClick = function(event) {
 	this.fullUpdate();
 	layersWindow.fullUpdate();
 	animationWindow.update();
+	dimensionsDisplay.update();
 }
 
 // adds a new sprite display element to list of sprite displays and the scroll container

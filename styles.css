@@ -311,14 +311,16 @@ div {
 		border: 1px solid rgb(100,100,100);
 		border-radius: 2px;
 	}
-	#chosenColorDisplay {
-		top: 0.6vmax;
+	.onlyColorDisplay {
+		top: 0.6vmax !important;
 		height: 12.6vmax;
+		z-index: 3;
 	}
-	/* No need for this right now, but might later */
 	#lastColorDisplay {
+		top: 0.6vmax;
+	}
+	#chosenColorDisplay {
 		top: 7.2vmax;
-		display: none;
 	}
 	.colorInputContainer, #hexValueContainer {
 		position: absolute;
@@ -400,7 +402,7 @@ div {
 	position: absolute;
 	top: 1vmax;
 	right: 1vmax;
-	width: 30.6vmax;
+	width: 26.8vmax;
 	height: 7.6vmax;
 }
 	/* TODO animationSlidesContainer gets in the way of grid if it doesn't have enough slides */
@@ -408,7 +410,7 @@ div {
 		position: absolute;
 		top: 0;
 		left: 0;
-		width: 22.8vmax;
+		width: 19vmax;
 		white-space: nowrap;
 		overflow-x: auto;
 		overflow-y: hidden;
@@ -431,7 +433,7 @@ div {
 	#newAnimationSlideButton {
 		position: absolute;
 		top: 2.4vmax;
-		left: 21.4vmax;
+		left: 17.6vmax;
 		height: 1.3vmax;
 		width: 1.3vmax;
 		background: linear-gradient(rgb(140,140,140),rgb(180,180,180));
@@ -447,6 +449,75 @@ div {
 	#newAnimationSlideButton:hover {
 		opacity: 1.0;
 	}
+	#animationBackwardButton {
+		position: absolute;
+		top: 0.5vmax;
+		right: 4.7vmax;
+		width: 0.9vmax;
+		height: 0.6vmax;
+		background: url('icons/animation_backward.png');
+		background-size: 0.9vmax 0.6vmax;
+		background-position: top left;
+		background-repeat: no-repeat;
+		z-index: 2;
+		opacity: 0.6;
+		cursor: pointer;
+	}
+	#animationPlayButton {
+		position: absolute;
+		top: 0.5vmax;
+		right: 3.3vmax;
+		width: 1.0vmax;
+		height: 0.6vmax;
+		background: url('icons/play.png');
+		background-size: 1.0vmax 0.6vmax;
+		background-position: top left;
+		background-repeat: no-repeat;
+		z-index: 2;
+		opacity: 0.6;
+		cursor: pointer;
+	}
+	#animationForwardButton {
+		position: absolute;
+		top: 0.5vmax;
+		right: 2.1vmax;
+		width: 0.9vmax;
+		height: 0.6vmax;
+		background: url('icons/animation_forward.png');
+		background-size: 0.9vmax 0.6vmax;
+		background-position: top left;
+		background-repeat: no-repeat;
+		z-index: 2;
+		opacity: 0.6;
+		cursor: pointer;
+	}
+	#animationOnion {
+		position: absolute;
+		right: 6.0vmax;
+		bottom: 0.4vmax;
+		width: 1.3vmax;
+		height: 1.3vmax;
+		background: url('icons/onion.png');
+		background-size: 1.3vmax 1.3vmax;
+		background-position: top left;
+		background-repeat: no-repeat;
+		z-index: 2;
+		opacity: 0.6;
+		cursor: pointer;
+	}
+	#animationOnion:hover, #animationBackwardButton:hover, #animationPlayButton:hover, #animationForwardButton:hover {
+	   	opacity: 1.0; 
+	}
+	#animationSpeedDisplay {
+		position: absolute;
+		right: 0.5vmax;
+		bottom: 0.2vmax;
+		font-size: 1.3vmax;
+		z-index: 2;
+		opacity: 0.6;
+		cursor: text;
+	}
+	#animationSpeedDisplay:hover { opacity: 1.0; }
 	#animationDisplay {
 		position: absolute;
 		top: 0;
