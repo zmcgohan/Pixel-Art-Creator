@@ -2,6 +2,8 @@ var ANIMATION_SLIDES_CONTAINER_ID = 'animationSlidesContainer',
 	ANIMATION_DISPLAY_ID = 'animationDisplay',
 	ANIMATION_SLIDE_CLASS = 'animationSlide',
 	NEW_ANIMATION_SLIDE_BUTTON_ID = 'newAnimationSlideButton',
+	ANIMATION_PLAY_BUTTON_ID  = 'animationPlayButton',
+	ANIMATION_ONION_ID = 'animationOnion',
 	MAX_FRAME_PADDING = .80, // 80% frame padding at <= MAX_FRAME_PADDING_SIZE
 	MAX_FRAME_PADDING_SIZE = 1,
 	MIN_FRAME_PADDING = .14, // 10% frame padding at >= MIN_FRAME_PADDING_SIZE
@@ -11,7 +13,24 @@ function AnimationWindow() {
 	this.slidesContainer = document.getElementById(ANIMATION_SLIDES_CONTAINER_ID);
 	this.animationDisplay = document.getElementById(ANIMATION_DISPLAY_ID);
 	this.newAnimationSlideButton = document.getElementById(NEW_ANIMATION_SLIDE_BUTTON_ID);
+	this.animationPlayButton = document.getElementById(ANIMATION_PLAY_BUTTON_ID);
+	this.animationOnion = document.getElementById(ANIMATION_ONION_ID);
 	this.animationSlides = [];
+
+	// set animation display's canvas width/height
+	this.animationDisplay.width = this.animationDisplay.offsetWidth * AR;
+	this.animationDisplay.height = this.animationDisplay.offsetHeight * AR;
+	
+	// current frame shown in animation display
+	this.curAnimationDisplayFrame = 0;
+	// currently playing animation?
+	this.playingAnimation = false;
+	// onion skinning?
+	this.onionSkinning = false;
+	// frames per second in animation display
+	this.animationFps = 5;
+	// last time display window was updated
+	this.lastDisplayWindowUpdateTime = Date.now();
 
 	this.addEventListeners();
 }
@@ -39,6 +58,50 @@ AnimationWindow.prototype.addEventListeners = function() {
 			grid.render();
 		}
 	}).bind(this), false);
+
+	// start/pause animation on play button
+	this.animationPlayButton.onmouseup = (function(event) {
+		if(!this.animationPlaying) {
+			this.animationPlayButton.id = 'animationPauseButton';
+			this.animationPlaying = true;
+			// start animating display
+			this.curAnimationDisplayFrame = 0;
+			this.updateAnimationDisplay();
+		} else {
+			// draw the current sprite's current frame back to display
+			this.drawFrame();
+			// change play/pause button back to play
+			this.animationPlayButton.id = 'animationPlayButton';
+			this.animationPlaying = false;
+		}
+	}).bind(this);
+
+	// turn on/off onion skinning
+	this.animationOnion.onmouseup = (function(event) {
+		if(!this.onionSkinning) {
+			console.log('Onion skinning ON.');
+			this.onionSkinning = true;
+		} else {
+			console.log('Onion skinning OFF.');
+			this.onionSkinning = false;
+		}
+	}).bind(this);
+}
+
+// updates animation display -- calls itself while animationPlaying is true
+AnimationWindow.prototype.updateAnimationDisplay = function() {
+	if(animationWindow.animationPlaying) {
+		if(Date.now() - animationWindow.lastDisplayWindowUpdateTime >= 1000 / animationWindow.animationFps) {
+			// if frame index is above max, restart animation
+			if(animationWindow.curAnimationDisplayFrame >= grid.curSprite.sprite.frames.length) animationWindow.curAnimationDisplayFrame = 0;
+			animationWindow.drawFrame(animationWindow.curAnimationDisplayFrame);
+			// increase current sprite's current frame by one
+			++animationWindow.curAnimationDisplayFrame;
+			// set last time was updated (to keep correct FPS)
+			animationWindow.lastDisplayWindowUpdateTime = Date.now();
+		}
+		window.requestAnimationFrame(animationWindow.updateAnimationDisplay);
+	}
 }
 
 AnimationWindow.prototype.setCurrentFrame = function(frameI) {
@@ -47,6 +110,46 @@ AnimationWindow.prototype.setCurrentFrame = function(frameI) {
 		this.animationSlides[frameI].id = 'curAnimationSlide';
 		grid.render();
 		layersWindow.fullUpdate();
+		// update animation display if not animating currently
+		if(!this.animationPlaying) this.drawFrame();
+}
+
+// draws frame with index frameI of current sprite
+var ANIMATION_DISPLAY_PADDING_PERCENT = .03; // padding on each side of max dimension (width or height)
+AnimationWindow.prototype.drawFrame = function(frameI) {
+	if(frameI === undefined) frameI = grid.curSprite.sprite.curFrameI;
+	var ctx = this.animationDisplay.getContext('2d'),
+		canvasUsable,
+		offsetX, offsetY,
+		pixelWidth,
+		layerI, curLayer;
+	// current sprite's width > height
+	if(grid.curSprite.sprite.width > grid.curSprite.sprite.height) {
+		offsetX = ctx.canvas.width * ANIMATION_DISPLAY_PADDING_PERCENT;
+		canvasUsable = ctx.canvas.width - (ctx.canvas.width * ANIMATION_DISPLAY_PADDING_PERCENT * 2);
+		pixelWidth = canvasUsable / grid.curSprite.sprite.width;
+		offsetY = ctx.canvas.height / 2 - grid.curSprite.sprite.height / 2 * pixelWidth;
+	} else {
+		offsetY = ctx.canvas.height * ANIMATION_DISPLAY_PADDING_PERCENT;
+		canvasUsable = ctx.canvas.height - (ctx.canvas.height * ANIMATION_DISPLAY_PADDING_PERCENT * 2);
+		pixelWidth = canvasUsable / grid.curSprite.sprite.height;
+		offsetX = ctx.canvas.width / 2 - grid.curSprite.sprite.width / 2 * pixelWidth;
+	}
+	// clear canvas
+	ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height); 
+	// draw all layers of frame
+	for(rows = 0; rows < grid.curSprite.sprite.height; ++rows) {
+		for(cols = 0; cols < grid.curSprite.sprite.width; ++cols) {
+			for(layerI = 0; layerI < grid.curSprite.sprite.frames[frameI].layers.length; ++layerI) {
+				curLayer = grid.curSprite.sprite.frames[frameI].layers[layerI];
+				if(curLayer.visible && curLayer.pixels[rows][cols] !== '') {
+					ctx.fillStyle = curLayer.pixels[rows][cols];
+					ctx.fillRect(Math.floor(offsetX + cols*pixelWidth), Math.floor(offsetY + rows*pixelWidth), Math.ceil(pixelWidth), Math.ceil(pixelWidth));
+					break;
+				}
+			}
+		}
+	}
 }
 
 AnimationWindow.prototype.update = function() {

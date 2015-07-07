@@ -17,7 +17,6 @@ function Grid() {
 	this.bgColors = DEFAULT_BG_COLORS; // color of background cells
 	this.numCols = Math.floor(10 + (canvas.width - MIN_SCREEN_WIDTH) / 50);
 	this.numRows = Math.floor((canvas.height / canvas.width) * this.numCols);
-	// TODO (possibly) make getters and setters for cellWidth/cellHeight -- Math.ceil() for values so no empty lines drawn on canvas?
 	this.cellWidth = canvas.width / this.numCols;
 	this.cellHeight = canvas.height / this.numRows;
 	this.activeCell = { x: undefined, y: undefined };
@@ -170,6 +169,7 @@ Grid.prototype.addEventListeners = function() {
 
 	// moving around the grid and zooming in/out
 	// TODO "jumpy" at MIN and MAX_CELL_WIDTH -- very low priority, but would like to smooth it out
+	// TODO can still accidentally go back in history on elements without wheel event -- add it to window?
 	var SCROLL_MULTIPLIER = 1.8;
 	canvas.addEventListener("wheel", function(event) {
 		event.preventDefault();

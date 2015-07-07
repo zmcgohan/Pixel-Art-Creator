@@ -450,6 +450,7 @@ div {
 		opacity: 1.0;
 	}
 	#animationBackwardButton {
+		display: none;
 		position: absolute;
 		top: 0.5vmax;
 		right: 4.7vmax;
@@ -463,21 +464,32 @@ div {
 		opacity: 0.6;
 		cursor: pointer;
 	}
-	#animationPlayButton {
+	#animationPlayButton, #animationPauseButton {
 		position: absolute;
-		top: 0.5vmax;
-		right: 3.3vmax;
-		width: 1.0vmax;
-		height: 0.6vmax;
-		background: url('icons/play.png');
-		background-size: 1.0vmax 0.6vmax;
 		background-position: top left;
 		background-repeat: no-repeat;
 		z-index: 2;
-		opacity: 0.6;
+		opacity: 0.4;
 		cursor: pointer;
 	}
+	#animationPlayButton {
+		top: 0.5vmax;
+		right: 6.1vmax;
+		background: url('icons/play.png');
+		width: 0.9vmax;
+		height: 0.6vmax;
+		background-size: 0.9vmax 0.6vmax;
+	}
+	#animationPauseButton {
+		top: 0.5vmax;
+		right: 6.2vmax;
+		background: url('icons/pause.png');
+		width: 0.7vmax;
+		height: 0.6vmax;
+		background-size: 0.7vmax 0.6vmax;
+	}
 	#animationForwardButton {
+		display: none;
 		position: absolute;
 		top: 0.5vmax;
 		right: 2.1vmax;
@@ -502,10 +514,10 @@ div {
 		background-position: top left;
 		background-repeat: no-repeat;
 		z-index: 2;
-		opacity: 0.6;
+		opacity: 0.4;
 		cursor: pointer;
 	}
-	#animationOnion:hover, #animationBackwardButton:hover, #animationPlayButton:hover, #animationForwardButton:hover {
+	#animationOnion:hover, #animationBackwardButton:hover, #animationPlayButton:hover, #animationPauseButton:hover, #animationForwardButton:hover, #animationSpeedDisplay:hover {
 	   	opacity: 1.0; 
 	}
 	#animationSpeedDisplay {
@@ -514,10 +526,9 @@ div {
 		bottom: 0.2vmax;
 		font-size: 1.3vmax;
 		z-index: 2;
-		opacity: 0.6;
+		opacity: 0.4;
 		cursor: text;
 	}
-	#animationSpeedDisplay:hover { opacity: 1.0; }
 	#animationDisplay {
 		position: absolute;
 		top: 0;
