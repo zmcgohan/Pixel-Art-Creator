@@ -47,29 +47,31 @@ ExportWindow.prototype.addEventListeners = function() {
 		this.exportPngButton.className = 'exportOptionButton';
 
 		// create link for download
-		var conversionCanvas = document.createElement('canvas'), // use canvas for each frame
-			ctx = conversionCanvas.getContext('2d'),
-			gif = new GIF({ workers: 2, quality: 1 });
-		conversionCanvas.width = grid.curSprite.sprite.width;
-		conversionCanvas.height = grid.curSprite.sprite.height;
+		var conversionCanvases = [], // use canvas for each frame
+			ctx,
+			canvasBG = '#ffffff';
+			gif = new GIF({ workers: 2, quality: 1, transparent: canvasBG});
 		for(frameI = 0; frameI < grid.curSprite.sprite.frames.length; ++frameI) {
-			ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+			conversionCanvases.push(document.createElement('canvas'));
+			conversionCanvases[frameI].style.background = canvasBG;
+			conversionCanvases[frameI].width = grid.curSprite.sprite.width;
+			conversionCanvases[frameI].height = grid.curSprite.sprite.height;
+			ctx = conversionCanvases[frameI].getContext('2d');
 			grid.curSprite.sprite.render(ctx, frameI, 0, 0, 1);
 			// add to GIF
-			gif.addFrame(conversionCanvas, { delay: 250 });
+			gif.addFrame(conversionCanvases[frameI], { delay: 250 });
 		}
-		gif.on('finished', function(blob) {
-			window.open(URL.createObjectURL(blob));
-		});
+		gif.on('finished', (function(blob) {
+			var urlCreator = window.URL || window.webkitURL;
+			if(this.downloadSupport) { // supports <a> 'download' attribute
+				this.exportButton.href = urlCreator.createObjectURL(blob);
+				this.exportButton.download = 'sprite.gif';
+			} else {
+				blob.type = 'application/octet-stream';
+				this.exportButton.href = urlCreator.createObjectURL(blob);
+			}
+		}).bind(this));
 		gif.render();
-		// convert to URI and add to export button
-		document.getElementById('testImg').src = img;
-		if(this.downloadSupport) { // supports <a> 'download' attribute
-			this.exportButton.href = img;
-			this.exportButton.download = 'sprite.png';
-		} else {
-			this.exportButton.href = img.replace('image/png', 'application/octet-stream');
-		}
 	}).bind(this);
 	// "PNG Sprite Sheet" button clicked
 	this.exportPngButton.onclick = (function(event) {
