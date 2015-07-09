@@ -162,8 +162,9 @@ Sprite.prototype.addLayer = function() {
 }
 
 // gets the pixel at specified row and col of current frame/layer
-Sprite.prototype.getPixel = function(row, col) {
-	var curFrame = this.frames[this.curFrameI],
+Sprite.prototype.getPixel = function(row, col, frame) {
+	if(frame === undefined) frame = this.curFrameI;
+	var curFrame = this.frames[frame],
 		curLayer,
 		pxColor = undefined;
 	for(var layerI = 0; layerI < curFrame.layers.length; ++layerI) {

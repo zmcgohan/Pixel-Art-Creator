@@ -74,6 +74,9 @@ Grid.prototype.render = function() {
 		topLeftCellX = Math.floor(this.topLeftViewPos.x / this.cellWidth),
 		topLeftCellY = Math.floor(this.topLeftViewPos.y / this.cellHeight);
 
+	// TODO add 'draw background' or 'draw outline' option
+	var spriteOutline = undefined;
+
 	// DRAW VISIBLE CELLS
 	for(i = 0; i < this.numRows+1; ++i) {
 		for(j = 0; j < this.numCols+1; ++j) {
@@ -87,15 +90,42 @@ Grid.prototype.render = function() {
 			// TODO: make the following sprite rendering more efficient.. because it's not. at all.
 			// render current sprite
 			var spriteCellColor = undefined;
+			var drawingOnionSkin = false;
 
 			// pixel of a current sprite in cell? get its color
-			for(var k = 0; k < this.sprites.length; ++k) {
-				if(this.sprites[k].pos.x <= topLeftCellX+j && this.sprites[k].pos.x+this.sprites[k].sprite.width >= topLeftCellX && this.sprites[k].pos.y <= topLeftCellY+i && this.sprites[k].pos.y+this.sprites[k].sprite.height >= topLeftCellY) {
-					var spritePxRow = (topLeftCellY+i)-this.sprites[k].pos.y,
-						spritePxCol = (topLeftCellX+j)-this.sprites[k].pos.x;
-					spriteCellColor = this.sprites[k].sprite.getPixel(spritePxRow, spritePxCol);
-					if(spriteCellColor !== undefined)
-						break;
+			// TODO currently wouldn't put current sprite on top
+			spriteCellColor = this.curSprite.sprite.getPixel(topLeftCellY+i-this.curSprite.pos.y, topLeftCellX+j-this.curSprite.pos.x);
+			// set sprite outline stroke positions if not already set (guaranteed to first be set at top left pixel)
+			if(!spriteOutline && !spriteCellColor) {
+				// draws more than needed, but necessary so outline doesn't constantly move
+				var outlineStartX = drawXPos - ((topLeftCellX+j)-this.curSprite.pos.x) * this.cellWidth,
+					outlineStartY = drawYPos - ((topLeftCellY+i)-this.curSprite.pos.y) * this.cellHeight;
+				spriteOutline = {
+					start: { x: outlineStartX, y: outlineStartY },
+					topend: { x: outlineStartX + this.curSprite.sprite.width * this.cellWidth, y: outlineStartY },
+					rightend: { x: outlineStartX + this.curSprite.sprite.width * this.cellWidth, y: outlineStartY + this.curSprite.sprite.height * this.cellHeight },
+					bottomend: { x: outlineStartX, y: outlineStartY + this.curSprite.sprite.height * this.cellHeight },
+				};
+			}
+			// check for onion skinned colors
+			/*
+			if(!spriteCellColor) {
+				if(animationWindow.onionSkinning && this.curSprite.sprite.curFrameI > 0) {
+					spriteCellColor = this.curSprite.sprite.getPixel(topLeftCellY+i-this.curSprite.pos.y, topLeftCellX+j-this.curSprite.pos.x, this.curSprite.sprite.curFrameI-1);
+					if(spriteCellColor !== undefined) drawingOnionSkin = true;
+				}
+			}
+			*/
+			// check for colors from other non-active sprites
+			if(!spriteCellColor) {
+				for(var k = 0; k < this.sprites.length; ++k) {
+					if(this.sprites[k].pos.x <= topLeftCellX+j && this.sprites[k].pos.x+this.sprites[k].sprite.width >= topLeftCellX && this.sprites[k].pos.y <= topLeftCellY+i && this.sprites[k].pos.y+this.sprites[k].sprite.height >= topLeftCellY) {
+						var spritePxRow = (topLeftCellY+i)-this.sprites[k].pos.y,
+							spritePxCol = (topLeftCellX+j)-this.sprites[k].pos.x;
+						spriteCellColor = this.sprites[k].sprite.getPixel(spritePxRow, spritePxCol);
+						if(spriteCellColor !== undefined) // break if found cell color (no need to search more)
+							break;
+					}
 				}
 			}
 			// floor pos and ceil width/height to avoid lines
@@ -103,7 +133,8 @@ Grid.prototype.render = function() {
 			drawYPos = Math.floor(drawYPos);
 			var drawCellWidth = Math.ceil(this.cellWidth),
 				drawCellHeight = Math.ceil(this.cellHeight);
-			if(spriteCellColor !== undefined) { // sprite cell found -- draw it
+			// TODO changed empty cell to default BG color -- keep??
+			if(spriteCellColor !== undefined && spriteCellColor !== '') { // sprite cell found -- draw it
 				if(spriteCellColor !== '') ctx.fillStyle = spriteCellColor;
 				else ctx.fillStyle = SPRITE_DEFAULT_BG_COLOR;
 				ctx.fillRect(drawXPos, drawYPos, drawCellWidth, drawCellHeight);
@@ -127,27 +158,20 @@ Grid.prototype.render = function() {
 		}
 	}
 
-	/*
-	// DRAW GRID LINES (TODO figure out whether this should even be here.. looks better without)
-	ctx.strokeStyle = this.lineColor;
-	ctx.lineWidth = 1;
-	for(i = 0; i <= this.numCols; ++i) {
-		var xPos = Math.floor(this.cellWidth * i - pxDiffX);
+	// draw outline of current sprite if necessary
+	var OUTLINE_SIZE = 2;
+	if(spriteOutline) {
+		ctx.strokeStyle = '#666666';
+		ctx.setLineDash([10,20]);
+		ctx.lineWidth = OUTLINE_SIZE;
 		ctx.beginPath();
-		ctx.moveTo(xPos, 0);
-		ctx.lineTo(xPos, canvas.height);
-		ctx.closePath();
+		ctx.moveTo(spriteOutline.start.x, spriteOutline.start.y-OUTLINE_SIZE/2);
+		ctx.lineTo(spriteOutline.topend.x, spriteOutline.topend.y-OUTLINE_SIZE/2);
+		ctx.lineTo(spriteOutline.rightend.x, spriteOutline.rightend.y);
+		ctx.lineTo(spriteOutline.bottomend.x-OUTLINE_SIZE/2, spriteOutline.bottomend.y);
+		ctx.lineTo(spriteOutline.start.x-OUTLINE_SIZE/2, spriteOutline.start.y-OUTLINE_SIZE/2);
 		ctx.stroke();
 	}
-	for(i = 0; i <= this.numRows; ++i) {
-		var yPos = Math.floor(this.cellHeight * i - pxDiffY);
-		ctx.beginPath();
-		ctx.moveTo(0, yPos);
-		ctx.lineTo(canvas.width, yPos);
-		ctx.closePath();
-		ctx.stroke();
-	}
-	*/
 }
 
 Grid.prototype.addEventListeners = function() {

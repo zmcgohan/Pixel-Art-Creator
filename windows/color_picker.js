@@ -212,7 +212,7 @@ ColorPicker.prototype.handleHSVInputChange = function(event) {
 	this.saturation = parseInt(this.saturationValueInput.innerHTML);
 	this.brightness = parseInt(this.valueValueInput.innerHTML);
 	// if field is over the max allowed value, reduce it
-	if(this.hue > 255) this.hue = 255;
+	if(this.hue > 359) this.hue = 359;
 	if(this.saturation > 100) this.saturation = 100;
 	if(this.brightness > 100) this.brightness = 100;
 	// if field is empty, = NaN, set to 0
@@ -220,6 +220,7 @@ ColorPicker.prototype.handleHSVInputChange = function(event) {
 	if(isNaN(this.saturation)) this.saturation = 0;
 	if(isNaN(this.brightness)) this.brightness = 0;
 	// update displays
+	this.hueBarUpdate();
 	this.satBrightBoxUpdate();
 	this.updateColorDisplays();
 	this.updateColorInputs('hsv');
@@ -246,6 +247,7 @@ ColorPicker.prototype.handleRGBInputChange = function(event) {
 	this.saturation = hsv.s;
 	this.brightness = hsv.v;
 	// update displays
+	this.hueBarUpdate();
 	this.satBrightBoxUpdate();
 	this.updateColorDisplays();
 	this.updateColorInputs('rgb');
@@ -274,6 +276,7 @@ ColorPicker.prototype.handleHexInputChange = function(event) {
 	this.saturation = hsv.s;
 	this.brightness = hsv.v;
 	// update displays
+	this.hueBarUpdate();
 	this.satBrightBoxUpdate();
 	this.updateColorDisplays();
 	this.updateColorInputs('hex');

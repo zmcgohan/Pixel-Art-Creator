@@ -14,7 +14,9 @@ var grid,
 	dimensionsDisplay, 
 	layersWindow, 
 	spritesWindow,
-	colorPicker;
+	colorPicker,
+	optionsWindow,
+		exportWindow;
 
 var tools = {};
 
@@ -40,9 +42,14 @@ dimensionsDisplay = new DimensionsDisplay();
 layersWindow = new LayersWindow();
 spritesWindow = new SpritesWindow();
 colorPicker = new ColorPicker();
+optionsWindow = new OptionsWindow(),
+	exportWindow = new ExportWindow();
 
 // initial visual setup
 grid.render();
 animationWindow.update();
 layersWindow.fullUpdate();
 spritesWindow.fullUpdate();
+
+// TODO make it so scrolls only work on specific elements (to prevent moving in history accidentally)
+//document.getElementById('optionsContainer').style.left = '0';

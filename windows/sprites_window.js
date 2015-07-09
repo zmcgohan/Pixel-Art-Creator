@@ -38,6 +38,7 @@ SpritesWindow.prototype.addEventListeners = function() {
 		this.fullUpdate();
 		layersWindow.fullUpdate();
 		animationWindow.update();
+		grid.render();
 	}).bind(this), false);
 }
 

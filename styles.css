@@ -58,13 +58,22 @@ div {
 }
 
 /* CURRENT TOOL */
+/* TODO perhaps add shadows later? */
+/*
+#currentTool, #currentToolActive, .colorSlideLarge, #toolBox {
+	box-shadow: 0 0 1px rgb(170,170,170);
+}
+.colorSlideSmall {
+	box-shadow: 0 0 1px rgba(170,170,170,0.6);
+}
+*/
 #currentTool {
 	position: absolute;
 	top: 1vmax;
 	left: 1vmax;
 	width: 3.3vmax;
 	height: 3.3vmax;
-	background-color: rgb(140,140,140);
+	background-color: rgb(140,140,140); 
 	background-size: 2.1vmax 2.1vmax;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -402,19 +411,20 @@ div {
 	position: absolute;
 	top: 1vmax;
 	right: 1vmax;
-	width: 26.8vmax;
+	width: 7.6vmax;
 	height: 7.6vmax;
 }
 	/* TODO animationSlidesContainer gets in the way of grid if it doesn't have enough slides */
 	#animationSlidesContainer {
 		position: absolute;
-		top: 0;
-		left: 0;
-		width: 19vmax;
+		top: 1vmax;
+		right: 9vmax;
+		max-width: 19vmax;
 		white-space: nowrap;
 		overflow-x: auto;
 		overflow-y: hidden;
 		text-align: right;
+		z-index: 1;
 	}
 		.animationSlide {
 			display: inline-block;
@@ -432,8 +442,8 @@ div {
 		}
 	#newAnimationSlideButton {
 		position: absolute;
-		top: 2.4vmax;
-		left: 17.6vmax;
+		top: 3.4vmax;
+		right: 9vmax;
 		height: 1.3vmax;
 		width: 1.3vmax;
 		background: linear-gradient(rgb(140,140,140),rgb(180,180,180));
@@ -445,6 +455,7 @@ div {
 		line-height: 1.2vmax;
 		opacity: 0.95;
 		cursor: pointer;
+		z-index: 2;
 	}
 	#newAnimationSlideButton:hover {
 		opacity: 1.0;
@@ -550,7 +561,7 @@ div {
 	font-size: 2vmax;
 	line-height: 2vmax;
 	color: #222222;
-	z-index: 100;
+	z-index: 2;
 }
 
 #dimensionsDisplay img {
@@ -817,3 +828,130 @@ div {
 		background: rgba(170,170,170,1.0); 
 	}
 	
+/* OPTIONS */
+#optionsIcon {
+	display: none;
+	position: absolute;
+	right: 29.2vmax;
+	bottom: 0.7vmax;
+	width: 1.8vmax;
+	height: 1.8vmax;
+	background: url('icons/gear.png');
+	background-size: 1.5vmax 1.5vmax;
+	background-position: top left;
+	background-repeat: no-repeat;
+	opacity: 0.6;
+	cursor: pointer;
+}
+#optionsIcon:hover {
+	opacity: 1.0;
+}
+#optionsMenu {
+	display: block;
+	position: absolute;
+	bottom: 1vmax;
+	right: 29.6vmax;
+	height: 22.5vmax;
+	width: 25vmax;
+	background: rgba(240,240,240,0.8);
+	border-style: solid;
+	border-width: 0 1px 1px 1px;
+	border-color: rgba(34,34,34,0.4);
+	border-radius: 0 0 0.5vmax 0.5vmax;
+}
+	#optionsMenuTitle {
+		position: absolute;
+		top: -1.5vmax;
+		height: 1.5vmax;
+		width: 25vmax;
+		line-height: 1.5vmax;
+		left: -1px;
+		font-size: 1.1vmax;
+		padding: 0 0.5vmax;
+		border-style: solid;
+		border-width: 1px 1px 0 1px;
+		border-color: rgba(34,34,34,0.4);
+		border-radius: 0.5vmax 0.5vmax 0 0;
+		background: rgba(170,170,170,0.8); 
+		color: rgba(34,34,34,0.8);
+		cursor: pointer;
+	}
+	#optionsMenuTitle:hover {
+		background: rgba(170,170,170,1.0); 
+	}
+	#optionsCategorySideBar {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 8vmax;
+		height: 22.5vmax;
+		border-style: solid;
+		border-color: rgba(34,34,34,0.4);
+		border-width: 0 1px 0 0;
+	}
+		.sideBarCategory {
+			display: block;
+			width: 100%;
+			height: 2.3vmax;
+			line-height: 2.3vmax;
+			padding: 0 0 0 0.5vmax;
+			font-size: 1.2vmax;
+			background: rgb(240,240,240);
+			border-style: solid;
+			border-color: rgb(220,220,220);
+			border-width: 0 0 1px 0;
+			cursor: pointer;
+		}
+		.sideBarCategory:hover {
+			border-right: 5px solid rgba(34,34,34,0.3);
+		}
+		.activeCategory {
+			background: rgb(225,225,225);
+			/* border-right: 5px solid rgba(34,34,34,0.15); */
+		}
+	#exportMenu {
+		position: absolute;
+		top: 0;
+		left: 8vmax;
+		width: calc(17vmax - 2px);
+		height: 22.5vmax;
+	}
+	#exportMenu {
+		
+	}
+		#exportMenu a {
+			color: #222;
+			text-decoration: none;
+		}
+		#exportMenu * {
+			position: absolute;
+			left: 1.5vmax;
+		}
+		.exportOptionButton {
+			display: block;
+			width: 14vmax;
+			height: 2.4vmax;
+			line-height: 2.4vmax;
+			/* padding-left: 2.5vmax; */
+			border: 1px solid rgba(34,34,34,0.3);
+			border-radius: 0.5vmax;
+			font-size: 1.2vmax;
+			text-align: center;
+			cursor: pointer;
+		}
+		.exportActiveButton {
+			background: rgb(200,200,200);
+		}
+		.exportOptionButton:hover {
+			background: rgb(200,200,200);
+		}
+		#exportCurSpriteButton { top: 1.0vmax; }
+		#exportWholeProjectButton { top: 3.9vmax; }
+		#exportGifButton { top: 9.8vmax; }
+		#exportPngButton { top: 12.70vmax; }
+		#exportButton {
+			position: absolute;
+			top: 19.1vmax;
+			text-align: center;
+			padding: 0;
+		}

@@ -50,14 +50,14 @@
 			<div id="hexValueContainer"># <span id="hexValueInput" class="rgbHsvInput" contenteditable="true">FF0000</span></div>
 			<div id="saveColorButton">&#10003;</div>
 		</div>
+		<div id="animationSlidesContainer"></div>
+		<div id="newAnimationSlideButton">+</div>
 		<div id="animationContainer">
-			<div id="animationSlidesContainer"></div>
-			<div id="newAnimationSlideButton">+</div>
 			<div id="animationBackwardButton"></div>
 			<div id="animationPlayButton" class="playBG"></div>
 			<div id="animationForwardButton"></div>
 			<div id="animationOnion"></div>
-			<div id="animationSpeedDisplay"><span style="display:block;text-align:center;padding:0;margin:0;line-height:0.3vmax;" contenteditable="true">15</span><span style="line-height: 1.3vmax;font-size:0.8vmax;">FPS</span></div>
+			<div id="animationSpeedDisplay"><span id="animationSpeedInput" style="display:block;text-align:center;padding:0;margin:0;line-height:0.3vmax;" contenteditable="true"></span><span style="line-height: 1.3vmax;font-size:0.8vmax;">FPS</span></div>
 			<canvas id="animationDisplay"></canvas>
 		</div>
 		<div id="layersMinimized"><span class="floatLeft">Layers</span><span class="floatRight">+</span></div>
@@ -78,6 +78,24 @@
 		<div id="spritesMinimized"><span class="floatLeft">Sprites</span><span class="floatRight">+</span></div>
 		<!-- <div id="dimensionsDisplay"><span id="dimensionsDisplayText" contenteditable="true"></span> <img id="dimensionsLockedImage" src="icons/unlocked.png" alt="" /></div> -->
 		<div id="dimensionsDisplay"><div id="dimensionsDisplayWidthText" contenteditable="true"></div>x<div id="dimensionsDisplayHeightText" contenteditable="true"></div> <img id="dimensionsLockedImage" src="icons/unlocked.png" alt="" /></div>
+		<div id="optionsIcon"></div>
+		<div id="optionsMenu">
+			<div id="optionsMenuTitle"><span class="floatLeft">Options</span><span class="floatRight">-</span></div>
+			<div id="optionsCategorySideBar">
+				<span id="exportCategoryLabel" class="sideBarCategory">Export</span>
+				<span id="projectsCategoryLabel" class="sideBarCategory">Projects</span>
+				<span id="settingsCategoryLabel" class="sideBarCategory">Settings</span>
+				<span id="accountCategoryLabel" class="sideBarCategory">Account</span>
+			</div>
+			<div id="exportMenu">
+				<span id="exportCurSpriteButton" class="exportOptionButton exportActiveButton">Current Sprite</span>
+				<span id="exportWholeProjectButton" class="exportOptionButton">Whole Project</span>
+				<span id="exportGifButton" class="exportOptionButton exportActiveButton">Animated GIF</span>
+				<span id="exportPngButton" class="exportOptionButton">PNG Sprite Sheet</span>
+				<a href="#" id="exportButton" class="exportOptionButton">Export</a>
+			</div>
+		</div>
+		<img src="" style="position: absolute; top: 30vmax; left: 30vmax;" id="testImg" />
 		<canvas id="mainCanvas" tabindex="1"></canvas>
 		<!-- SCRIPTS -->
 		<script src="misc_funcs.js"></script>
@@ -92,7 +110,12 @@
 		<script src="windows/animation_window.js"></script>
 		<script src="windows/layers_window.js"></script>
 		<script src="windows/sprites_window.js"></script>
+		<script src="windows/options_window.js"></script>
+		<script src="windows/export_window.js"></script>
 		<script src="tools.js"></script>
+
+		<script src="includes/gif.js"></script>
+		<script src="includes/gif.worker.js"></script>
 
 		<script src="pixel_art.js"></script>
 	</body>
