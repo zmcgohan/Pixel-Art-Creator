@@ -7,12 +7,13 @@ function OptionsWindow() {
 	this.optionsIcon = document.getElementById('optionsIcon');
 
 	this.categoryLabels = document.getElementsByClassName('sideBarCategory');
+	this.categoryMenus = [ document.getElementById('exportMenu'), document.getElementById('projectsMenu'), document.getElementById('projectsMenu') ];
 
 	this.opened = false;
 
 	this.addEventListeners();
 	// set default category (whatever's first)
-	this.changeCategory(0);
+	this.changeCategory(2);
 }
 
 OptionsWindow.prototype.addEventListeners = function() {
@@ -45,7 +46,10 @@ OptionsWindow.prototype.addEventListeners = function() {
 
 OptionsWindow.prototype.changeCategory = function(newCategoryI) {
 	var i;
-	for(i = 0; i < this.categoryLabels.length; ++i)
+	for(i = 0; i < this.categoryLabels.length; ++i) {
 		this.categoryLabels[i].className = 'sideBarCategory';
+		if(i !== newCategoryI) this.categoryMenus[i].style.display = 'none';
+		else this.categoryMenus[i].style.display = 'block';
+	}
 	this.categoryLabels[newCategoryI].className += ' activeCategory';
 }

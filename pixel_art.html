@@ -84,7 +84,7 @@
 			<div id="optionsCategorySideBar">
 				<span id="exportCategoryLabel" class="sideBarCategory">Export</span>
 				<span id="projectsCategoryLabel" class="sideBarCategory">Projects</span>
-				<span id="settingsCategoryLabel" class="sideBarCategory">Settings</span>
+				<!-- <span id="settingsCategoryLabel" class="sideBarCategory">Settings</span> -->
 				<span id="accountCategoryLabel" class="sideBarCategory">Account</span>
 			</div>
 			<div id="exportMenu">
@@ -94,6 +94,39 @@
 				<span id="exportPngButton" class="exportOptionButton">PNG Sprite Sheet</span>
 				<a href="#" id="exportButton" class="exportOptionButton">Export</a>
 			</div>
+			<div id="projectsMenu">
+				<div id="saveProjectButton">Save Current</div>
+				<div id="newProjectButton">+ New Project</div>
+				<!--
+				<div class="projectContainer currentProjectContainer">
+					<span class="projectTitle">Unnamed Project</span>
+					<span class="projectImagesContainer">
+						<canvas class="projectImageLarge"></canvas>
+						<canvas class="projectImageLarge"></canvas>
+						<canvas class="projectImageLarge"></canvas>
+						<canvas class="projectImageLarge"></canvas>
+					</span>
+				</div>
+				<div class="projectContainer">
+					<span class="projectTitle">Unnamed Project</span>
+					<span class="projectImagesContainer">
+						<canvas class="projectImageLarge"></canvas>
+						<canvas class="projectImageLarge"></canvas>
+						<canvas class="projectImageLarge"></canvas>
+						<canvas class="projectImageLarge"></canvas>
+					</span>
+				</div>
+				<div class="projectContainer">
+					<span class="projectTitle">Unnamed Project</span>
+					<span class="projectImagesContainer">
+						<canvas class="projectImageLarge"></canvas>
+						<canvas class="projectImageLarge"></canvas>
+						<canvas class="projectImageLarge"></canvas>
+						<canvas class="projectImageLarge"></canvas>
+					</span>
+				</div>
+				-->
+			</div>
 		</div>
 		<canvas id="mainCanvas" tabindex="1"></canvas>
 		<!-- SCRIPTS -->
@@ -101,6 +134,7 @@
 
 		<script src="grid.js"></script>
 		<script src="sprite.js"></script>
+		<script src="project.js"></script>
 		<script src="windows/window.js"></script>
 		<script src="windows/color_palette.js"></script>
 		<script src="windows/color_picker.js"></script>
@@ -111,10 +145,15 @@
 		<script src="windows/sprites_window.js"></script>
 		<script src="windows/options_window.js"></script>
 		<script src="windows/export_window.js"></script>
+		<script src="windows/projects_window.js"></script>
+		<script src="windows/settings_window.js"></script>
+		<script src="windows/account_window.js"></script>
 		<script src="tools.js"></script>
 
 		<script src="gif.js"></script>
 		<script src="gif.worker.js"></script>
+
+		<script src="/socket.io/socket.io.js"></script>
 
 		<script src="pixel_art.js"></script>
 	</body>

@@ -5,6 +5,8 @@
 var AR = 2, // aspect ratio
 	screenWidthHeightRatio = window.innerWidth / window.innerHeight; // ratio of screen width to height
 
+var socket = io();
+
 var canvas, ctx;
 
 var grid, 
@@ -16,7 +18,8 @@ var grid,
 	spritesWindow,
 	colorPicker,
 	optionsWindow,
-		exportWindow;
+		exportWindow,
+		projectsWindow;
 
 var tools = {};
 
@@ -43,7 +46,8 @@ layersWindow = new LayersWindow();
 spritesWindow = new SpritesWindow();
 colorPicker = new ColorPicker();
 optionsWindow = new OptionsWindow(),
-	exportWindow = new ExportWindow();
+	exportWindow = new ExportWindow(),
+	projectsWindow = new ProjectsWindow();
 
 // initial visual setup
 grid.render();

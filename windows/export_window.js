@@ -90,7 +90,6 @@ ExportWindow.prototype.addEventListeners = function() {
 			grid.curSprite.sprite.render(ctx, frameI, frameI * grid.curSprite.sprite.width, 0, 1);
 		}
 		var img = conversionCanvas.toDataURL('image/png');
-		document.getElementById('testImg').src = img;
 		if(this.downloadSupport) { // supports <a> 'download' attribute
 			this.exportButton.href = img;
 			this.exportButton.download = 'sprite.png';

@@ -185,3 +185,20 @@ function vmaxToPx(vmax) {
 	var onePercent = window.innerWidth > window.innerHeight ? window.innerWidth / 100 : window.innerHeight / 100;
 	return onePercent * vmax;
 }
+
+function getUnrepeatedSprites(spriteArray) {
+	var unrepeatedSprites = [],
+		i, j,
+		alreadyInArray = false;
+	for(i = 0; i < spriteArray.length; ++i) {
+		alreadyInArray = false;
+		for(j = 0; j < unrepeatedSprites.length; ++j) {
+			if(unrepeatedSprites[j] === spriteArray[i].sprite) {
+				alreadyInArray = true;
+				break;
+			}
+		}
+		if(!alreadyInArray) unrepeatedSprites.push(spriteArray[i].sprite);
+	}
+	return unrepeatedSprites;
+}
