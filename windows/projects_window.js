@@ -36,6 +36,22 @@ ProjectsWindow.prototype.fullUpdate = function() {
 	}
 }
 
+ProjectsWindow.prototype.handleContainerClick = function(container) {
+	var projI = 0;
+	while(this.projects[projI].container !== container) ++projI;
+	this.setCurrentProject(projI);
+}
+
+ProjectsWindow.prototype.setCurrentProject = function(curProjI) {
+	curProject = this.projects[curProjI].project;
+	grid.sprites = curProject.sprites;
+	grid.curSprite = grid.sprites[0];
+	grid.render();
+	animationWindow.update();
+	layersWindow.fullUpdate();
+	spritesWindow.fullUpdate();
+}
+
 // TODO have to change grid's sprites
 ProjectsWindow.prototype.addProject = function() {
 	// create new project and its DOM elements
@@ -46,6 +62,7 @@ ProjectsWindow.prototype.addProject = function() {
 	},
 		projTitle = document.createElement('span'),
 		projImagesContainer = document.createElement('span');
+	// set up DOM elements
 	projTitle.className = 'projectTitle';
 	projTitle.innerHTML = 'Unnamed Project';
 	projImagesContainer.className = 'projectImagesContainer';
@@ -55,9 +72,16 @@ ProjectsWindow.prototype.addProject = function() {
 	projImagesContainer.appendChild(newProj.projectImages[0]);
 	if(this.projects.length > 0) this.projectsMenu.insertBefore(newProj.container, this.projects[0].container);
 	else this.projectsMenu.appendChild(newProj.container);
+	// add event listeners
+	newProj.container.onmouseup = (function(event) {
+		var container = getParentWithId(event.target, 'projectContainer');
+		this.handleContainerClick(container);
+	}).bind(this);
 	// change current project
 	if(this.projects.length > 0) this.projects[0].container.className = 'projectContainer';
 	newProj.container.className = 'projectContainer currentProjectContainer';
 	// add new project to array
 	this.projects.unshift(newProj);
+	// set current project to new
+	this.setCurrentProject(0);
 }

@@ -2,6 +2,8 @@ function Project() {
 	this.name = 'Unnamed Project';
 	this.sprites = [];
 	this.lastEdited = Date.now();
+
+	this.addSprite();
 }
 
 Project.prototype.addSprite = function() {

@@ -9,7 +9,8 @@ var socket = io();
 
 var canvas, ctx;
 
-var grid, 
+var curProject,
+	grid, 
 	colorPalette,
    	toolBox, 
 	animationWindow, 

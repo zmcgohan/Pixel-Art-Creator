@@ -186,6 +186,7 @@ function vmaxToPx(vmax) {
 	return onePercent * vmax;
 }
 
+// returns an array containing only unrepeated sprites from spriteArray, which contains both sprites and positions
 function getUnrepeatedSprites(spriteArray) {
 	var unrepeatedSprites = [],
 		i, j,
@@ -201,4 +202,10 @@ function getUnrepeatedSprites(spriteArray) {
 		if(!alreadyInArray) unrepeatedSprites.push(spriteArray[i].sprite);
 	}
 	return unrepeatedSprites;
+}
+
+// gets the closest parent of elem with the id parentId
+function getParentWithId(elem, parentId) {
+	while(!elem.className || elem.className.indexOf(parentId) < 0) elem = elem.parentNode;
+	return elem;
 }
