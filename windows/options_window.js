@@ -13,7 +13,7 @@ function OptionsWindow() {
 
 	this.addEventListeners();
 	// set default category (whatever's first)
-	this.changeCategory(0);
+	this.changeCategory(2);
 }
 
 OptionsWindow.prototype.addEventListeners = function() {
@@ -39,6 +39,7 @@ OptionsWindow.prototype.addEventListeners = function() {
 			var categoryI = i;
 			return (function(event) {
 				this.changeCategory(categoryI);
+				updateScreen(); // TODO probably shouldn't happen
 			}).bind(this);
 		}).bind(this)();
 	}

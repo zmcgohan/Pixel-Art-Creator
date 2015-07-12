@@ -1044,3 +1044,60 @@ div {
 			#saveProjectButton {
 				left: 0.75vmax;
 			}
+	#accountMenu { }
+		#loginMenu {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+		}
+			#loginFormContainer {
+				position: absolute;
+				top: 4.8vmax;
+				left: 1.5vmax;
+				width: 14vmax;
+				height: 10vmax;
+			}
+				#loginHeader {
+					font-size: 1.8vmax;
+					width: 100%;
+					text-align: center;
+					font-weight: 400;
+				}
+				#usernameInput, #passwordInput {
+					position: absolute;
+					left: 0;
+					outline: none;
+					width: 100%;
+					height: 2.1vmax;
+					padding: 0 0.2vmax;
+					font-size: 1.3vmax;
+				}
+				#usernameInput { top: 2.3vmax; }
+				#passwordInput { top: 4.9vmax; }
+				#loginRememberLabel {
+					position: absolute;
+					top: 7.5vmax;
+					left: 0;
+					font-size: 0.8vmax;
+				}
+				#loginSubmitButton {
+					position: absolute;
+					top: 7.5vmax;
+					right: 0;
+				}
+			#registerLoginLink, #forgotPasswordLink {
+				position: absolute;
+				top: 9.5vmax;
+				font-size: 0.8vmax;
+			}
+			#registerLoginLink { left: 0; }
+			#forgotPasswordLink { right: 0; }
+			#loginFormContainer a {
+				text-decoration: none;
+				color: #222;
+			}
+			#loginFormContainer a:hover {
+				color: #a00000;
+			}
