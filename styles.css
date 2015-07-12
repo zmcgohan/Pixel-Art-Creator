@@ -909,7 +909,7 @@ div {
 			background: rgb(225,225,225);
 			/* border-right: 5px solid rgba(34,34,34,0.15); */
 		}
-	#exportMenu, #projectsMenu {
+	#exportMenu, #projectsMenu, #accountMenu {
 		position: absolute;
 		top: 0;
 		left: 8vmax;
@@ -960,7 +960,7 @@ div {
 		.projectContainer {
 			position: relative;
 			display: block;
-			width: 16vmax;
+			width: 15vmax;
 			height: 5vmax;
 			margin: calc(1.0vmax - 1px);
 			margin-bottom: calc(0.7vmax - 1px);
@@ -971,15 +971,35 @@ div {
 			opacity: 1.0;
 		}
 			.projectTitle {
+				position: relative;
 				display: block;
-				width: 16vmax;
+				width: 13.5vmax;
 				height: 1.5vmax;
 				line-height: 1.5vmax;
 				font-size: 1.0vmax;
 			}
+			.changeProjectTitleButton {
+				display: none;
+			}
+			.currentProjectContainer:hover .changeProjectTitleButton {
+				display: block;
+				position: absolute;
+				top: 0;
+				right: 0;
+				width: 1.5vmax;
+				height: 1.5vmax;
+				background: url('icons/pen.png');
+				background-size: 1vmax 1vmax;
+				background-position: center;
+				background-repeat: no-repeat;
+				opacity: 0.4;
+			}
+			.changeProjectTitleButton:hover {
+				opacity: 1.0 !important;
+			}
 			.projectImagesContainer {
 				display: block;
-				width: 16vmax;
+				width: 15vmax;
 				height: 3.3vmax;
 			}
 				.projectImageLarge {
@@ -988,16 +1008,25 @@ div {
 					width: 3vmax;
 					height: 3vmax;
 					margin-left: 1vmax;
-					background: rgba(150,150,150,1.0);
 					border-radius: 0.4vmax;
+					border: 1px solid rgba(50,50,50,0.6);
 				}
 				.projectImageLarge:nth-of-type(1) { margin: 0; }
+				.projectImageSmall {
+					display: inline-block;
+					float: left;
+					width: 1.6vmax;
+					height: 1.6vmax;
+					margin: 0 0.275vmax 0.275vmax 0;
+					border-radius: 0.2vmax;
+					border: 1px solid rgba(50,50,50,0.6);
+				}
 			#newProjectButton, #saveProjectButton {
 				position: absolute;
 				top: 0.5vmax;
 				display: block;
-				width: 6vmax;
 				height: 1.5vmax;
+				padding: 0 0.5vmax;
 				line-height: 1.4vmax;
 				background: rgb(210,210,210);
 				font-size: 0.8vmax;

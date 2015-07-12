@@ -197,11 +197,7 @@ Sprite.prototype.colorPixel = function(row, col, color) {
 			}
 		}
 		this.width = this.height = 1;
-		dimensionsDisplay.update();
-		// TODO change to per-frame updating
-		animationWindow.update();
-		layersWindow.fullUpdate();
-		spritesWindow.fullUpdate();
+		updateScreen();
 		return;
 	}
 	// resize if necessary
@@ -222,11 +218,7 @@ Sprite.prototype.colorPixel = function(row, col, color) {
 		this.addPixels(SpriteSide.BOTTOM, heightDiff);
 	}
 	curLayer.pixels[row][col] = color;
-	dimensionsDisplay.update();
-	// TODO change to per-frame updating (for layers, sprites and animation) for efficiency
-	animationWindow.update();
-	layersWindow.fullUpdate();
-	spritesWindow.fullUpdate();
+	updateScreen();
 	return true;
 }
 
@@ -240,11 +232,7 @@ Sprite.prototype.erasePixel = function(row, col) {
 		curLayer.pixels[row][col] = '';
 		dimensionChanges = this.trimSize();
 	}
-	dimensionsDisplay.update();
-	// TODO change to per-frame updating for efficiency
-	animationWindow.update();
-	layersWindow.fullUpdate();
-	spritesWindow.fullUpdate();
+	updateScreen();
 	return dimensionChanges;
 }
 
@@ -352,9 +340,7 @@ Sprite.prototype.trimSize = function() {
 		--this.height;
 		++dimensionChanges.bottom;
 	}
-	// TODO change to per-frame updating
-	animationWindow.update();
-	layersWindow.fullUpdate();
+	updateScreen();
 	return dimensionChanges;
 }
 
@@ -398,11 +384,7 @@ Sprite.prototype.resize = function(numRows, numCols) {
 	}
 	this.width = this.frames[0].layers[0].pixels[0].length;
 	this.height = this.frames[0].layers[0].pixels.length;
-	grid.render();
-	dimensionsDisplay.update();
-	// TODO change to per-frame updating for efficiency
-	animationWindow.update();
-	layersWindow.fullUpdate();
+	updateScreen();
 }
 
 Sprite.prototype.switchLayers = function(layerOne, layerTwo) {

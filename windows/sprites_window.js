@@ -35,10 +35,7 @@ SpritesWindow.prototype.addEventListeners = function() {
 	this.newSpriteButton.addEventListener('mouseup', (function(event) {
 		grid.addSprite();
 		grid.curSprite = grid.sprites[grid.sprites.length-1];
-		this.fullUpdate();
-		layersWindow.fullUpdate();
-		animationWindow.update();
-		grid.render();
+		updateScreen();
 	}).bind(this), false);
 }
 
@@ -86,12 +83,7 @@ SpritesWindow.prototype.handleDisplayClick = function(event) {
 	var displayI = this.getDisplayIndex(event.target);
 	grid.curSprite = grid.sprites[displayI];
 
-	// update screen
-	grid.render();
-	this.fullUpdate();
-	layersWindow.fullUpdate();
-	animationWindow.update();
-	dimensionsDisplay.update();
+	updateScreen();
 }
 
 // adds a new sprite display element to list of sprite displays and the scroll container

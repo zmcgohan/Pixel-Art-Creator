@@ -8,6 +8,16 @@ function setUp() {
 	ctx = canvas.getContext('2d');
 }
 
+// updates all of the updatable parts of the screen
+function updateScreen() {
+	grid.render();
+	dimensionsDisplay.update();
+	animationWindow.update();
+	layersWindow.fullUpdate();
+	spritesWindow.fullUpdate();
+	projectsWindow.fullUpdate();
+}
+
 function updatePositionsAndSizes() {
 	var i,
 		canvases = document.getElementsByTagName('canvas');

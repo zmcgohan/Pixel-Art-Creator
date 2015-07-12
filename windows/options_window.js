@@ -7,13 +7,13 @@ function OptionsWindow() {
 	this.optionsIcon = document.getElementById('optionsIcon');
 
 	this.categoryLabels = document.getElementsByClassName('sideBarCategory');
-	this.categoryMenus = [ document.getElementById('exportMenu'), document.getElementById('projectsMenu'), document.getElementById('projectsMenu') ];
+	this.categoryMenus = [ document.getElementById('exportMenu'), document.getElementById('projectsMenu'), document.getElementById('accountMenu') ];
 
 	this.opened = false;
 
 	this.addEventListeners();
 	// set default category (whatever's first)
-	this.changeCategory(2);
+	this.changeCategory(0);
 }
 
 OptionsWindow.prototype.addEventListeners = function() {

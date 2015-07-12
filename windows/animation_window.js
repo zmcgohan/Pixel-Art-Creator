@@ -64,7 +64,7 @@ AnimationWindow.prototype.addEventListeners = function() {
 			// scroll as right as possible
 			this.slidesContainer.scrollLeft = this.slidesContainer.scrollWidth;
 			this.setCurrentFrame(grid.curSprite.sprite.frames.length - 1);
-			grid.render();
+			updateScreen();
 		}
 	}).bind(this), false);
 
