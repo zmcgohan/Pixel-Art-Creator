@@ -16,7 +16,15 @@ function AccountWindow() {
 AccountWindow.prototype.addEventListeners = function() {
 	/* LOGIN/REGISTER STUFF */
 	this.loginForm.onsubmit = (function() {
-		console.log('Input form submitted');
+		var data = {
+			username: this.usernameInput.value,
+			password: this.passwordInput.value
+		};
+		if(this.loggingIn) {
+			socket.emit('login', data);
+		} else {
+			socket.emit('register', data);
+		}
 		event.preventDefault();
 		return false;
 	}).bind(this);

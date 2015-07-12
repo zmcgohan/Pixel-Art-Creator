@@ -5,7 +5,7 @@
 var AR = 2, // aspect ratio
 	screenWidthHeightRatio = window.innerWidth / window.innerHeight; // ratio of screen width to height
 
-//var socket = io();
+var socket = io();
 
 var canvas, ctx;
 

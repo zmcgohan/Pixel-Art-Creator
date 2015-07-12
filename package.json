@@ -1,0 +1,10 @@
+{
+  "name": "pixel-art-program",
+  "version": "0.0.1",
+  "description": "program for assisting in pixel art creation",
+  "dependencies": {
+    "express": "^4.13.1",
+    "socket.io": "^1.3.5",
+    "sqlite3": "^3.0.8"
+  }
+}
