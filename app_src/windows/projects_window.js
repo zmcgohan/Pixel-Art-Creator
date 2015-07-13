@@ -129,7 +129,7 @@ ProjectsWindow.prototype.setCurrentProject = function(curProjI) {
 	this.projects.unshift(temp);
 	curProject = this.projects[0];
 	grid.sprites = curProject.sprites;
-	grid.curSprite = grid.sprites[0];
+	grid.curSpriteI = 0;
 	grid.render();
 	animationWindow.update();
 	layersWindow.fullUpdate();

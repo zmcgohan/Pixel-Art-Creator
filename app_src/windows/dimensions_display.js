@@ -54,7 +54,7 @@ DimensionsDisplay.prototype.addEventListeners = function() {
 			}
 			if(grid.curSprite.sprite.width === 0 || grid.curSprite.sprite.height === 0) {
 				grid.sprites.splice(grid.sprites.indexOf(grid.curSprite));
-				grid.curSprite = undefined;
+				grid.curSpriteI = undefined;
 			}
 		}
 		this.update();

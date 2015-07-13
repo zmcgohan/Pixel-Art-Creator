@@ -6,6 +6,7 @@ function ToolBox() {
 	Window.call(this);
 
 	this.curTool = tools.pen;
+	this.curToolI = 0;
 	this.currentToolDiv = document.getElementById(CURRENT_TOOL_DIV_ID);
 	this.toolBoxDiv = document.getElementById(TOOLBOX_DIV_ID);
 
@@ -17,6 +18,13 @@ function ToolBox() {
 	this.update();
 }
 ToolBox.prototype = Object.create(Window.prototype);
+
+Object.defineProperty(ToolBox.prototype, "curTool", {
+	get: function curTool() {
+		if(this.curToolI === 0) return tools.pen;
+		else if(this.curToolI === 1) return tools.eraser;
+	}
+});
 
 // adds event listeners to current tool div
 ToolBox.prototype.addCurrentToolEventListeners = function() {
@@ -56,18 +64,18 @@ ToolBox.prototype.addCurrentToolEventListeners = function() {
 
 // adds event listeners to tool box div
 ToolBox.prototype.addToolBoxEventListeners = function() {
-	var getToolIconClickHandler = (function(tool) {
+	var toolI;
+	var getToolIconClickHandler = (function(toolI) {
 		return (function(event) {
-			if(this.curTool !== tool) {
-				this.curTool = tool;
-				this.update();
-			}
+			this.curToolI = toolI;
+			this.update();
 		}).bind(this);
 	}).bind(this);
+	toolI = 0;
 	for(var toolName in tools) {
 		var curIcon = document.getElementById(tools[toolName].iconId);
 		// add click handlers to each tool icon
-		curIcon.addEventListener('mouseup', getToolIconClickHandler(tools[toolName]), false);
+		curIcon.addEventListener('mouseup', getToolIconClickHandler(toolI++), false);
 	}
 }
 

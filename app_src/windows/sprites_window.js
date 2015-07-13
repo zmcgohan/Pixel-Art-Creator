@@ -34,7 +34,7 @@ SpritesWindow.prototype.addEventListeners = function() {
 	// new sprite button click (add sprite)
 	this.newSpriteButton.addEventListener('mouseup', (function(event) {
 		grid.addSprite();
-		grid.curSprite = grid.sprites[grid.sprites.length-1];
+		grid.curSpriteI = grid.sprites.length-1;
 		updateScreen();
 	}).bind(this), false);
 }
@@ -82,7 +82,7 @@ SpritesWindow.prototype.getDisplayIndex = function(display) {
 // handle sprite display click to change current sprite
 SpritesWindow.prototype.handleDisplayClick = function(event) {
 	var displayI = this.getDisplayIndex(event.target);
-	grid.curSprite = grid.sprites[displayI];
+	grid.curSpriteI = displayI;
 
 	updateScreen();
 }

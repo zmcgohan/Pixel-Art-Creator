@@ -11,7 +11,8 @@ function Grid() {
 	// TODO setting for min/max cell width -- pixel art can get very detailed
 	MIN_CELL_WIDTH = Math.floor(canvas.width / 250); MAX_CELL_WIDTH = Math.floor(canvas.width / 3);
 	this.sprites = [];
-	this.curSprite = undefined; // current sprite being edited
+	//this.curSprite = undefined; // current sprite being edited
+	this.curSpriteI = undefined; // index of current sprite
 	this.topLeftViewPos = { x: 0, y: 0 }; // top left view position (in pixels)
 	this.lineColor = DEFAULT_LINE_COLOR; // color of cell separation lines
 	this.bgColors = DEFAULT_BG_COLORS; // color of background cells
@@ -35,6 +36,18 @@ Grid.prototype.addSprite = function() {
 		sprite: newSprite
 	});
 }
+
+/* Returns the current sprite. */
+Grid.prototype.getCurrentSprite = function() {
+	return this.sprites[this.curSpriteI];
+}
+
+Object.defineProperty(Grid.prototype, "curSprite", {
+	get: function curSprite() {
+		if(this.curSpriteI !== undefined) return this.sprites[this.curSpriteI];
+		else return undefined;	
+	}
+});
 
 // sets new cellWidth & cellHeight values based on a given new width
 Grid.prototype.setCellWidth = function(newWidth) {

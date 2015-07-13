@@ -1,5 +1,6 @@
 // pen tool -- simply draws a pixel at the mouse position
 function PenTool() {
+	this.toolI = 0;
 	this.icon = 'icons/pen.png';
 	this.iconId = 'penToolIcon';
 	this.shortcutKeyCode = 'p'.charCodeAt(0);
@@ -36,6 +37,7 @@ PenTool.prototype.handleEvent = function(event) {
 
 // eraser tool -- erases a pixel from sprite
 function EraserTool() {
+	this.toolI = 1;
 	this.icon = 'icons/eraser.png';
 	this.iconId = 'eraserToolIcon';
 	this.shortcutKeyCode = 'e'.charCodeAt(0);
@@ -66,7 +68,7 @@ function addToolKeyHandlers() {
 		var keyPressed = event.which || event.keyCode || event.charCode;
 		for(var toolName in tools) {
 			if(keyPressed === tools[toolName].shortcutKeyCode && toolBox.curTool !== tools[toolName]) {
-				toolBox.curTool = tools[toolName];
+				toolBox.curToolI = tools[toolName].toolI;
 				toolBox.update();
 				break;
 			}
