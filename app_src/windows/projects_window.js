@@ -218,15 +218,16 @@ ProjectsWindow.prototype.setNumProjectImages = function(projI, numImages) {
 ProjectsWindow.prototype.saveEnvironment = function() {
 	var data = {
 		projects: this.projects,
-		curSprite: grid.curSprite,
+		//curSprite: grid.curSprite, // TODO probably have to change to curSpriteI or something -- (use getter?) -- can't JSON a reference
 		gridPos: grid.topLeftViewPos,
 		colorPalettes: colorPalette.palettes,
 		curPaletteI: colorPalette.curPaletteI,
 		curSlideI: colorPalette.curSlideI,
-		curTool: toolBox.curTool,
+		curTool: toolBox.curTool, // TODO same thing -- i?
 		onionSkinning: animationWindow.onionSkinning,
 		animationFps: animationWindow.animationFps
 	};
+	console.log("JSON string of data's length: " + JSON.stringify(data).length);
 	console.log('Emitting projects.');
 	socket.emit('save environment', data);
 }
