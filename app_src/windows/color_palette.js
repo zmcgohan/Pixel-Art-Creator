@@ -6,6 +6,7 @@ function ColorPalette() {
 	this.downArrow = document.getElementById('paletteDownArrow');
 	this.paletteChooseButton = document.getElementById('paletteChooseButton');
 	//this.newColorSlide = document.getElementById('newColorSlide');
+	this.palettesNew = [ [ new Color(0, 1, 1), new Color(120, 1, 1), new Color(240, 1, 1) ], [] ];
 	this.palettes = [ [ curColor, '#fafafa', '#0000FF', '#00ff00' ], [] ]; // last palette will always be empty, the "new" palette
 	this.curPaletteI = 0;
 	// get all color slides
@@ -19,6 +20,13 @@ function ColorPalette() {
 }
 
 ColorPalette.prototype = Object.create(Window.prototype);
+
+/* Define the getter for curColor. */
+Object.defineProperty(ColorPalette.prototype, "curColor", {
+	get: function curColor() {
+		return this.palettes[this.curPaletteI][this.curSlideI];
+	}
+});
 
 ColorPalette.prototype.addEventListeners = function() {
 	// click listener to palette up/down arrows

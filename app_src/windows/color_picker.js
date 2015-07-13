@@ -77,6 +77,7 @@ ColorPicker.prototype.addEventListeners = function() {
 
 	/* RGB/HSV/Hex INPUT EVENTS */
 	// add input events (RGB, HSV, Hex)
+	// TODO this error checking is a mess
 	this.redValueInput.onkeydown = this.greenValueInput.onkeydown = this.blueValueInput.onkeydown =
 		this.hueValueInput.onkeydown = this.saturationValueInput.onkeydown = this.valueValueInput.onkeydown =
 		this.hexValueInput.onkeydown = (function(event) {
@@ -86,10 +87,11 @@ ColorPicker.prototype.addEventListeners = function() {
 			// determine if text is highlighted
 			var curRange = window.getSelection().getRangeAt(0);
 			textHighlighted = curRange.startContainer === event.target.childNodes[0] && curRange.endContainer === event.target.childNodes[0] && curRange.endOffset - curRange.startOffset > 0;
-			if(keyCode === BACKSPACE && event.target.innerHTML.length === 0) {
+			if(keyCode === BACKSPACE && event.target.innerText.length === 0) {
 				event.preventDefault();
 			} else if(keyCode === TAB) {
 				if(event.target.id === 'hexValueInput') {
+					// TODO broken for some reason (looping in Safari and Chrome)
 					window.setTimeout(function() { this.redValueInput.focus(); }, 1);
 				}
 			} else if(((event.target.id === 'hexValueInput' && !(48 <= keyCode && keyCode <=57) && !(65 <= keyCode && keyCode <= 70)) ||
@@ -98,7 +100,7 @@ ColorPicker.prototype.addEventListeners = function() {
 				event.preventDefault();
 			} else if(((event.target.id === 'hexValueInput' && ((48 <= keyCode && keyCode <= 57) || (65 <= keyCode && keyCode <= 70))) ||
 					(event.target.id !== 'hexValueInput' && keyCode >= 48 && keyCode <= 57))
-				&& ((event.target.id !== 'hexValueInput' && event.target.innerHTML.length >= 3) || (event.target.id === 'hexValueInput' && event.target.innerHTML.length >= 6)) && !textHighlighted) { // make sure inputs don't go over the correct length
+				&& ((event.target.id !== 'hexValueInput' && event.target.innerText.length >= 3) || (event.target.id === 'hexValueInput' && event.target.innerText.length >= 6)) && !textHighlighted) { // make sure inputs don't go over the correct length
 				event.preventDefault();
 			}
 		}).bind(this);
@@ -208,9 +210,9 @@ ColorPicker.prototype.updateCurrentSlide = function() {
 // handle a change in the HSV input fields (update values of ColorPicker and update displays if needed)
 ColorPicker.prototype.handleHSVInputChange = function(event) {
 	// set new value
-	this.hue = parseInt(this.hueValueInput.innerHTML);
-	this.saturation = parseInt(this.saturationValueInput.innerHTML);
-	this.brightness = parseInt(this.valueValueInput.innerHTML);
+	this.hue = parseInt(this.hueValueInput.innerText);
+	this.saturation = parseInt(this.saturationValueInput.innerText);
+	this.brightness = parseInt(this.valueValueInput.innerText);
 	// if field is over the max allowed value, reduce it
 	if(this.hue > 359) this.hue = 359;
 	if(this.saturation > 100) this.saturation = 100;
@@ -229,9 +231,9 @@ ColorPicker.prototype.handleHSVInputChange = function(event) {
 
 // handle a change in the RGB input fields (update values of ColorPicker and update displays if needed)
 ColorPicker.prototype.handleRGBInputChange = function(event) {
-	var red = parseInt(this.redValueInput.innerHTML),
-		green = parseInt(this.greenValueInput.innerHTML),
-		blue = parseInt(this.blueValueInput.innerHTML),
+	var red = parseInt(this.redValueInput.innerText),
+		green = parseInt(this.greenValueInput.innerText),
+		blue = parseInt(this.blueValueInput.innerText),
 		hsv;
 	// R/G/B empty? = 0
 	if(isNaN(red)) red = 0;
@@ -256,16 +258,16 @@ ColorPicker.prototype.handleRGBInputChange = function(event) {
 
 // handle a change in the hex input field (update values of ColorPicker and update displays if needed)
 ColorPicker.prototype.handleHexInputChange = function(event) {
-	if(this.hexValueInput.innerHTML.length !== 3 && this.hexValueInput.innerHTML.length !== 6) return; // if value isn't 3 or 6 characters, don't update
+	if(this.hexValueInput.innerText.length !== 3 && this.hexValueInput.innerText.length !== 6) return; // if value isn't 3 or 6 characters, don't update
 	var red, green, blue, hsv;
-	if(this.hexValueInput.innerHTML.length === 6) {
-		red = parseInt(this.hexValueInput.innerHTML.substring(0,2), 16);
-		green = parseInt(this.hexValueInput.innerHTML.substring(2,4), 16);
-		blue = parseInt(this.hexValueInput.innerHTML.substring(4,6), 16);
+	if(this.hexValueInput.innerText.length === 6) {
+		red = parseInt(this.hexValueInput.innerText.substring(0,2), 16);
+		green = parseInt(this.hexValueInput.innerText.substring(2,4), 16);
+		blue = parseInt(this.hexValueInput.innerText.substring(4,6), 16);
 	} else {
-		red = parseInt(this.hexValueInput.innerHTML.substring(0,1) + this.hexValueInput.innerHTML.substring(0,1), 16);
-		green = parseInt(this.hexValueInput.innerHTML.substring(1,2) + this.hexValueInput.innerHTML.substring(1,2), 16);
-		blue = parseInt(this.hexValueInput.innerHTML.substring(2,3) + this.hexValueInput.innerHTML.substring(2,3), 16);
+		red = parseInt(this.hexValueInput.innerText.substring(0,1) + this.hexValueInput.innerText.substring(0,1), 16);
+		green = parseInt(this.hexValueInput.innerText.substring(1,2) + this.hexValueInput.innerText.substring(1,2), 16);
+		blue = parseInt(this.hexValueInput.innerText.substring(2,3) + this.hexValueInput.innerText.substring(2,3), 16);
 	}
 	// R/G/B over 255? set to 255
 	if(red > 255) red = 255;
@@ -415,16 +417,16 @@ ColorPicker.prototype.updateColorInputs = function(exclusion) {
 		rgb = hsvToRGB(hue, saturationPercent, brightnessPercent),
 		hexString = ('00' + rgb.r.toString(16)).slice(-2) + ('00' + rgb.g.toString(16)).slice(-2) + ('00' + rgb.b.toString(16)).slice(-2);
 	if(exclusion !== 'rgb') {
-		this.redValueInput.innerHTML = rgb.r;
-		this.greenValueInput.innerHTML = rgb.g;
-		this.blueValueInput.innerHTML = rgb.b;
+		this.redValueInput.innerText = rgb.r;
+		this.greenValueInput.innerText = rgb.g;
+		this.blueValueInput.innerText = rgb.b;
 	}
 	if(exclusion !== 'hsv') {
-		this.hueValueInput.innerHTML = hue;
-		this.saturationValueInput.innerHTML = Math.floor(saturationPercent * 100);
-		this.valueValueInput.innerHTML = Math.floor(brightnessPercent * 100);
+		this.hueValueInput.innerText = hue;
+		this.saturationValueInput.innerText = Math.floor(saturationPercent * 100);
+		this.valueValueInput.innerText = Math.floor(brightnessPercent * 100);
 	}
 	if(exclusion !== 'hex')
-		this.hexValueInput.innerHTML = hexString;
+		this.hexValueInput.innerText = hexString;
 
 }
