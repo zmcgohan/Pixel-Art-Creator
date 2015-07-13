@@ -84,14 +84,14 @@ Grid.prototype.render = function() {
 			else drawYPos = i*this.cellHeight-(this.cellHeight+pxDiffY);
 			// TODO: make the following sprite rendering more efficient.. because it's not. at all.
 			// render current sprite
-			var spriteCellColor = undefined;
-			var drawingOnionSkin = false;
+			var spriteCellColor = undefined,
+				onionColor = undefined;
 
 			// pixel of a current sprite in cell? get its color
 			// TODO currently wouldn't put current sprite on top
 			spriteCellColor = this.curSprite.sprite.getPixel(topLeftCellY+i-this.curSprite.pos.y, topLeftCellX+j-this.curSprite.pos.x);
 			// set sprite outline stroke positions if not already set (guaranteed to first be set at top left pixel)
-			if(!spriteOutline && !spriteCellColor) {
+			if(!spriteOutline && spriteCellColor !== undefined) { // cell from current sprite in view
 				// draws more than needed, but necessary so outline doesn't constantly move
 				var outlineStartX = drawXPos - ((topLeftCellX+j)-this.curSprite.pos.x) * this.cellWidth,
 					outlineStartY = drawYPos - ((topLeftCellY+i)-this.curSprite.pos.y) * this.cellHeight;
@@ -103,22 +103,21 @@ Grid.prototype.render = function() {
 				};
 			}
 			// check for onion skinned colors
-			/*
-			if(!spriteCellColor) {
+			if(spriteCellColor === '') { // empty color
 				if(animationWindow.onionSkinning && this.curSprite.sprite.curFrameI > 0) {
-					spriteCellColor = this.curSprite.sprite.getPixel(topLeftCellY+i-this.curSprite.pos.y, topLeftCellX+j-this.curSprite.pos.x, this.curSprite.sprite.curFrameI-1);
-					if(spriteCellColor !== undefined) drawingOnionSkin = true;
+					onionColor = this.curSprite.sprite.getPixel(topLeftCellY+i-this.curSprite.pos.y, topLeftCellX+j-this.curSprite.pos.x, this.curSprite.sprite.curFrameI-1);
 				}
 			}
-			*/
 			// check for colors from other non-active sprites
 			if(!spriteCellColor) {
 				for(var k = 0; k < this.sprites.length; ++k) {
 					if(this.sprites[k].pos.x <= topLeftCellX+j && this.sprites[k].pos.x+this.sprites[k].sprite.width >= topLeftCellX && this.sprites[k].pos.y <= topLeftCellY+i && this.sprites[k].pos.y+this.sprites[k].sprite.height >= topLeftCellY) {
 						var spritePxRow = (topLeftCellY+i)-this.sprites[k].pos.y,
 							spritePxCol = (topLeftCellX+j)-this.sprites[k].pos.x;
-						spriteCellColor = this.sprites[k].sprite.getPixel(spritePxRow, spritePxCol);
-						if(spriteCellColor !== undefined) // break if found cell color (no need to search more)
+						// keep going if '', stop if color found
+						var cellColor = this.sprites[k].sprite.getPixel(spritePxRow, spritePxCol);
+						if(cellColor !== undefined) spriteCellColor = cellColor;
+						if(spriteCellColor) // break if found cell color, not including '' (no need to search more)
 							break;
 					}
 				}
@@ -128,7 +127,8 @@ Grid.prototype.render = function() {
 			drawYPos = Math.floor(drawYPos);
 			var drawCellWidth = Math.ceil(this.cellWidth),
 				drawCellHeight = Math.ceil(this.cellHeight);
-			// TODO changed empty cell to default BG color -- keep??
+			// TODO if(!this.spriteBG) spriteCellColor = undefined;
+			// ^^ probably better way of outline vs. background (though still not very eloquent)
 			if(spriteCellColor !== undefined && spriteCellColor !== '') { // sprite cell found -- draw it
 				if(spriteCellColor !== '') ctx.fillStyle = spriteCellColor;
 				else ctx.fillStyle = SPRITE_DEFAULT_BG_COLOR;
@@ -142,6 +142,13 @@ Grid.prototype.render = function() {
 					ctx.fillStyle = this.bgColors[(xAdd+yAdd+i+j)%this.bgColors.length];
 				}
 				ctx.fillRect(drawXPos, drawYPos, drawCellWidth, drawCellHeight);
+			}
+			// if onion skin color, draw it
+			if(onionColor) {
+				ctx.globalAlpha = 0.6;
+				ctx.fillStyle = onionColor;
+				ctx.fillRect(drawXPos, drawYPos, drawCellWidth, drawCellHeight);
+				ctx.globalAlpha = 1.0;
 			}
 			// if active cell, shade it
 			if(topLeftCellX+j === this.activeCell.x && topLeftCellY+i === this.activeCell.y) {

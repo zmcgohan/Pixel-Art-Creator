@@ -20,7 +20,7 @@ ProjectsWindow.prototype.addEventListeners = function() {
 	}).bind(this);
 	// save project button click
 	this.saveProjectButton.onclick = (function(event) {
-		console.log('Saving current project.');
+		this.saveProjects();
 	}).bind(this);
 }
 
@@ -213,4 +213,9 @@ ProjectsWindow.prototype.setNumProjectImages = function(projI, numImages) {
 	for(i = 0; i < images.length; ++i) {
 		images[i].className = imageClass;
 	}
+}
+
+ProjectsWindow.prototype.saveProjects = function() {
+	console.log('Emitting projects.');
+	socket.emit('save projects', this.projects);
 }

@@ -99,18 +99,24 @@
 				<div id="newProjectButton">+ New Project</div>
 			</div>
 			<div id="accountMenu">
+				<img id="accountLoadingImage" src="icons/loading.gif" alt="" />
 				<div id="loginMenu">
+					<span id="loginErrorContainer"></span>
 					<span id="loginFormContainer">
 						<h1 id="loginHeader">Log In</h1>
 						<form id="loginForm" action="" method="POST">
-							<input id="usernameInput" type="text" />
-							<input id="passwordInput" type="password" />
+							<input id="usernameInput" type="text" placeholder="Username" />
+							<input id="passwordInput" type="password" placeholder="Password" />
 							<label id="loginRememberLabel"><input id="loginRememberCheck" type="checkbox" /> Remember Me</label>
 							<input id="loginSubmitButton" type="submit" value="Submit" />
 						</form>
 						<a href="#" id="registerLoginLink">Register</a>
-						<a href="#" id="forgotPasswordLink">Forgot password</a>
+						<!-- <a href="#" id="forgotPasswordLink">Forgot password</a> -->
 					</span>
+				</div>
+				<div id="loggedInMenu">
+					<div id="loggedInText">You are logged in as Zach.</div>
+					<a href="#" id="logoutText">Log Out</a>
 				</div>
 			</div>
 		</div>

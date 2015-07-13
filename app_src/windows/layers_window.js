@@ -197,7 +197,7 @@ LayersWindow.prototype.handleTitleEvent = function(event) {
 		} else if(!isAlphaNumeric && keyCode !== BACKSPACE) {
 			event.preventDefault();
 		}
-		event.stopPropagation(); // keeps changing the current tool
+		//event.stopPropagation(); // keeps changing the current tool
 	} else if(event.type === 'blur') {
 		// TODO click fires before blur, so it always changes back to default
 		event.target.contentEditable = false;

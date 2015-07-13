@@ -23,6 +23,8 @@ var curProject,
 		projectsWindow,
 		accountWindow;
 
+var curUser = undefined;
+
 var tools = {};
 
 var curColor = '#FF0000';
