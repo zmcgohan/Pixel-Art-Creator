@@ -20,7 +20,7 @@ ProjectsWindow.prototype.addEventListeners = function() {
 	}).bind(this);
 	// save project button click
 	this.saveProjectButton.onclick = (function(event) {
-		this.saveProjects();
+		this.saveEnvironment();
 	}).bind(this);
 }
 
@@ -215,7 +215,18 @@ ProjectsWindow.prototype.setNumProjectImages = function(projI, numImages) {
 	}
 }
 
-ProjectsWindow.prototype.saveProjects = function() {
+ProjectsWindow.prototype.saveEnvironment = function() {
+	var data = {
+		projects: this.projects,
+		curSprite: grid.curSprite,
+		gridPos: grid.topLeftViewPos,
+		colorPalettes: colorPalette.palettes,
+		curPaletteI: colorPalette.curPaletteI,
+		curSlideI: colorPalette.curSlideI,
+		curTool: toolBox.curTool,
+		onionSkinning: animationWindow.onionSkinning,
+		animationFps: animationWindow.animationFps
+	};
 	console.log('Emitting projects.');
-	socket.emit('save projects', this.projects);
+	socket.emit('save environment', data);
 }

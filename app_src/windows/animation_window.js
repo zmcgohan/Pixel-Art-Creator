@@ -194,9 +194,12 @@ AnimationWindow.prototype.updateAnimationDisplay = function() {
 }
 
 AnimationWindow.prototype.setCurrentFrame = function(frameI) {
-	this.animationSlides[grid.curSprite.sprite.curFrameI].removeAttribute('id');
+	var i;
 	grid.curSprite.sprite.curFrameI = frameI;
-	this.animationSlides[frameI].id = 'curAnimationSlide';
+	for(i = 0; i < this.animationSlides.length; ++i) {
+		if(i !== grid.curSprite.sprite.curFrameI && this.animationSlides[i].id) this.animationSlides[i].removeAttribute('id');
+		else if(i === grid.curSprite.sprite.curFrameI) this.animationSlides[i].id = 'curAnimationSlide';
+	}
 	grid.render();
 	layersWindow.fullUpdate();
 	// update animation display if not animating currently
@@ -262,6 +265,8 @@ AnimationWindow.prototype.update = function() {
 			this.removeSlide();
 		}
 	}
+	// set current frame
+	this.setCurrentFrame(grid.curSprite.sprite.curFrameI);
 	// calculate padding around each frame's drawn image
 	if(maxDimension <= MAX_FRAME_PADDING_SIZE) {
 		framePadding = MAX_FRAME_PADDING;

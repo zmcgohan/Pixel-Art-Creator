@@ -58,7 +58,7 @@ io.on('connection', function(socket) {
 		account.handleRegistration(db, addUserStmt, socket, data);
 	});
 	// user is saving their projects
-	socket.on('save projects', function(data) {
-		console.log('Saving projects: ' + data);
+	socket.on('save environment', function(data) {
+		console.log('Saving entire environment: ' + data);
 	});
 });

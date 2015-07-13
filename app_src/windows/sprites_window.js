@@ -55,6 +55,7 @@ SpritesWindow.prototype.fullUpdate = function() {
 			this.spriteDisplays[spriteI].id = 'curSpriteDisplay';
 	}
 	// render each sprite
+	// TODO make sure no sprites get repeated
 	for(spriteI = 0; spriteI < grid.sprites.length; ++spriteI) {
 		curSprite = grid.sprites[spriteI].sprite;
 		spriteCtx = this.spriteDisplays[spriteI].getContext('2d');

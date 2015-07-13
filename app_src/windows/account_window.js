@@ -9,6 +9,7 @@ function AccountWindow() {
 	this.registerLoginLink = document.getElementById('registerLoginLink');
 	this.forgotPasswordLink = document.getElementById('forgotPasswordLink');
 	this.loginErrorContainer = document.getElementById('loginErrorContainer');
+	this.loginRememberCheck = document.getElementById('loginRememberCheck');
 
 	this.accountLoadingImage = document.getElementById('accountLoadingImage');
 
@@ -32,9 +33,7 @@ AccountWindow.prototype.addEventListeners = function() {
 			};
 			this.update();
 			// clear form stuff
-			this.usernameInput.value = '';
-			this.passwordInput.value = '';
-			this.setError('');
+			this.resetForms();
 		} else {
 			this.setError(data);
 		}
@@ -45,11 +44,15 @@ AccountWindow.prototype.addEventListeners = function() {
 				username: this.usernameInput.value, // TODO change
 				verification: undefined
 			};
+			// if "Remember Me" box is checked, create cookie
+			if(this.loginRememberCheck.checked) {
+				var d = new Date();
+				d.setTime(d.getTime() + 365*24*60*60*1000); // cookie lasts for a year
+				document.cookie = 'pxUser=' + curUser.username + '; expires=' + d.toUTCString();
+			}
 			this.update();
 			// clear form stuff
-			this.usernameInput.value = '';
-			this.passwordInput.value = '';
-			this.setError('');
+			this.resetForms();
 		} else {
 			this.setError(data);
 		}
@@ -85,6 +88,14 @@ AccountWindow.prototype.addEventListeners = function() {
 		curUser = undefined;
 		this.update();
 	}).bind(this);
+}
+
+/* Resets the login and register forms to their initial values. */
+AccountWindow.prototype.resetForms = function() {
+	this.usernameInput.value = '';
+	this.passwordInput.value = '';
+	this.setError('');
+	this.loginRememberCheck.checked = false;
 }
 
 AccountWindow.prototype.setError = function(errorMsg) {
